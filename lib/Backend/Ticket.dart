@@ -10,7 +10,7 @@ class TicketBloc {
 
   /// The [ticketItems] Map would hold all the data this bloc provides
   final Map ticketItems = {
-    'Order Name':'',
+    'Order Name': '',
     'Payment Type': '',
     'Items': [],
     'Subtotal': 0,
@@ -20,8 +20,8 @@ class TicketBloc {
   };
 
   /// [retrieveOrder] removes items from the cart, back to the shop
-  void retrieveOrder(orderName, paymentType, items, subtotal, discount, tax, total) {
-    
+  void retrieveOrder(
+      orderName, paymentType, items, subtotal, discount, tax, total) {
     ticketItems['Order Name'] = orderName;
     ticketItems['Payment Type'] = paymentType;
     ticketItems['Items'] = items;
@@ -29,12 +29,10 @@ class TicketBloc {
     ticketItems['Discount'] = discount;
     ticketItems['IVA'] = tax;
     ticketItems['Total'] = total;
-    
 
     ticketStreamController.sink.add(ticketItems);
   }
-  
-  
+
   /// [changeOrderName] removes items from the cart, back to the shop
   void changeOrderName(orderName) {
     ticketItems['Order Name'] = orderName;
@@ -66,30 +64,31 @@ class TicketBloc {
     ticketStreamController.sink.add(ticketItems);
   }
 
-  /// [addQuantity] removes items from the cart, back to the shop
+  /// [addQuantity] adds items from the cart, back to the shop
   void addQuantity(i) {
-    ticketItems['Items'][i]['Quantity'] = ticketItems['Items'][i]['Quantity'] + 1;
-    ticketItems['Items'][i]['Total Price'] = ticketItems['Items'][i]['price'] * ticketItems['Items'][i]['Quantity'];
-    
-    ticketStreamController.sink.add(ticketItems);
+    ticketItems['Items'][i]['Quantity'] =
+        ticketItems['Items'][i]['Quantity'] + 1;
+    ticketItems['Items'][i]['Total Price'] =
+        ticketItems['Items'][i]['Price'] * ticketItems['Items'][i]['Quantity'];
 
+    ticketStreamController.sink.add(ticketItems);
   }
 
   /// [removeQuantity] removes items from the cart, back to the shop
   void removeQuantity(i) {
-    ticketItems['Items'][i]['Quantity'] = ticketItems['Items'][i]['Quantity'] - 1;
-    ticketItems['Items'][i]['Total Price'] = ticketItems['Items'][i]['price'] * ticketItems['Items'][i]['Quantity'];
-    
+    ticketItems['Items'][i]['Quantity'] =
+        ticketItems['Items'][i]['Quantity'] - 1;
+    ticketItems['Items'][i]['Total Price'] =
+        ticketItems['Items'][i]['Price'] * ticketItems['Items'][i]['Quantity'];
+
     ticketStreamController.sink.add(ticketItems);
   }
 
-  /// The [dispose] method is used 
+  /// The [dispose] method is used
   /// to automatically close the stream when the widget is removed from the widget tree
   void dispose() {
     ticketStreamController.close(); // close our StreamController
   }
-
 }
 
-
-final bloc = TicketBloc();  // add to the end of the file
+final bloc = TicketBloc(); // add to the end of the file

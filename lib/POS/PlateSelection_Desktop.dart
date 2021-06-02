@@ -5,12 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class PlateSelectionDesktop extends StatelessWidget {
+  final String category;
+  PlateSelectionDesktop({this.category});
+
   @override
   Widget build(BuildContext context) {
-    
     final product = Provider.of<List<Products>>(context);
 
-    if (product == null){
+    if (product == null) {
       return Center();
     }
 
@@ -21,7 +23,7 @@ class PlateSelectionDesktop extends StatelessWidget {
         crossAxisCount: (MediaQuery.of(context).size.width > 1100) ? 4 : 3,
         crossAxisSpacing: 10.0,
         mainAxisSpacing: 20.0,
-        childAspectRatio: 0.95,
+        childAspectRatio: 1,
       ),
       scrollDirection: Axis.vertical,
       itemCount: product.length,
@@ -30,8 +32,9 @@ class PlateSelectionDesktop extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(15)),
           hoverColor: Colors.black26,
           onTap: () => bloc.addToCart({
-            'name': product[i].product,
-            'price': product[i].price,
+            'Name': product[i].product,
+            'Category': product[i].category,
+            'Price': product[i].price,
             'Quantity': 1,
             'Total Price': product[i].price
           }),
@@ -44,19 +47,14 @@ class PlateSelectionDesktop extends StatelessWidget {
               children: <Widget>[
                 ///Image
                 Container(
-                  height: MediaQuery.of(context).size.width * 0.12,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
+                    height: MediaQuery.of(context).size.width * 0.12,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
                       color: Colors.grey[100],
                       borderRadius: BorderRadius.circular(15.0),
-                      // image: DecorationImage(
-                      //     image: NetworkImage(product[i].image),
-                      //     fit: BoxFit.cover)
                     ),
-                  child: CachedNetworkImage(
-                    imageUrl: product[i].image,
-                    fit: BoxFit.cover)
-                ),
+                    child: CachedNetworkImage(
+                        imageUrl: product[i].image, fit: BoxFit.cover)),
 
                 ///Text
                 Container(
@@ -68,12 +66,18 @@ class PlateSelectionDesktop extends StatelessWidget {
                       children: <Widget>[
                         ///Product
                         Container(
+                          constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width * 0.1,
+                          ),
                           child: Text(
                             product[i].product, //product[index].product,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: true,
                             textAlign: TextAlign.start,
                             style: TextStyle(
                                 color: Colors.black,
-                                fontSize: 12,
+                                fontSize: 13,
                                 fontWeight: FontWeight.w400),
                           ),
                         ),
@@ -88,7 +92,7 @@ class PlateSelectionDesktop extends StatelessWidget {
                             style: TextStyle(
                               color: Colors.black54,
                               fontWeight: FontWeight.w400,
-                              fontSize: 12,
+                              fontSize: 14,
                             ),
                           ),
                         ),
