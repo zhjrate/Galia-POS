@@ -1,13 +1,13 @@
 import 'package:denario/Backend/DatabaseService.dart';
 import 'package:denario/Expenses/ExpenseInput.dart';
 import 'package:denario/Expenses/ExpenseList.dart';
-import 'package:denario/Expenses/ExpenseSummary.dart';
 import 'package:denario/Models/Categories.dart';
 import 'package:denario/Models/Expenses.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ExpensesDesk extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -17,18 +17,18 @@ class ExpensesDesk extends StatelessWidget {
           padding: EdgeInsets.all(15),
           child: Column(children: [
             //Expense Input
-            MultiProvider(providers: [
-              StreamProvider<CategoryList>.value(
-                  value: DatabaseService().categoriesList),
-              StreamProvider<AccountsList>.value(
-                  value: DatabaseService().accountsList)
-            ], child: ExpenseInput()),
+            MultiProvider(              
+              providers: [
+                StreamProvider<CategoryList>.value(value: DatabaseService().categoriesList),
+                StreamProvider<AccountsList>.value(value: DatabaseService().accountsList)
+              ],
+              child: ExpenseInput()
+            ),
             SizedBox(height: 30),
             //Expense List
-            MultiProvider(
+             MultiProvider(              
               providers: [
-                StreamProvider<List<Expenses>>.value(
-                    value: DatabaseService().expenseList()),
+                StreamProvider<List<Expenses>>.value(value: DatabaseService().expenseList()),
               ],
               child: Container(
                 height: MediaQuery.of(context).size.height * 0.7,
@@ -50,37 +50,36 @@ class ExpensesDesk extends StatelessWidget {
                   children: [
                     //ExpenseList
                     Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          //Title
-                          Text(
-                            'Gastos del mes',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children:[
+                        //Title
+                        Text('Gastos del mes',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18
                           ),
-                          SizedBox(height: 15),
-                          //Expenses List
-                          ExpenseList()
-                        ]),
+                        ),
+                        SizedBox(height: 15),
+                        //Expenses List
+                        ExpenseList()
+                      ]),
                     SizedBox(height: 20),
                     //Graph
                     Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          //Title
-                          Text(
-                            'Resumen de Gastos',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children:[
+                        //Title
+                        Text('Gastos del mes',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18
                           ),
-                          SizedBox(height: 15),
-                          //Expenses List
-                          ExpenseSummary()
-                        ]),
-                  ],
-                ),
+                        ),
+                        SizedBox(height: 15),
+                        //Expenses List
+                        ExpenseList()
+                      ]),
+                ],),
               ),
             ),
           ]),

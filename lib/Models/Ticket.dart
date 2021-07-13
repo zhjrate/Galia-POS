@@ -6,20 +6,15 @@ class Ticket {
   int discounts;
   int total;
 
-  Ticket(
-      {this.orderName,
-      this.items,
-      this.paymentType,
-      this.subtotal,
-      this.discounts,
-      this.total});
+  Ticket({this.orderName, this.items, this.paymentType, this.subtotal, this.discounts, this.total});
+
 }
 
 class TicketItem {
   String itemName;
-  String itemCategory;
   int itemPrice;
   int itemQty;
 
-  TicketItem({this.itemName, this.itemCategory, this.itemPrice, this.itemQty});
+  TicketItem({this.itemName, this.itemPrice, this.itemQty});
+
 }
