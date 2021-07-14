@@ -2,8 +2,10 @@ import 'dart:math';
 
 import 'package:denario/Backend/DatabaseService.dart';
 import 'package:denario/Backend/Ticket.dart';
+import 'package:denario/Models/DailyCash.dart';
 import 'package:denario/Models/SavedOrders.dart';
 import 'package:denario/POS/ActiveOrders.dart';
+import 'package:denario/POS/ConfirmOrder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -15,26 +17,43 @@ class TicketView extends StatefulWidget {
 }
 
 class _TicketViewState extends State<TicketView> {
-
   String orderName = 'Sin Agregar';
   var _controller = TextEditingController();
   var _discountTextController = TextEditingController();
 
   var orderDetail;
-  int subTotal = 0;
+  Map<String, dynamic> orderCategories;
+  Map currentValues;
+  double subTotal = 0;
   double tax = 0;
-  int discount = 0;
-  int total = 0;
+  double discount = 0;
+  double total = 0;
 
   String paymentType = 'Efectivo';
 
+  void clearVariables() {
+    bloc.removeAllFromCart();
+    _controller.clear();
+
+    setState(() {
+      discount = 0;
+      tax = 0;
+      paymentType = 'Efectivo';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final registerStatus = Provider.of<CashRegister>(context);
+
+    if (registerStatus == null) {
+      return Container();
+    }
+
     return StreamBuilder(
         stream: bloc.getStream,
         initialData: bloc.ticketItems,
         builder: (context, snapshot) {
-
           subTotal = snapshot.data["Subtotal"];
           tax = snapshot.data["IVA"];
           discount = snapshot.data["Discount"];
@@ -42,7 +61,7 @@ class _TicketViewState extends State<TicketView> {
           orderName = snapshot.data["Order Name"];
 
           for (var i = 0; i < bloc.ticketItems['Items'].length; i++) {
-            subTotal += bloc.ticketItems['Items'][i]["price"] *
+            subTotal += bloc.ticketItems['Items'][i]["Price"] *
                 bloc.ticketItems['Items'][i]["Quantity"];
           }
 
@@ -60,8 +79,8 @@ class _TicketViewState extends State<TicketView> {
                         Text('Pedidos: '),
                         SizedBox(width: 5),
                         StreamProvider<List<SavedOrders>>.value(
-                          value: DatabaseService().orderList(),
-                          child: ActiveOrders())
+                            value: DatabaseService().orderList(),
+                            child: ActiveOrders())
                       ],
                     ),
                     Divider(thickness: 0.5, indent: 0, endIndent: 0),
@@ -81,7 +100,8 @@ class _TicketViewState extends State<TicketView> {
                             padding: EdgeInsets.symmetric(
                                 horizontal: 5, vertical: 5),
                             child: TextFormField(
-                              controller: _controller, //..text = snapshot.data["Order Name"],
+                              controller:
+                                  _controller, //..text = snapshot.data["Order Name"],
                               style: TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.w300),
                               inputFormatters: [
@@ -89,7 +109,9 @@ class _TicketViewState extends State<TicketView> {
                               ],
                               cursorColor: Theme.of(context).accentColor,
                               decoration: InputDecoration.collapsed(
-                                hintText: (snapshot.data["Order Name"] == '') ? 'Mesa 1' : snapshot.data["Order Name"],
+                                hintText: (snapshot.data["Order Name"] == '')
+                                    ? 'Mesa 1'
+                                    : snapshot.data["Order Name"],
                                 hintStyle:
                                     TextStyle(color: Colors.grey.shade700),
                               ),
@@ -97,12 +119,13 @@ class _TicketViewState extends State<TicketView> {
                                 bloc.changeOrderName(val);
                                 setState(() {
                                   orderName = val;
-                                }); 
+                                });
                               },
                             ),
                           ),
                         ),
                         Spacer(),
+                        //Delete Order
                         IconButton(
                             onPressed: () {
                               bloc.removeAllFromCart();
@@ -111,6 +134,7 @@ class _TicketViewState extends State<TicketView> {
                                 discount = 0;
                                 tax = 0;
                                 paymentType = 'Efectivo';
+                                orderCategories = {};
                               });
                             },
                             icon: Icon(Icons.delete, color: Colors.black))
@@ -127,7 +151,6 @@ class _TicketViewState extends State<TicketView> {
                             shrinkWrap: true,
                             itemCount: snapshot.data["Items"].length,
                             itemBuilder: (context, i) {
-
                               final cartList = snapshot.data["Items"];
                               orderDetail = cartList;
 
@@ -149,7 +172,7 @@ class _TicketViewState extends State<TicketView> {
                                           Container(
                                             constraints:
                                                 BoxConstraints(maxWidth: 150),
-                                            child: Text(cartList[i]['name']),
+                                            child: Text(cartList[i]['Name']),
                                           ),
                                           //Quantity
                                           Row(
@@ -157,8 +180,9 @@ class _TicketViewState extends State<TicketView> {
                                               //Remove
                                               IconButton(
                                                 onPressed: () {
-                                                  bloc.removeQuantity(i);
-                                                  setState(() {});
+                                                  setState(() {
+                                                    bloc.removeQuantity(i);
+                                                  });
                                                 },
                                                 icon: Icon(Icons
                                                     .remove_circle_outline),
@@ -169,8 +193,9 @@ class _TicketViewState extends State<TicketView> {
                                               //Add
                                               IconButton(
                                                 onPressed: () {
-                                                  bloc.addQuantity(i);
-                                                  setState(() {});
+                                                  setState(() {
+                                                    bloc.addQuantity(i);
+                                                  });
                                                 },
                                                 icon: Icon(
                                                     Icons.add_circle_outline),
@@ -215,6 +240,7 @@ class _TicketViewState extends State<TicketView> {
                     SizedBox(height: 10),
                     //Tax
                     InkWell(
+                      hoverColor: Colors.grey,
                       onTap: () => showDialog(
                           context: context,
                           builder: (context) {
@@ -268,6 +294,7 @@ class _TicketViewState extends State<TicketView> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: <Widget>[
+                                            //Exento
                                             Container(
                                               height: 35.0,
                                               width: 100,
@@ -275,6 +302,7 @@ class _TicketViewState extends State<TicketView> {
                                                 onPressed: () {
                                                   setState(() {
                                                     tax = 0;
+                                                    bloc.removeTaxAmount();
                                                   });
                                                   Navigator.pop(context);
                                                 },
@@ -314,13 +342,15 @@ class _TicketViewState extends State<TicketView> {
                                               ),
                                             ),
                                             SizedBox(width: 20),
+                                            //21
                                             Container(
                                               height: 35.0,
                                               width: 100,
                                               child: RaisedButton(
                                                 onPressed: () {
                                                   setState(() {
-                                                    tax = 0.12;
+                                                    tax = 0.21;
+                                                    bloc.setTaxAmount(tax);
                                                   });
                                                   Navigator.pop(context);
                                                 },
@@ -346,7 +376,7 @@ class _TicketViewState extends State<TicketView> {
                                                         minHeight: 50.0),
                                                     alignment: Alignment.center,
                                                     child: Text(
-                                                      "12%",
+                                                      "21%",
                                                       textAlign:
                                                           TextAlign.center,
                                                       style: TextStyle(
@@ -386,6 +416,7 @@ class _TicketViewState extends State<TicketView> {
                     SizedBox(height: 10),
                     //Discounts
                     InkWell(
+                      hoverColor: Colors.grey,
                       onTap: () => showDialog(
                           context: context,
                           builder: (context) {
@@ -436,28 +467,36 @@ class _TicketViewState extends State<TicketView> {
                                           child: TextFormField(
                                             autofocus: true,
                                             controller: _discountTextController,
-                                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly
+                                            ],
                                             style: TextStyle(
-                                                fontSize: 20, fontWeight: FontWeight.w300),
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w300),
                                             textAlign: TextAlign.center,
-                                            keyboardType: TextInputType.number,                                            
-                                            cursorColor: Theme.of(context).accentColor,
-                                            decoration: InputDecoration.collapsed(
+                                            keyboardType: TextInputType.number,
+                                            cursorColor:
+                                                Theme.of(context).accentColor,
+                                            decoration:
+                                                InputDecoration.collapsed(
                                               hintText: '\$10',
-                                              hintStyle:
-                                                  TextStyle(color: Colors.grey.shade700),
+                                              hintStyle: TextStyle(
+                                                  color: Colors.grey.shade700),
                                             ),
                                             onChanged: (val) {
-                                              if(val == null || val == ''){
+                                              if (val == null || val == '') {
                                                 setState(() {
                                                   discount = 0;
                                                 });
                                               } else {
                                                 setState(() {
-                                                discount = int.tryParse(val);
-                                              });
+                                                  discount =
+                                                      double.tryParse(val);
+                                                  bloc.setDiscountAmount(
+                                                      discount);
+                                                });
                                               }
-                                              
                                             },
                                           ),
                                         ),
@@ -469,15 +508,17 @@ class _TicketViewState extends State<TicketView> {
                                         width: double.infinity,
                                         child: RaisedButton(
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
                                           ),
                                           color: Colors.black,
                                           onPressed: () {
                                             Navigator.pop(context);
                                           },
                                           child: Center(
-                                              child: Text('Guardar', style: TextStyle(color: Colors.white))
-                                          ),
+                                              child: Text('Guardar',
+                                                  style: TextStyle(
+                                                      color: Colors.white))),
                                         ),
                                       ),
                                     ],
@@ -541,8 +582,11 @@ class _TicketViewState extends State<TicketView> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8)),
                                 color: Colors.white,
-                                border:
-                                    Border.all(color: (paymentType == 'Efectivo') ? Colors.green : Colors.white10, width: 2),
+                                border: Border.all(
+                                    color: (paymentType == 'Efectivo')
+                                        ? Colors.green
+                                        : Colors.white10,
+                                    width: 2),
                                 image: DecorationImage(
                                   image: AssetImage('images/Cash.png'),
                                   fit: BoxFit.cover,
@@ -563,8 +607,11 @@ class _TicketViewState extends State<TicketView> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8)),
                                 color: Colors.white,
-                                border:
-                                    Border.all(color: (paymentType == 'MercadoPago') ? Colors.green : Colors.white10, width: 2),
+                                border: Border.all(
+                                    color: (paymentType == 'MercadoPago')
+                                        ? Colors.green
+                                        : Colors.white10,
+                                    width: 2),
                                 image: DecorationImage(
                                   image: AssetImage('images/MP.png'),
                                   fit: BoxFit.cover,
@@ -585,8 +632,11 @@ class _TicketViewState extends State<TicketView> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8)),
                                 color: Colors.white,
-                                border:
-                                    Border.all(color: (paymentType == 'LAPOS') ? Colors.green : Colors.white10, width: 2),
+                                border: Border.all(
+                                    color: (paymentType == 'LAPOS')
+                                        ? Colors.green
+                                        : Colors.white10,
+                                    width: 2),
                                 image: DecorationImage(
                                   image: AssetImage('images/CreditCard.png'),
                                   fit: BoxFit.cover,
@@ -607,8 +657,11 @@ class _TicketViewState extends State<TicketView> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8)),
                                 color: Colors.white,
-                                border:
-                                    Border.all(color: (paymentType == 'PedidosYa') ? Colors.green : Colors.white10, width: 2),
+                                border: Border.all(
+                                    color: (paymentType == 'PedidosYa')
+                                        ? Colors.green
+                                        : Colors.white10,
+                                    width: 2),
                                 image: DecorationImage(
                                   image: AssetImage('images/PedidosYA.png'),
                                   fit: BoxFit.cover,
@@ -633,27 +686,30 @@ class _TicketViewState extends State<TicketView> {
                             ),
                             color: Colors.white70,
                             onPressed: () {
-
+                              //Save Order
                               DatabaseService().saveOrder(
-                                DateTime.now().toString(), 
-                                subTotal, 
-                                discount, 
-                                tax, 
-                                total, 
-                                orderDetail, 
-                                orderName, 
-                                paymentType, 
-                                Colors.primaries[
-                                  Random().nextInt(Colors.primaries.length)].value,
+                                DateTime.now().toString(),
+                                subTotal,
+                                discount,
+                                tax,
+                                total,
+                                orderDetail,
+                                orderName,
+                                paymentType,
+                                Colors
+                                    .primaries[Random()
+                                        .nextInt(Colors.primaries.length)]
+                                    .value,
                               );
 
-                                bloc.removeAllFromCart();
-                                _controller.clear();
-                                setState(() {
-                                  discount = 0;
-                                  tax = 0;
-                                  paymentType = 'Efectivo';
-                                });
+                              //Clear Variables
+                              bloc.removeAllFromCart();
+                              _controller.clear();
+                              setState(() {
+                                discount = 0;
+                                tax = 0;
+                                paymentType = 'Efectivo';
+                              });
                             },
                             child: Center(
                                 child: Icon(
@@ -665,41 +721,47 @@ class _TicketViewState extends State<TicketView> {
                         SizedBox(width: 15),
                         //Pagar
                         Expanded(
-                          child: Container(
-                            height: 40,
-                            child: RaisedButton(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              color: Colors.black,
-                              onPressed: () {
-
-                                var year = DateTime.now().year.toString();
-                                var month = DateTime.now().month.toString();
-
-                                DatabaseService().createOrder(year, month, DateTime.now().toString(), subTotal, discount, tax, total, orderDetail, orderName, paymentType);
-
-                                bloc.removeAllFromCart();
-                                _controller.clear();
-                                setState(() {
-                                  discount = 0;
-                                  tax = 0;
-                                  paymentType = 'Efectivo';
-                                });
-                              
-                              },
-                              child: Center(
-                                  child: Text('Ordenar',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w400))),
+                            child: Container(
+                          height: 40,
+                          child: RaisedButton(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
                             ),
+                            color: Colors.black,
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return StreamProvider<
+                                        DailyTransactions>.value(
+                                      initialData: null,
+                                      value: DatabaseService()
+                                          .dailyTransactions(
+                                              registerStatus.registerName),
+                                      child: ConfirmOrder(
+                                          total: total,
+                                          items: snapshot.data["Items"],
+                                          discount: discount,
+                                          orderDetail: orderDetail,
+                                          orderName: orderName,
+                                          paymentType: paymentType,
+                                          subTotal: subTotal,
+                                          tax: tax,
+                                          controller: _controller,
+                                          clearVariables: clearVariables),
+                                    );
+                                  });
+                            },
+                            child: Center(
+                                child: Text('Ordenar',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w400))),
                           ),
-                        ),
+                        )),
                       ],
                     )
                   ]));
-        }       
-      );
+        });
   }
 }

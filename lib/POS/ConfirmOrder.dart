@@ -1,13 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:denario/Backend/DatabaseService.dart';
+import 'package:denario/Models/DailyCash.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ConfirmOrder extends StatefulWidget {
-  final int total;
+  final double total;
   final dynamic items;
 
-  final int subTotal;
-  final int discount;
+  final double subTotal;
+  final double discount;
   final double tax;
   final orderDetail;
   final String orderName;
@@ -35,6 +37,7 @@ class ConfirmOrder extends StatefulWidget {
 class _ConfirmOrderState extends State<ConfirmOrder> {
   Map<String, dynamic> orderCategories;
   Future currentValuesBuilt;
+  double salesAmount;
 
   Future currentValue() async {
     var year = DateTime.now().year.toString();
@@ -59,12 +62,22 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
 
   @override
   Widget build(BuildContext context) {
+    final dailyTransactions = Provider.of<DailyTransactions>(context);
+
+    if (dailyTransactions == null) {
+      return Container();
+    }
+
     return FutureBuilder(
         future: currentValuesBuilt,
         builder: (context, snap) {
           if (snap.connectionState == ConnectionState.done) {
-            print(
-                "Previous Sales amount is : ${snap.data['Ventas']} - New sales amount is: ${snap.data['Ventas'] + widget.total}");
+            try {
+              salesAmount = snap.data['Ventas'];
+            } catch (e) {
+              //
+            }
+
             return Dialog(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0)),
@@ -142,20 +155,19 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                 child: RaisedButton(
                                   color: Colors.black,
                                   onPressed: () {
-                                    //Update sales amount
-                                    try {
-                                      final int newSalesAmount =
-                                          snap.data['Ventas'] + widget.total;
-                                      //Update Sales Amount
-                                      DatabaseService()
-                                          .updateSalesAmount(newSalesAmount);
-                                    } catch (e) {
-                                      final int newSalesAmount = widget.total;
-                                      //Update Sales Amount
-                                      DatabaseService()
-                                          .updateSalesAmount(newSalesAmount);
-                                    }
+                                    double newSalesAmount = 0;
+                                    //Date variables
+                                    var year = DateTime.now().year.toString();
+                                    var month = DateTime.now().month.toString();
 
+                                    ////////////////////////Update Accounts (sales and categories)
+                                    if (salesAmount == null ||
+                                        salesAmount < 1) {
+                                      newSalesAmount = widget.total.toDouble();
+                                    } else {
+                                      newSalesAmount =
+                                          salesAmount + widget.total.toDouble();
+                                    }
                                     //Set Categories Variables
                                     orderCategories = {};
                                     final cartList = widget.items;
@@ -173,17 +185,24 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                                 (cartList[i]["Price"] *
                                                     cartList[i]["Quantity"]));
                                       } else {
-                                        //Add ney category with amount
+                                        //Add new category with amount
                                         orderCategories[
                                                 'Ventas de ${cartList[i]["Category"]}'] =
                                             cartList[i]["Price"] *
                                                 cartList[i]["Quantity"];
                                       }
                                     }
-
-                                    //Date variables
-                                    var year = DateTime.now().year.toString();
-                                    var month = DateTime.now().month.toString();
+                                    //Logic to add Sales by Categories to Firebase based on current Values from snap
+                                    orderCategories.forEach((k, v) {
+                                      try {
+                                        orderCategories.update(k,
+                                            (value) => v = v + snap.data['$k']);
+                                      } catch (e) {
+                                        //Do nothing
+                                      }
+                                    });
+                                    //Add Total sales edited to map
+                                    orderCategories['Ventas'] = newSalesAmount;
 
                                     //Create Sale
                                     DatabaseService().createOrder(
@@ -198,21 +217,48 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                         widget.orderName,
                                         widget.paymentType);
 
-                                    //Logic to add Sales by Categories to Firebase based on current Values from snap
-                                    orderCategories.forEach((k, v) {
-                                      try {
-                                        orderCategories.update(k,
-                                            (value) => v = v + snap.data['$k']);
-                                      } catch (e) {
-                                        //Do nothing
-                                      }
-                                    });
-
-                                    //Save Order Categories
+                                    /////Save Sales and Order Categories to database
                                     DatabaseService()
                                         .saveOrderType(orderCategories);
 
-                                    //Clear Variables
+                                    ///////////////////////////Register in Daily Transactions
+                                    double totalDailySales = 0;
+                                    double totalDailyTransactions = 0;
+                                    List salesByMedium = [];
+                                    setState(() {
+                                      totalDailySales =
+                                          dailyTransactions.sales +
+                                              widget.total;
+                                      totalDailyTransactions =
+                                          dailyTransactions.dailyTransactions +
+                                              widget.total;
+                                      salesByMedium =
+                                          dailyTransactions.salesByMedium;
+                                    });
+                                    /////Update Sales by Medium
+                                    bool listUpdated = false;
+
+                                    for (var map in salesByMedium) {
+                                      if (map["Type"] == widget.paymentType) {
+                                        map['Amount'] =
+                                            map['Amount'] + widget.total;
+                                        listUpdated = true;
+                                      }
+                                    }
+                                    if (!listUpdated) {
+                                      salesByMedium.add({
+                                        'Type': widget.paymentType,
+                                        'Amount': widget.total
+                                      });
+                                    }
+
+                                    DatabaseService().updateSalesinCashRegister(
+                                        dailyTransactions.openDate.toString(),
+                                        totalDailySales,
+                                        salesByMedium,
+                                        totalDailyTransactions);
+
+                                    /////////////////Clear Variables
                                     widget.clearVariables();
                                     Navigator.of(context).pop();
                                   },

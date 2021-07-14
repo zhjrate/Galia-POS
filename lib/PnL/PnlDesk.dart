@@ -1,10 +1,24 @@
 import 'package:denario/Models/Mapping.dart';
 import 'package:denario/PnL/PnL.dart';
-import 'package:denario/PnL/PnlMargins.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class PnlDesk extends StatelessWidget {
+class PnlDesk extends StatefulWidget {
+  @override
+  _PnlDeskState createState() => _PnlDeskState();
+}
+
+class _PnlDeskState extends State<PnlDesk> {
+  int pnlYear;
+  int pnlMonth;
+
+  @override
+  void initState() {
+    pnlYear = DateTime.now().year;
+    pnlMonth = DateTime.now().month;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final highLevelMapping = Provider.of<HighLevelMapping>(context);
@@ -18,14 +32,14 @@ class PnlDesk extends StatelessWidget {
 
     return SingleChildScrollView(
       child: Container(
-        padding: EdgeInsets.all(30),
+        padding: EdgeInsets.all(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             //Title + Date
             Container(
-              width: MediaQuery.of(context).size.width * 0.8,
+              width: MediaQuery.of(context).size.width * 0.9,
               padding: EdgeInsets.all(30),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -33,8 +47,8 @@ class PnlDesk extends StatelessWidget {
                 children: [
                   //Title
                   Text(
-                    'Estado de resultados',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    'ESTADO DE RESULTADOS',
+                    style: TextStyle(fontWeight: FontWeight.w900, fontSize: 28),
                   ),
                   Spacer(),
                   //Month selection
@@ -51,20 +65,105 @@ class PnlDesk extends StatelessWidget {
                         )
                       ],
                     ),
-                    child: Text(
-                      '05 - 2021',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        //Month
+                        Container(
+                          padding: EdgeInsets.all(5),
+                          child: DropdownButton<String>(
+                            value: pnlMonth.toString(),
+                            //elevation: 5,
+                            style: TextStyle(color: Colors.black),
+                            items: <String>[
+                              '1',
+                              '2',
+                              '3',
+                              '4',
+                              '5',
+                              '6',
+                              '7',
+                              '8',
+                              '9',
+                              '10',
+                              '11',
+                              '12',
+                            ].map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                            hint: Text(
+                              pnlMonth.toString(),
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            onChanged: (String value) {
+                              setState(() {
+                                pnlMonth = int.parse(value);
+                              });
+                            },
+                          ),
+                        ),
+                        Divider(
+                            indent: 10,
+                            endIndent: 10,
+                            color: Colors.grey,
+                            thickness: 0.5),
+                        //Year
+                        Container(
+                          padding: EdgeInsets.all(5),
+                          child: DropdownButton<String>(
+                            value: pnlYear.toString(),
+                            //elevation: 5,
+                            style: TextStyle(color: Colors.black),
+                            items: <String>[
+                              '2021',
+                              '2022',
+                              '2023',
+                              '2024',
+                              '2025',
+                              '2026',
+                              '2027',
+                              '2028',
+                              '2029',
+                              '2030',
+                            ].map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                            hint: Text(
+                              pnlYear.toString(),
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            onChanged: (String value) {
+                              setState(() {
+                                pnlYear = int.parse(value);
+                              });
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-            //Margins
-            PnlMargins(),
             //PnL
-            PnL(pnlAccountGroups: pnlAccountGroups, pnlMapping: pnlMapping)
-            //Bar Graph
+            PnL(
+                pnlAccountGroups: pnlAccountGroups,
+                pnlMapping: pnlMapping,
+                pnlMonth: pnlMonth,
+                pnlYear: pnlYear)
           ],
         ),
       ),
