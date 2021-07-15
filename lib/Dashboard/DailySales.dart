@@ -24,52 +24,51 @@ class DailySales extends StatelessWidget {
           //Total Sales
           Expanded(
             child: Container(
-              width: MediaQuery.of(context).size.width * 0.42,
-              padding: EdgeInsets.all(30),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(25),
-                boxShadow: <BoxShadow>[
-                  new BoxShadow(
-                    color: Colors.grey[200],
-                    offset: new Offset(15.0, 15.0),
-                    blurRadius: 10.0,
-                  )
-                ],
-              ),
-              child: (registerStatus.registerisOpen)
-                  ? //Center(child: Text('${dailyTransactions.sales}'))
-                  Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        //Title
-                        Container(
-                          width: double.infinity,
-                          child: Text(
-                            'Ventas',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
-                            textAlign: TextAlign.start,
-                          ),
-                        ),
-                        SizedBox(height: 15),
-                        //Amount
-                        Text(
-                          '${formatCurrency.format(dailyTransactions.sales)}',
-                          style: TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 15),
-                        //Graph Sales per day
-                        Expanded(
-                            child:
-                                Container(child: Center() //DailySalesGraph(),
-                                    ))
-                      ],
+                width: MediaQuery.of(context).size.width * 0.42,
+                padding: EdgeInsets.all(30),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(25),
+                  boxShadow: <BoxShadow>[
+                    new BoxShadow(
+                      color: Colors.grey[200],
+                      offset: new Offset(15.0, 15.0),
+                      blurRadius: 10.0,
                     )
-                  : Center(),
-            ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    //Title
+                    Container(
+                      width: double.infinity,
+                      child: Text(
+                        'Ventas',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+                    SizedBox(height: 15),
+                    //Amount
+                    (registerStatus.registerisOpen)
+                        ? Text(
+                            '${formatCurrency.format(dailyTransactions.sales)}',
+                            style: TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.bold),
+                          )
+                        : Text(
+                            '\$0',
+                            style: TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.bold),
+                          ),
+                    SizedBox(height: 15),
+                    //Graph Sales per day
+                    Expanded(child: DailySalesGraph())
+                  ],
+                )),
           ),
           SizedBox(height: 15),
           //Sales by Medium
