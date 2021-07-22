@@ -183,7 +183,8 @@ class _PnlMarginsState extends State<PnlMargins> {
               //Graph
               Container(
                 width: double.infinity,
-                height: 400,
+                height: MediaQuery.of(context).size.height * 0.6,
+                constraints: BoxConstraints(minHeight: 300),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(25),

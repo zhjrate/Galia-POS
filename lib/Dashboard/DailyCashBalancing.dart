@@ -62,9 +62,9 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
                     Container(
                       width: double.infinity,
                       child: Text(
-                        'CAJA',
+                        'Arqueo de caja',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18),
+                            fontWeight: FontWeight.bold, fontSize: 16),
                         textAlign: TextAlign.start,
                       ),
                     ),
@@ -77,7 +77,7 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
                         color: Colors.grey,
                       ),
                     ),
-                    SizedBox(height: 15),
+                    SizedBox(height: 10),
                     //Open / Current
                     closedRegister(),
                   ],
@@ -141,9 +141,9 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
                   Container(
                     width: double.infinity,
                     child: Text(
-                      'CAJA',
+                      'Arqueo de caja',
                       style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       textAlign: TextAlign.start,
                     ),
                   ),
@@ -156,7 +156,7 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
                       color: Colors.grey,
                     ),
                   ),
-                  SizedBox(height: 15),
+                  SizedBox(height: 5),
                   //Open / Current
                   registerStatus.registerisOpen
                       ? Column(
@@ -179,7 +179,7 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
                                   Spacer(),
                                   //Close Button
                                   Container(
-                                    padding: EdgeInsets.all(8),
+                                    padding: EdgeInsets.all(5),
                                     child: RaisedButton(
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
@@ -201,62 +201,58 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
                                               style: TextStyle(
                                                   color: Colors.red,
                                                   fontWeight: FontWeight.w300,
-                                                  fontSize: 12))),
+                                                  fontSize: 11))),
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            SizedBox(height: 20),
+                            SizedBox(height: 10),
                             //Details
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 //Fecha
                                 Container(
-                                    width: 50,
                                     child: Text(
-                                      DateFormat.MMMd()
-                                          .format(dailyTransactions.openDate)
-                                          .toString(),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    )),
+                                  DateFormat.MMMd()
+                                      .format(dailyTransactions.openDate)
+                                      .toString(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )),
                                 SizedBox(width: 10),
                                 //Detail
                                 Container(
-                                    width: 150,
                                     child: Center(
-                                      child: Text(
-                                        '${(dailyTransactions.openDate).hour.toString()}:${(dailyTransactions.openDate).minute.toString()}',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    )),
+                                  child: Text(
+                                    '${(dailyTransactions.openDate).hour.toString()}:${(dailyTransactions.openDate).minute.toString()}',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w500),
+                                  ),
+                                )),
                                 SizedBox(width: 10),
                                 //Cost Type
                                 Container(
-                                    width: 150,
                                     child: Center(
-                                      child: Text(
-                                        '${dailyTransactions.user}',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    )),
+                                  child: Text(
+                                    '${dailyTransactions.user}',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w500),
+                                  ),
+                                )),
                                 SizedBox(width: 10),
                                 //Total
                                 Container(
-                                    width: 75,
                                     child: Center(
-                                      child: Text(
-                                          '\$${dailyTransactions.initialAmount}',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          )),
-                                    )),
+                                  child: Text(
+                                      '\$${dailyTransactions.initialAmount}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      )),
+                                )),
                               ],
                             ),
                             //Ingresos - Egresos
@@ -357,7 +353,7 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
                 ],
               )),
         ),
-        SizedBox(height: 20),
+        SizedBox(height: 10),
         //Cash Balancing History (Last 5)
         Expanded(
           child: Container(
@@ -371,9 +367,9 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
                   Container(
                     width: double.infinity,
                     child: Text(
-                      'HISTORIAL',
+                      'Historial de arqueos',
                       style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       textAlign: TextAlign.start,
                     ),
                   ),
@@ -411,7 +407,8 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
                                     children: [
                                       //Fecha
                                       Container(
-                                          width: 50,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 8),
                                           child: Text(
                                             DateFormat.MMMd()
                                                 .format(dailyTransactionsList[i]
@@ -424,7 +421,8 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
                                       //SizedBox(width: 10),
                                       //Apertura
                                       Container(
-                                          width: 50,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 8),
                                           child: Text(
                                             '${(dailyTransactionsList[i].openDate).hour}:${(dailyTransactionsList[i].openDate).minute}',
                                             style: TextStyle(
@@ -434,7 +432,8 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
                                       //SizedBox(width: 10),
                                       //Cierre
                                       Container(
-                                          width: 50,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 8),
                                           child: Text(
                                             '${(dailyTransactionsList[i].closeDate).hour}:${(dailyTransactionsList[i].closeDate).minute}',
                                             style: TextStyle(
@@ -444,7 +443,8 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
                                       //SizedBox(width: 10),
                                       //Usuario
                                       Container(
-                                          width: 150,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 8),
                                           child: Center(
                                             child: Text(
                                               '${dailyTransactionsList[i].user}',
@@ -455,7 +455,8 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
                                       //SizedBox(width: 10),
                                       //Monto Inicial
                                       Container(
-                                          width: 75,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 8),
                                           child: Center(
                                             child: Text(
                                                 '\$${dailyTransactionsList[i].initialAmount}',
@@ -464,7 +465,8 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
                                           )),
                                       //Monto Cierre
                                       Container(
-                                          width: 75,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 8),
                                           child: Center(
                                             child: Text(
                                                 '\$${dailyTransactionsList[i].closeAmount}',

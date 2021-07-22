@@ -10,12 +10,14 @@ class DailySales extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final registerStatus = Provider.of<CashRegister>(context);
-    //final dailyTransactionsList = Provider.of<List<DailyTransactions>>(context);
+    final dailyTransactionsList = Provider.of<List<DailyTransactions>>(context);
     final dailyTransactions = Provider.of<DailyTransactions>(context);
 
-    if (registerStatus == null || dailyTransactions == null) {
+    if (dailyTransactions == null || registerStatus == null) {
       return Container();
     }
+
+    final transactionsList = dailyTransactionsList.reversed.take(7).toList();
 
     return Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -53,7 +55,7 @@ class DailySales extends StatelessWidget {
                     ),
                     SizedBox(height: 15),
                     //Amount
-                    (registerStatus.registerisOpen)
+                    (registerStatus != null && registerStatus.registerisOpen)
                         ? Text(
                             '${formatCurrency.format(dailyTransactions.sales)}',
                             style: TextStyle(
@@ -66,7 +68,10 @@ class DailySales extends StatelessWidget {
                           ),
                     SizedBox(height: 15),
                     //Graph Sales per day
-                    Expanded(child: DailySalesGraph())
+                    Expanded(
+                        child: (dailyTransactionsList == null)
+                            ? Container()
+                            : DailySalesGraph(transactionsList))
                   ],
                 )),
           ),

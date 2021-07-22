@@ -74,15 +74,10 @@ class _TicketViewState extends State<TicketView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     //Active Orders
-                    Row(
-                      children: [
-                        Text('Pedidos: '),
-                        SizedBox(width: 5),
-                        StreamProvider<List<SavedOrders>>.value(
-                            value: DatabaseService().orderList(),
-                            child: ActiveOrders())
-                      ],
-                    ),
+                    StreamProvider<List<SavedOrders>>.value(
+                        initialData: null,
+                        value: DatabaseService().orderList(),
+                        child: ActiveOrders()),
                     Divider(thickness: 0.5, indent: 0, endIndent: 0),
                     SizedBox(height: 5),
                     //Order Name
@@ -237,7 +232,7 @@ class _TicketViewState extends State<TicketView> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 8),
                     //Tax
                     InkWell(
                       hoverColor: Colors.grey,
@@ -413,7 +408,7 @@ class _TicketViewState extends State<TicketView> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 8),
                     //Discounts
                     InkWell(
                       hoverColor: Colors.grey,
@@ -542,7 +537,7 @@ class _TicketViewState extends State<TicketView> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 15),
+                    SizedBox(height: 8),
                     //Total
                     Container(
                       child: Row(
@@ -553,7 +548,7 @@ class _TicketViewState extends State<TicketView> {
                             constraints: BoxConstraints(maxWidth: 150),
                             child: Text('TOTAL',
                                 style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold)),
+                                    fontSize: 14, fontWeight: FontWeight.bold)),
                           ),
                           Spacer(),
                           Text('\$$total',
@@ -562,7 +557,7 @@ class _TicketViewState extends State<TicketView> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 10),
                     //Payment type
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -576,8 +571,8 @@ class _TicketViewState extends State<TicketView> {
                             });
                           },
                           child: Container(
-                            height: 50,
-                            width: 50,
+                            height: 35,
+                            width: 35,
                             decoration: BoxDecoration(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8)),
@@ -601,8 +596,8 @@ class _TicketViewState extends State<TicketView> {
                             });
                           },
                           child: Container(
-                            height: 50,
-                            width: 50,
+                            height: 35,
+                            width: 35,
                             decoration: BoxDecoration(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8)),
@@ -626,8 +621,8 @@ class _TicketViewState extends State<TicketView> {
                             });
                           },
                           child: Container(
-                            height: 50,
-                            width: 50,
+                            height: 35,
+                            width: 35,
                             decoration: BoxDecoration(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8)),
@@ -651,8 +646,8 @@ class _TicketViewState extends State<TicketView> {
                             });
                           },
                           child: Container(
-                            height: 50,
-                            width: 50,
+                            height: 35,
+                            width: 35,
                             decoration: BoxDecoration(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8)),
@@ -670,7 +665,7 @@ class _TicketViewState extends State<TicketView> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 15),
                     //Actions (Save, Process)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,

@@ -79,17 +79,6 @@ class GrossMarginGraphState extends State<GrossMarginGraph> {
       width: double.infinity,
       height: MediaQuery.of(context).size.height * 0.5,
       padding: EdgeInsets.symmetric(vertical: 30, horizontal: 50),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(25),
-        boxShadow: <BoxShadow>[
-          new BoxShadow(
-            color: Colors.grey[200],
-            offset: new Offset(15.0, 15.0),
-            blurRadius: 10.0,
-          )
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.start,

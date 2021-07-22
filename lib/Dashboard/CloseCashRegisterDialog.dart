@@ -28,6 +28,7 @@ class _CloseCashRegisterDialogState extends State<CloseCashRegisterDialog> {
         child: Container(
           height: MediaQuery.of(context).size.height * 0.4,
           width: MediaQuery.of(context).size.width * 0.35,
+          constraints: BoxConstraints(minHeight: 350, minWidth: 200),
           child: Container(
             width: MediaQuery.of(context).size.width * 0.35,
             child: Padding(

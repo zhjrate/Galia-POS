@@ -7,14 +7,13 @@ class ExpenseList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final expenses = Provider.of<List<Expenses>>(context);
-    final screen = MediaQuery.of(context).size;
 
     if (expenses == null) {
       return Center();
     }
     if (expenses.length == 0) {
       return Container(
-        width: screen.width * 0.4,
+        width: double.infinity,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -52,7 +51,7 @@ class ExpenseList extends StatelessWidget {
     List<Expenses> expenseList = expenses.reversed.toList();
 
     return Container(
-      width: screen.width * 0.4,
+      width: double.infinity,
       child: ListView.builder(
           itemCount: (expenseList.length > 7) ? 7 : expenseList.length,
           shrinkWrap: true,
@@ -64,23 +63,21 @@ class ExpenseList extends StatelessWidget {
               width: double.infinity,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   //Fecha
                   Container(
-                      width: 50,
+                      //width: 50,
                       child: Text(
-                        DateFormat.MMMd()
-                            .format(expenseList[i].date)
-                            .toString(),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )),
+                    DateFormat.MMMd().format(expenseList[i].date).toString(),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )),
                   SizedBox(width: 10),
                   //Detail
                   Container(
-                    width: 250,
+                    //width: 250,
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -108,23 +105,23 @@ class ExpenseList extends StatelessWidget {
                   SizedBox(width: 10),
                   //Cost Type
                   Container(
-                      width: 150,
+                      //width: 150,
                       child: Center(
-                        child: Text(
-                          '${expenseList[i].costType}',
-                          style: TextStyle(fontWeight: FontWeight.w500),
-                        ),
-                      )),
+                    child: Text(
+                      '${expenseList[i].costType}',
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                  )),
                   SizedBox(width: 10),
                   //Total
                   Container(
-                      width: 75,
+                      //width: 75,
                       child: Center(
-                        child: Text('\$${expenseList[i].total}',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            )),
-                      )),
+                    child: Text('\$${expenseList[i].total}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        )),
+                  )),
                 ],
               ),
             );

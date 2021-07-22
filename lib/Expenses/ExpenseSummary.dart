@@ -106,48 +106,110 @@ class _ExpenseSummaryState extends State<ExpenseSummary> {
                 otrosGastos);
 
             return Container(
-              width: screen.width * 0.4,
+              width: double.infinity,
               height: screen.height * 0.5,
               child: Column(
                 children: <Widget>[
                   const SizedBox(
-                    height: 28,
+                    height: 20,
                   ),
                   //Legend
-                  Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      indicator(
-                        Colors.red[200],
-                        'Costo de ventas',
-                        touchedIndex == 0 ? 18 : 16,
-                        touchedIndex == 0 ? Colors.black : Colors.grey,
-                        touchedIndex == 0 ? FontWeight.bold : FontWeight.w400,
-                      ),
-                      indicator(
-                        Colors.green[200],
-                        'Gastos de empleados',
-                        touchedIndex == 1 ? 18 : 16,
-                        touchedIndex == 1 ? Colors.black : Colors.grey,
-                        touchedIndex == 1 ? FontWeight.bold : FontWeight.w400,
-                      ),
-                      indicator(
-                        Colors.blue[200],
-                        'Gastos del local',
-                        touchedIndex == 2 ? 18 : 16,
-                        touchedIndex == 2 ? Colors.black : Colors.grey,
-                        touchedIndex == 2 ? FontWeight.bold : FontWeight.w400,
-                      ),
-                      indicator(
-                        Colors.purple[200],
-                        'Otros gastos',
-                        touchedIndex == 3 ? 18 : 16,
-                        touchedIndex == 3 ? Colors.black : Colors.grey,
-                        touchedIndex == 3 ? FontWeight.bold : FontWeight.w400,
-                      ),
-                    ],
-                  ),
+                  (screen.width > 1250)
+                      ? Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            indicator(
+                              Colors.red[200],
+                              'Costo de ventas',
+                              touchedIndex == 0 ? 18 : 16,
+                              touchedIndex == 0 ? Colors.black : Colors.grey,
+                              touchedIndex == 0
+                                  ? FontWeight.bold
+                                  : FontWeight.w400,
+                            ),
+                            indicator(
+                              Colors.green[200],
+                              'Gastos de empleados',
+                              touchedIndex == 1 ? 18 : 16,
+                              touchedIndex == 1 ? Colors.black : Colors.grey,
+                              touchedIndex == 1
+                                  ? FontWeight.bold
+                                  : FontWeight.w400,
+                            ),
+                            indicator(
+                              Colors.blue[200],
+                              'Gastos del local',
+                              touchedIndex == 2 ? 18 : 16,
+                              touchedIndex == 2 ? Colors.black : Colors.grey,
+                              touchedIndex == 2
+                                  ? FontWeight.bold
+                                  : FontWeight.w400,
+                            ),
+                            indicator(
+                              Colors.purple[200],
+                              'Otros gastos',
+                              touchedIndex == 3 ? 18 : 16,
+                              touchedIndex == 3 ? Colors.black : Colors.grey,
+                              touchedIndex == 3
+                                  ? FontWeight.bold
+                                  : FontWeight.w400,
+                            ),
+                          ],
+                        )
+                      : Column(children: [
+                          // 1 and 2
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              indicator(
+                                Colors.red[200],
+                                'Costo de ventas',
+                                touchedIndex == 0 ? 18 : 16,
+                                touchedIndex == 0 ? Colors.black : Colors.grey,
+                                touchedIndex == 0
+                                    ? FontWeight.bold
+                                    : FontWeight.w400,
+                              ),
+                              indicator(
+                                Colors.green[200],
+                                'Gastos de empleados',
+                                touchedIndex == 1 ? 18 : 16,
+                                touchedIndex == 1 ? Colors.black : Colors.grey,
+                                touchedIndex == 1
+                                    ? FontWeight.bold
+                                    : FontWeight.w400,
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 10),
+                          // 3 and 4
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              indicator(
+                                Colors.blue[200],
+                                'Gastos del local',
+                                touchedIndex == 2 ? 18 : 16,
+                                touchedIndex == 2 ? Colors.black : Colors.grey,
+                                touchedIndex == 2
+                                    ? FontWeight.bold
+                                    : FontWeight.w400,
+                              ),
+                              indicator(
+                                Colors.purple[200],
+                                'Otros gastos',
+                                touchedIndex == 3 ? 18 : 16,
+                                touchedIndex == 3 ? Colors.black : Colors.grey,
+                                touchedIndex == 3
+                                    ? FontWeight.bold
+                                    : FontWeight.w400,
+                              ),
+                            ],
+                          )
+                        ]),
                   const SizedBox(
                     height: 12,
                   ),
@@ -175,7 +237,7 @@ class _ExpenseSummaryState extends State<ExpenseSummary> {
                         show: false,
                       ),
                       sectionsSpace: 5,
-                      centerSpaceRadius: 75,
+                      centerSpaceRadius: (screen.width > 1250) ? 75 : 60,
                       sections: showingSections(
                           costodeVentas,
                           gastosdeEmpleados,

@@ -333,12 +333,17 @@ class _ExpenseInputState extends State<ExpenseInput> {
                       color: Colors.grey[400]),
                 ),
                 SizedBox(height: 15),
-                Text(
-                  '${NumberFormat.simpleCurrency().format(qty * price)}',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 18,
-                      color: Colors.grey[700]),
+                Container(
+                  height: 50,
+                  child: Center(
+                    child: Text(
+                      '${NumberFormat.simpleCurrency().format(qty * price)}',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 18,
+                          color: Colors.grey[700]),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -624,12 +629,17 @@ class _ExpenseInputState extends State<ExpenseInput> {
                       color: Colors.grey[400]),
                 ),
                 SizedBox(height: 15),
-                Text(
-                  '${NumberFormat.simpleCurrency().format(qty * price)}',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 18,
-                      color: Colors.grey[700]),
+                Container(
+                  height: 50,
+                  child: Center(
+                    child: Text(
+                      '${NumberFormat.simpleCurrency().format(qty * price)}',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 18,
+                          color: Colors.grey[700]),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -915,12 +925,17 @@ class _ExpenseInputState extends State<ExpenseInput> {
                       color: Colors.grey[400]),
                 ),
                 SizedBox(height: 15),
-                Text(
-                  '${NumberFormat.simpleCurrency().format(qty * price)}',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 18,
-                      color: Colors.grey[700]),
+                Container(
+                  height: 50,
+                  child: Center(
+                    child: Text(
+                      '${NumberFormat.simpleCurrency().format(qty * price)}',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 18,
+                          color: Colors.grey[700]),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -1205,12 +1220,17 @@ class _ExpenseInputState extends State<ExpenseInput> {
                       color: Colors.grey[400]),
                 ),
                 SizedBox(height: 15),
-                Text(
-                  '${NumberFormat.simpleCurrency().format(qty * price)}',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 18,
-                      color: Colors.grey[700]),
+                Container(
+                  height: 50,
+                  child: Center(
+                    child: Text(
+                      '${NumberFormat.simpleCurrency().format(qty * price)}',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 18,
+                          color: Colors.grey[700]),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -1495,12 +1515,17 @@ class _ExpenseInputState extends State<ExpenseInput> {
                       color: Colors.grey[400]),
                 ),
                 SizedBox(height: 15),
-                Text(
-                  '${NumberFormat.simpleCurrency().format(qty * price)}',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 18,
-                      color: Colors.grey[700]),
+                Container(
+                  height: 50,
+                  child: Center(
+                    child: Text(
+                      '${NumberFormat.simpleCurrency().format(qty * price)}',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 18,
+                          color: Colors.grey[700]),
+                    ),
+                  ),
                 ),
               ],
             ),

@@ -1,7 +1,11 @@
+import 'package:denario/Models/DailyCash.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class DailySalesGraph extends StatefulWidget {
+  final List<DailyTransactions> salesGraphDataList;
+  DailySalesGraph(this.salesGraphDataList);
+
   @override
   State<StatefulWidget> createState() => DailySalesGraphState();
 }
@@ -12,8 +16,28 @@ class DailySalesGraphState extends State<DailySalesGraph> {
     const Color(0xff02d39a),
   ];
 
+  List<DailyTransactions> salesGraphValues;
+
+  Map minSale;
+  Map maxSale;
+
+  int min;
+  int max;
+  int avg;
+
   @override
   void initState() {
+    salesGraphValues = widget.salesGraphDataList;
+    setState(() {
+      DailyTransactions minSale =
+          salesGraphValues.reduce((a, b) => a.sales < b.sales ? a : b);
+      DailyTransactions maxSale =
+          salesGraphValues.reduce((a, b) => a.sales > b.sales ? a : b);
+
+      min = minSale.sales.round();
+      max = maxSale.sales.round();
+      avg = ((min + max) / 2).round();
+    });
     super.initState();
   }
 
@@ -40,54 +64,91 @@ class DailySalesGraphState extends State<DailySalesGraph> {
               fontSize: 14),
           getTitles: (value) {
             switch (value.toInt()) {
+              case 0:
+                if (salesGraphValues.length > 0) {
+                  return salesGraphValues[0].openDate.day.toString();
+                }
+                return '';
+
+              case 1:
+                if (salesGraphValues.length > 1) {
+                  return salesGraphValues[1].openDate.day.toString();
+                }
+                return '';
               case 2:
-                return 'MAR';
+                if (salesGraphValues.length > 2) {
+                  return salesGraphValues[2].openDate.day.toString();
+                }
+                return '';
+              case 3:
+                if (salesGraphValues.length > 3) {
+                  return salesGraphValues[3].openDate.day.toString();
+                }
+                return '';
+              case 4:
+                if (salesGraphValues.length > 4) {
+                  return salesGraphValues[4].openDate.day.toString();
+                }
+                return '';
               case 5:
-                return 'JUN';
-              case 8:
-                return 'SEP';
+                if (salesGraphValues.length > 5) {
+                  return salesGraphValues[5].openDate.day.toString();
+                }
+                return '';
+              case 6:
+                if (salesGraphValues.length > 6) {
+                  return salesGraphValues[6].openDate.day.toString();
+                }
+                return '';
             }
             return '';
           },
           margin: 8,
         ),
         leftTitles: SideTitles(
-          showTitles: true,
-          getTextStyles: (value) => const TextStyle(
-            color: Color(0xff67727d),
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
-          ),
-          getTitles: (value) {
-            switch (value.toInt()) {
-              case 1:
-                return '10k';
-              case 3:
-                return '30k';
-              case 5:
-                return '50k';
-            }
-            return '';
-          },
-          reservedSize: 28,
-          margin: 12,
+          showTitles: false,
+          //   getTextStyles: (value) => const TextStyle(
+          //     color: Color(0xff67727d),
+          //     fontWeight: FontWeight.bold,
+          //     fontSize: 12,
+          //   ),
+          //   getTitles: (value) {
+          //     switch (value.toInt()) {
+          //       case 1:
+          //         return '${minSale['Sales']}k';
+          //       case 2:
+          //         return '${(maxSale['Sales'] + minSale['Sales']) / 2}k';
+          //       case 5:
+          //         return '${maxSale['Sales']}k';
+          //     }
+          //     return '';
+          //   },
+          //   reservedSize: 28,
+          //   margin: 12,
         ),
       ),
       borderData: FlBorderData(show: false),
       minX: 0,
-      maxX: 12,
+      maxX: 6,
       minY: 0,
-      maxY: 6,
+      maxY: max.toDouble(),
       lineBarsData: [
         LineChartBarData(
           spots: [
-            FlSpot(0, 3),
-            FlSpot(2, 2),
-            FlSpot(4, 5),
-            FlSpot(6, 3.1),
-            FlSpot(8, 4),
-            FlSpot(10, 3),
-            FlSpot(12, 4),
+            FlSpot(0,
+                (salesGraphValues.length > 0) ? salesGraphValues[0].sales : 0),
+            FlSpot(1,
+                (salesGraphValues.length > 1) ? salesGraphValues[1].sales : 0),
+            FlSpot(2,
+                (salesGraphValues.length > 2) ? salesGraphValues[2].sales : 0),
+            FlSpot(3,
+                (salesGraphValues.length > 3) ? salesGraphValues[3].sales : 0),
+            FlSpot(4,
+                (salesGraphValues.length > 4) ? salesGraphValues[4].sales : 0),
+            FlSpot(5,
+                (salesGraphValues.length > 5) ? salesGraphValues[5].sales : 0),
+            FlSpot(6,
+                (salesGraphValues.length > 6) ? salesGraphValues[6].sales : 0),
           ],
           isCurved: true,
           colors: gradientColors,

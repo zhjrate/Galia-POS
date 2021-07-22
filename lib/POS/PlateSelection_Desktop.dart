@@ -22,7 +22,7 @@ class PlateSelectionDesktop extends StatelessWidget {
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: (MediaQuery.of(context).size.width > 1100) ? 4 : 3,
         crossAxisSpacing: 10.0,
-        mainAxisSpacing: 20.0,
+        mainAxisSpacing: 5.0,
         childAspectRatio: 1,
       ),
       scrollDirection: Axis.vertical,
@@ -39,22 +39,19 @@ class PlateSelectionDesktop extends StatelessWidget {
             'Total Price': product[i].price
           }),
           child: Container(
-            constraints: BoxConstraints(
-              minWidth: MediaQuery.of(context).size.width * 0.15,
-            ),
             padding: EdgeInsets.all(5.0),
             child: Column(
               children: <Widget>[
                 ///Image
-                Container(
-                    height: MediaQuery.of(context).size.width * 0.12,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: CachedNetworkImage(
-                        imageUrl: product[i].image, fit: BoxFit.cover)),
+                Expanded(
+                  child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: CachedNetworkImage(
+                          imageUrl: product[i].image, fit: BoxFit.cover)),
+                ),
 
                 ///Text
                 Container(
@@ -65,20 +62,19 @@ class PlateSelectionDesktop extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         ///Product
-                        Container(
-                          constraints: BoxConstraints(
-                            maxWidth: MediaQuery.of(context).size.width * 0.1,
-                          ),
-                          child: Text(
-                            product[i].product, //product[index].product,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            softWrap: true,
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400),
+                        Expanded(
+                          child: Container(
+                            child: Text(
+                              product[i].product, //product[index].product,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              softWrap: true,
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400),
+                            ),
                           ),
                         ),
                         Spacer(),
