@@ -1,5 +1,5 @@
 name: denario
-description: A new Flutter project.
+description: Punto de Venta.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -59,6 +59,7 @@ flutter:
     - images/MP.png
     - images/PedidosYA.png
     - images/EmptyState.png
+    - images/EmptyWallet.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
