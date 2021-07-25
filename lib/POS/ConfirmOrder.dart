@@ -65,7 +65,50 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
     final dailyTransactions = Provider.of<DailyTransactions>(context);
 
     if (dailyTransactions == null) {
-      return Container();
+      return Dialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+          child: Container(
+            width: (MediaQuery.of(context).size.width > 900)
+                ? 600
+                : MediaQuery.of(context).size.width * 0.8,
+            height: 250,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    alignment: Alignment(1.0, 0.0),
+                    child: IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: Icon(Icons.close),
+                        iconSize: 20.0),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      constraints: BoxConstraints(
+                          maxWidth: (MediaQuery.of(context).size.width > 900)
+                              ? 400
+                              : MediaQuery.of(context).size.width * 0.5),
+                      child: Text(
+                        "Recuerda abrir caja antes de procesar pedidos",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 25),
+                ],
+              ),
+            ),
+          ));
     }
 
     return FutureBuilder(

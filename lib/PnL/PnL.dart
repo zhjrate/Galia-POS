@@ -89,6 +89,8 @@ class _PnLState extends State<PnL> {
                     totalVentas) *
                 100;
 
+            print(grossMargin);
+
             return Container(
               width: MediaQuery.of(context).size.width * 0.9,
               child: Row(

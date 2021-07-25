@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:denario/Dashboard/DailySalesGraph.dart';
 import 'package:denario/Models/DailyCash.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,14 @@ class DailySales extends StatelessWidget {
     final dailyTransactions = Provider.of<DailyTransactions>(context);
 
     if (dailyTransactions == null || registerStatus == null) {
-      return Container();
+      return Center(
+        child: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('images/EmptyState.png'),
+                  fit: BoxFit.fitWidth)),
+        ),
+      );
     }
 
     final transactionsList = dailyTransactionsList.reversed.take(7).toList();
@@ -69,7 +77,8 @@ class DailySales extends StatelessWidget {
                     SizedBox(height: 15),
                     //Graph Sales per day
                     Expanded(
-                        child: (dailyTransactionsList == null)
+                        child: (dailyTransactions == null ||
+                                dailyTransactionsList == null)
                             ? Container()
                             : DailySalesGraph(transactionsList))
                   ],
@@ -91,7 +100,80 @@ class DailySales extends StatelessWidget {
                   )
                 ],
               ),
-              child: Center(child: Text('Sales by Medium')),
+              padding: EdgeInsets.all(30),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  //Title
+                  Text(
+                    'Ventas por medio',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                  SizedBox(height: 15),
+                  //List of payment types
+                  Expanded(
+                    child: (Container(
+                        child: GridView.builder(
+                      shrinkWrap: true,
+                      physics: BouncingScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount:
+                            (MediaQuery.of(context).size.width > 1100) ? 4 : 3,
+                        crossAxisSpacing: 10.0,
+                        mainAxisSpacing: 5.0,
+                        childAspectRatio: 1,
+                      ),
+                      scrollDirection: Axis.vertical,
+                      itemCount: registerStatus.paymentTypes.length,
+                      itemBuilder: (context, i) {
+                        var salesByMediumIndex = dailyTransactions.salesByMedium
+                            .indexWhere((x) =>
+                                x['Type'] ==
+                                registerStatus.paymentTypes[i]['Type']);
+                        print(salesByMediumIndex);
+
+                        return Container(
+                          padding: EdgeInsets.all(5.0),
+                          child: Column(
+                            children: <Widget>[
+                              ///Image
+                              Expanded(
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[100],
+                                      borderRadius: BorderRadius.circular(15.0),
+                                    ),
+                                    child: CachedNetworkImage(
+                                        imageUrl: registerStatus.paymentTypes[i]
+                                            ['Image'],
+                                        fit: BoxFit.cover)),
+                              ),
+                              SizedBox(height: 10),
+
+                              ///Text
+                              Text(
+                                (salesByMediumIndex != null &&
+                                        salesByMediumIndex >= 0)
+                                    ? '${formatCurrency.format(dailyTransactions.salesByMedium[salesByMediumIndex]['Amount'])}'
+                                    : '${formatCurrency.format(0)}',
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                softWrap: true,
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ))),
+                  ),
+                ],
+              ),
             ),
           ),
         ]);

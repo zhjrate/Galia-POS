@@ -13,8 +13,22 @@ class _POSMobileState extends State<POSMobile> {
   final GlobalKey<ScaffoldState> _scaffoldKeyMobile =
       GlobalKey<ScaffoldState>();
 
-  String category = 'Café';
-  List categories = ['Promos', 'Café', 'Postres', 'Panadería', 'Sandwich y Ensaladas', 'Bebidas'];
+  String category;
+
+  @override
+  void initState() {
+    category = 'Café';
+    super.initState();
+  }
+
+  List categories = [
+    'Promos',
+    'Café',
+    'Postres',
+    'Panadería',
+    'Platos',
+    'Bebidas'
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -48,43 +62,48 @@ class _POSMobileState extends State<POSMobile> {
           children: [
             //Category selection
             Container(
-              width: double.infinity,
-              height: 50,
-              child: ListView.builder(
-                shrinkWrap: true,
-                physics: BouncingScrollPhysics(),      
-                scrollDirection: Axis.horizontal,
-                itemCount: categories.length,
-                itemBuilder: (context, i){
-                  return  FlatButton(
-                    hoverColor: Colors.grey[350],
-                    height: 50,
-                    onPressed: () {
-                      setState(() {
-                        category = categories[i];
-                      });
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5.0),
-                      child: Center(
-                        child: Text(
-                          categories[i],
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400),
+                width: double.infinity,
+                height: 50,
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    physics: BouncingScrollPhysics(),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: categories.length,
+                    itemBuilder: (context, i) {
+                      return FlatButton(
+                        color: (category == categories[i])
+                            ? Colors.black
+                            : Colors.transparent,
+                        hoverColor: Colors.grey[350],
+                        height: 50,
+                        onPressed: () {
+                          setState(() {
+                            category = categories[i];
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5.0),
+                          child: Center(
+                            child: Text(
+                              categories[i],
+                              style: TextStyle(
+                                  color: (category == categories[i])
+                                      ? Colors.white
+                                      : Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  );
-                }
-              )                            
-            ),
+                      );
+                    })),
             Divider(
                 color: Colors.grey, thickness: 0.5, indent: 15, endIndent: 15),
             //Plates GridView
             Container(
+                height: 400,
                 child: StreamProvider<List<Products>>.value(
+                    initialData: null,
                     value: DatabaseService().productList(category),
                     child: PlateSelectionMobile())),
           ],

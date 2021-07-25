@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:denario/Backend/Ticket.dart';
 import 'package:denario/Models/Products.dart';
 import 'package:flutter/material.dart';
@@ -20,18 +19,29 @@ class PlateSelectionDesktop extends StatelessWidget {
       shrinkWrap: true,
       physics: BouncingScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: (MediaQuery.of(context).size.width > 1100) ? 4 : 3,
-        crossAxisSpacing: 10.0,
-        mainAxisSpacing: 5.0,
+        crossAxisCount: (MediaQuery.of(context).size.width > 1100) ? 5 : 3,
+        crossAxisSpacing: 15.0,
+        mainAxisSpacing: 15.0,
         childAspectRatio: 1,
       ),
       scrollDirection: Axis.vertical,
       itemCount: product.length,
       itemBuilder: (context, i) {
-        return InkWell(
-          borderRadius: BorderRadius.all(Radius.circular(15)),
-          hoverColor: Colors.black26,
-          onTap: () => bloc.addToCart({
+        return ElevatedButton(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+            overlayColor: MaterialStateProperty.resolveWith<Color>(
+              (Set<MaterialState> states) {
+                if (states.contains(MaterialState.hovered))
+                  return Colors.black12;
+                if (states.contains(MaterialState.focused) ||
+                    states.contains(MaterialState.pressed))
+                  return Colors.black26;
+                return null; // Defer to the widget's default.
+              },
+            ),
+          ),
+          onPressed: () => bloc.addToCart({
             'Name': product[i].product,
             'Category': product[i].category,
             'Price': product[i].price,
@@ -41,58 +51,35 @@ class PlateSelectionDesktop extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.all(5.0),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                ///Image
-                Expanded(
-                  child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      child: CachedNetworkImage(
-                          imageUrl: product[i].image, fit: BoxFit.cover)),
+                //product
+                Text(
+                  product[i].product, //product[index].product,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: true,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400),
                 ),
+                SizedBox(height: 20),
 
-                ///Text
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        ///Product
-                        Expanded(
-                          child: Container(
-                            child: Text(
-                              product[i].product, //product[index].product,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              softWrap: true,
-                              textAlign: TextAlign.start,
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400),
-                            ),
-                          ),
-                        ),
-                        Spacer(),
-
-                        ///Price
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            "\$${product[i].price}", //'\$120' + //product[index].price.toString(),
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                              color: Colors.black54,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ]),
+                ///Price
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    "\$${product[i].price}", //'\$120' + //product[index].price.toString(),
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                      color: Colors.black54,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14,
+                    ),
+                  ),
                 ),
               ],
             ),

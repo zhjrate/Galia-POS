@@ -73,7 +73,15 @@ class _ExpenseInputState extends State<ExpenseInput> {
     final accountsProvider = Provider.of<AccountsList>(context);
 
     if (categoriesProvider == null || accountsProvider == null) {
-      return Center();
+      return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        costSelection('', Icons.circle, Colors.grey[200], '', ''),
+        SizedBox(width: 35),
+        costSelection('', Icons.circle, Colors.grey[200], '', ''),
+        SizedBox(width: 35),
+        costSelection('', Icons.circle, Colors.grey[200], '', ''),
+        SizedBox(width: 35),
+        costSelection('', Icons.circle, Colors.grey[200], '', ''),
+      ]);
     } else if (costType == '') {
       return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         costSelection('Costo de Ventas', Icons.attach_money, Colors.red, 'Café',

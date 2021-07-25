@@ -416,7 +416,7 @@ class _POSDeskState extends State<POSDesk> {
           Container(
               height: double.infinity,
               width: MediaQuery.of(context).size.width * 0.25,
-              constraints: BoxConstraints(minWidth: 250),
+              constraints: BoxConstraints(minWidth: 300),
               decoration:
                   BoxDecoration(color: Colors.white, boxShadow: <BoxShadow>[
                 new BoxShadow(

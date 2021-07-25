@@ -559,112 +559,157 @@ class _TicketViewState extends State<TicketView> {
                     ),
                     SizedBox(height: 10),
                     //Payment type
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        //Efectivo
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              paymentType = 'Efectivo';
-                            });
-                          },
-                          child: Container(
-                            height: 35,
-                            width: 35,
-                            decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8)),
-                                color: Colors.white,
-                                border: Border.all(
-                                    color: (paymentType == 'Efectivo')
-                                        ? Colors.green
-                                        : Colors.white10,
-                                    width: 2),
-                                image: DecorationImage(
-                                  image: AssetImage('images/Cash.png'),
-                                  fit: BoxFit.cover,
-                                )),
-                          ),
-                        ),
-                        //MercadoPago
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              paymentType = 'MercadoPago';
-                            });
-                          },
-                          child: Container(
-                            height: 35,
-                            width: 35,
-                            decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8)),
-                                color: Colors.white,
-                                border: Border.all(
-                                    color: (paymentType == 'MercadoPago')
-                                        ? Colors.green
-                                        : Colors.white10,
-                                    width: 2),
-                                image: DecorationImage(
-                                  image: AssetImage('images/MP.png'),
-                                  fit: BoxFit.cover,
-                                )),
-                          ),
-                        ),
-                        //Card
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              paymentType = 'LAPOS';
-                            });
-                          },
-                          child: Container(
-                            height: 35,
-                            width: 35,
-                            decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8)),
-                                color: Colors.white,
-                                border: Border.all(
-                                    color: (paymentType == 'LAPOS')
-                                        ? Colors.green
-                                        : Colors.white10,
-                                    width: 2),
-                                image: DecorationImage(
-                                  image: AssetImage('images/CreditCard.png'),
-                                  fit: BoxFit.cover,
-                                )),
-                          ),
-                        ),
-                        //PedidosYA
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              paymentType = 'PedidosYa';
-                            });
-                          },
-                          child: Container(
-                            height: 35,
-                            width: 35,
-                            decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8)),
-                                color: Colors.white,
-                                border: Border.all(
-                                    color: (paymentType == 'PedidosYa')
-                                        ? Colors.green
-                                        : Colors.white10,
-                                    width: 2),
-                                image: DecorationImage(
-                                  image: AssetImage('images/PedidosYA.png'),
-                                  fit: BoxFit.cover,
-                                )),
-                          ),
-                        ),
-                      ],
+                    Container(
+                      height: 50,
+                      width: double.infinity,
+                      child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: registerStatus.paymentTypes.length,
+                          itemBuilder: (context, i) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 5.0),
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    paymentType =
+                                        registerStatus.paymentTypes[i]['Type'];
+                                  });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Container(
+                                    height: 35,
+                                    width: 35,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(8)),
+                                        color: Colors.white,
+                                        border: Border.all(
+                                            color: (paymentType ==
+                                                    registerStatus
+                                                            .paymentTypes[i]
+                                                        ['Type'])
+                                                ? Colors.green
+                                                : Colors.white10,
+                                            width: 2),
+                                        image: DecorationImage(
+                                          image: NetworkImage(registerStatus
+                                              .paymentTypes[i]['Image']),
+                                          fit: BoxFit.cover,
+                                        )),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
                     ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //   crossAxisAlignment: CrossAxisAlignment.start,
+                    //   children: [
+                    //     //Efectivo
+                    //     InkWell(
+                    //       onTap: () {
+                    //         setState(() {
+                    //           paymentType = 'Efectivo';
+                    //         });
+                    //       },
+                    //       child: Container(
+                    //         height: 35,
+                    //         width: 35,
+                    //         decoration: BoxDecoration(
+                    //             borderRadius:
+                    //                 BorderRadius.all(Radius.circular(8)),
+                    //             color: Colors.white,
+                    //             border: Border.all(
+                    //                 color: (paymentType == 'Efectivo')
+                    //                     ? Colors.green
+                    //                     : Colors.white10,
+                    //                 width: 2),
+                    //             image: DecorationImage(
+                    //               image: AssetImage('images/Cash.png'),
+                    //               fit: BoxFit.cover,
+                    //             )),
+                    //       ),
+                    //     ),
+                    //     //MercadoPago
+                    //     InkWell(
+                    //       onTap: () {
+                    //         setState(() {
+                    //           paymentType = 'MercadoPago';
+                    //         });
+                    //       },
+                    //       child: Container(
+                    //         height: 35,
+                    //         width: 35,
+                    //         decoration: BoxDecoration(
+                    //             borderRadius:
+                    //                 BorderRadius.all(Radius.circular(8)),
+                    //             color: Colors.white,
+                    //             border: Border.all(
+                    //                 color: (paymentType == 'MercadoPago')
+                    //                     ? Colors.green
+                    //                     : Colors.white10,
+                    //                 width: 2),
+                    //             image: DecorationImage(
+                    //               image: AssetImage('images/MP.png'),
+                    //               fit: BoxFit.cover,
+                    //             )),
+                    //       ),
+                    //     ),
+                    //     //Card
+                    //     InkWell(
+                    //       onTap: () {
+                    //         setState(() {
+                    //           paymentType = 'LAPOS';
+                    //         });
+                    //       },
+                    //       child: Container(
+                    //         height: 35,
+                    //         width: 35,
+                    //         decoration: BoxDecoration(
+                    //             borderRadius:
+                    //                 BorderRadius.all(Radius.circular(8)),
+                    //             color: Colors.white,
+                    //             border: Border.all(
+                    //                 color: (paymentType == 'LAPOS')
+                    //                     ? Colors.green
+                    //                     : Colors.white10,
+                    //                 width: 2),
+                    //             image: DecorationImage(
+                    //               image: AssetImage('images/CreditCard.png'),
+                    //               fit: BoxFit.cover,
+                    //             )),
+                    //       ),
+                    //     ),
+                    //     //PedidosYA
+                    //     InkWell(
+                    //       onTap: () {
+                    //         setState(() {
+                    //           paymentType = 'PedidosYa';
+                    //         });
+                    //       },
+                    //       child: Container(
+                    //         height: 35,
+                    //         width: 35,
+                    //         decoration: BoxDecoration(
+                    //             borderRadius:
+                    //                 BorderRadius.all(Radius.circular(8)),
+                    //             color: Colors.white,
+                    //             border: Border.all(
+                    //                 color: (paymentType == 'PedidosYa')
+                    //                     ? Colors.green
+                    //                     : Colors.white10,
+                    //                 width: 2),
+                    //             image: DecorationImage(
+                    //               image: AssetImage('images/PedidosYA.png'),
+                    //               fit: BoxFit.cover,
+                    //             )),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                     SizedBox(height: 15),
                     //Actions (Save, Process)
                     Row(
