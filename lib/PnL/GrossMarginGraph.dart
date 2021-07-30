@@ -84,6 +84,7 @@ class GrossMarginGraphState extends State<GrossMarginGraph> {
         mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
+          //Title
           Text(
             'Gross Margin by Category',
             style: TextStyle(color: Colors.black, fontSize: 18),
@@ -91,6 +92,7 @@ class GrossMarginGraphState extends State<GrossMarginGraph> {
           const SizedBox(
             height: 38,
           ),
+          //Graph
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),

@@ -71,30 +71,33 @@ class _HomeDeskState extends State<HomeDesk> {
       child: Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.white,
-            leading: Center(
-              child: Text(
-                'POS',
-                style: TextStyle(color: Colors.black),
+            title: Center(
+              child: Container(
+                height: 100,
+                width: 200,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage('images/Denario Tag.png'))),
               ),
             ),
-            actions: [
-              Row(
-                children: [
-                  //User Image
-                  Container(
-                    height: 30,
-                    width: 30,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle, color: Colors.grey),
-                  ),
-                  SizedBox(width: 8),
-                  //Logout
-                  FlatButton(
-                      child: Text('Salir de mi cuenta'), onPressed: () {}),
-                  SizedBox(width: 8),
-                ],
-              )
-            ],
+            // actions: [
+            //   Row(
+            //     children: [
+            //       //User Image
+            //       Container(
+            //         height: 30,
+            //         width: 30,
+            //         decoration: BoxDecoration(
+            //             shape: BoxShape.circle, color: Colors.grey),
+            //       ),
+            //       SizedBox(width: 8),
+            //       //Logout
+            //       FlatButton(
+            //           child: Text('Salir de mi cuenta'), onPressed: () {}),
+            //       SizedBox(width: 8),
+            //     ],
+            //   )
+            // ],
           ),
           body: Container(
             height: double.infinity,

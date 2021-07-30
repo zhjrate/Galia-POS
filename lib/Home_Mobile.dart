@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'POS/POS_Mobile.dart';
 
-
 class HomeMobile extends StatefulWidget {
-
   @override
   _HomeMobileState createState() => _HomeMobileState();
 }
@@ -18,11 +16,11 @@ class _HomeMobileState extends State<HomeMobile> {
     POSMobile(),
   ];
 
-  Widget screenNavigator (String screenName, IconData screenIcon){
+  Widget screenNavigator(String screenName, IconData screenIcon) {
     return FlatButton(
       hoverColor: Colors.black26,
       height: 50,
-      onPressed: (){},
+      onPressed: () {},
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 5.0),
         child: Row(
@@ -33,7 +31,8 @@ class _HomeMobileState extends State<HomeMobile> {
             Icon(screenIcon, color: Colors.white, size: 25),
             SizedBox(width: 8),
             //Text
-            Text(screenName,
+            Text(
+              screenName,
               style: TextStyle(color: Colors.white, fontSize: 10),
             )
           ],
@@ -42,7 +41,7 @@ class _HomeMobileState extends State<HomeMobile> {
     );
   }
 
-  void openDrawer () {
+  void openDrawer() {
     _scaffoldKey.currentState.openDrawer();
   }
 
@@ -52,51 +51,57 @@ class _HomeMobileState extends State<HomeMobile> {
       key: _scaffoldKey,
       drawer: Drawer(
         child: Container(
-              color: Colors.black87,
-              height: double.infinity,
-              width: 75,
-              child: Padding(
+            color: Colors.black87,
+            height: double.infinity,
+            width: 75,
+            child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 20, horizontal: 5),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children:[
-                    screenNavigator('POS', Icons.blur_circular),
-                    SizedBox(height: 20),
-                    screenNavigator('Dashboard', Icons.bar_chart),
-                    SizedBox(height: 20),
-                    screenNavigator('Gastos', Icons.multiline_chart),
-                    SizedBox(height: 20),
-                    screenNavigator('PnL', Icons.data_usage)
-                  ])
-              )
-            ),
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      screenNavigator('POS', Icons.blur_circular),
+                      SizedBox(height: 20),
+                      screenNavigator('Dashboard', Icons.bar_chart),
+                      SizedBox(height: 20),
+                      screenNavigator('Gastos', Icons.multiline_chart),
+                      SizedBox(height: 20),
+                      screenNavigator('PnL', Icons.data_usage)
+                    ]))),
       ),
       appBar: AppBar(
         backgroundColor: Colors.white,
-        leading: IconButton(
-          onPressed: openDrawer,
-          icon: Icon(Icons.menu, color: Colors.black, size: 25)
+        title: Center(
+          child: Container(
+            height: 30,
+            width: 200,
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage('images/Denario Tag.png'))),
+          ),
         ),
-        actions: [
-          Row(children: [
-            //User Image
-            Container(
-              height: 30,
-              width: 30,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.grey
-              ),
-            ),
-            SizedBox(width: 8),
-            //Logout
-            FlatButton(
-              child: Text('Salir'),
-              onPressed: (){}
-            ),
-            SizedBox(width: 8),
-          ],)
-        ],
+        leading: IconButton(
+            onPressed: openDrawer,
+            icon: Icon(Icons.menu, color: Colors.black, size: 25)),
+        // actions: [
+        //   Row(children: [
+        //     //User Image
+        //     Container(
+        //       height: 30,
+        //       width: 30,
+        //       decoration: BoxDecoration(
+        //         shape: BoxShape.circle,
+        //         color: Colors.grey
+        //       ),
+        //     ),
+        //     SizedBox(width: 8),
+        //     //Logout
+        //     FlatButton(
+        //       child: Text('Salir'),
+        //       onPressed: (){}
+        //     ),
+        //     SizedBox(width: 8),
+        //   ],)
+        // ],
       ),
       body: tabs[pageIndex],
     );

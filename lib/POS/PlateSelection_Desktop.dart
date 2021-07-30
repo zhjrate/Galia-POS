@@ -63,8 +63,8 @@ class PlateSelectionDesktop extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       color: Colors.black,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500),
                 ),
                 SizedBox(height: 20),
 
@@ -77,7 +77,7 @@ class PlateSelectionDesktop extends StatelessWidget {
                     style: TextStyle(
                       color: Colors.black54,
                       fontWeight: FontWeight.w400,
-                      fontSize: 14,
+                      fontSize: 16,
                     ),
                   ),
                 ),

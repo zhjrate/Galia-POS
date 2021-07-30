@@ -15,14 +15,32 @@ class DailySales extends StatelessWidget {
     final dailyTransactions = Provider.of<DailyTransactions>(context);
 
     if (dailyTransactions == null || registerStatus == null) {
-      return Center(
-        child: Container(
+      return Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+        Container(
+          width: MediaQuery.of(context).size.width * 0.42,
+          height: 400,
+          padding: EdgeInsets.all(30),
           decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('images/EmptyState.png'),
-                  fit: BoxFit.fitWidth)),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(25),
+            boxShadow: <BoxShadow>[
+              new BoxShadow(
+                color: Colors.grey[200],
+                offset: new Offset(15.0, 15.0),
+                blurRadius: 10.0,
+              )
+            ],
+          ),
+          child: Container(
+            height: 150,
+            width: 150,
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage('images/EmptyWallet.jpg'),
+                    fit: BoxFit.fitWidth)),
+          ),
         ),
-      );
+      ]);
     }
 
     final transactionsList = dailyTransactionsList.reversed.take(7).toList();

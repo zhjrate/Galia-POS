@@ -47,7 +47,7 @@ class _PnlDeskState extends State<PnlDesk> {
                 children: [
                   //Title
                   Text(
-                    'ESTADO DE RESULTADOS',
+                    'Estado de resultados',
                     style: TextStyle(fontWeight: FontWeight.w900, fontSize: 28),
                   ),
                   Spacer(),

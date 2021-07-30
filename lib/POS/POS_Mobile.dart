@@ -1,6 +1,7 @@
 import 'package:denario/Backend/DatabaseService.dart';
 import 'package:denario/Models/Products.dart';
 import 'package:denario/POS/PlateSelection_Mobile.dart';
+import 'package:denario/POS/TicketView.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -36,12 +37,7 @@ class _POSMobileState extends State<POSMobile> {
       key: _scaffoldKeyMobile,
       endDrawer: Drawer(
         //Ticket View
-        child: Container(
-            color: Colors.white,
-            child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start, children: []))),
+        child: Container(color: Colors.white, child: TicketView()),
       ),
       floatingActionButton: InkWell(
           onTap: () => _scaffoldKeyMobile.currentState.openEndDrawer(),

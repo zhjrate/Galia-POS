@@ -75,12 +75,19 @@ class _PnLState extends State<PnL> {
 
             final double grossMargin =
                 ((totalVentas - totalCostodeVentas) / totalVentas) * 100;
+            final double gross = totalVentas - totalCostodeVentas;
+
             final double operatingMargin = ((totalVentas -
                         totalCostodeVentas -
                         totalGastosdeEmpleados -
                         totalGastosdelLocal) /
                     totalVentas) *
                 100;
+            final double operating = totalVentas -
+                totalCostodeVentas -
+                totalGastosdeEmpleados -
+                totalGastosdelLocal;
+
             final double profitMargin = ((totalVentas -
                         totalCostodeVentas -
                         totalGastosdeEmpleados -
@@ -89,7 +96,11 @@ class _PnLState extends State<PnL> {
                     totalVentas) *
                 100;
 
-            print(grossMargin);
+            final double profit = totalVentas -
+                totalCostodeVentas -
+                totalGastosdeEmpleados -
+                totalGastosdelLocal -
+                totalOtrosGastos;
 
             return Container(
               width: MediaQuery.of(context).size.width * 0.9,
@@ -100,8 +111,11 @@ class _PnLState extends State<PnL> {
                     //Margins and Graphs
                     PnlMargins(
                       grossMargin: grossMargin,
+                      gross: gross,
                       operatingMargin: operatingMargin,
+                      operating: operating,
                       profitMargin: profitMargin,
+                      profit: profit,
                       snapshot: snapshot,
                     ),
                     //PnL Card

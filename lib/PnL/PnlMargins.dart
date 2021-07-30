@@ -4,14 +4,20 @@ import 'package:intl/intl.dart';
 
 class PnlMargins extends StatefulWidget {
   final double grossMargin;
+  final double gross;
   final double operatingMargin;
+  final double operating;
   final double profitMargin;
+  final double profit;
   final AsyncSnapshot snapshot;
 
   PnlMargins(
       {this.grossMargin,
+      this.gross,
       this.operatingMargin,
+      this.operating,
       this.profitMargin,
+      this.profit,
       this.snapshot});
 
   @override
@@ -169,14 +175,34 @@ class _PnlMarginsState extends State<PnlMargins> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   //Gross Margin
-                  marginBox('Gross Margin', widget.grossMargin, 1000, context),
+                  marginBox(
+                      'Gross Margin',
+                      (!widget.grossMargin.isNaN &&
+                              !widget.grossMargin.isInfinite)
+                          ? widget.grossMargin
+                          : 0,
+                      widget.gross,
+                      context),
                   Spacer(),
                   //Op. Margin
                   marginBox(
-                      'Operating Margin', widget.operatingMargin, 900, context),
+                      'Operating Margin',
+                      (!widget.operatingMargin.isNaN &&
+                              !widget.operatingMargin.isInfinite)
+                          ? widget.operatingMargin
+                          : 0,
+                      widget.operating,
+                      context),
                   Spacer(),
                   //Profit Margin
-                  marginBox('Profit Margin', widget.profitMargin, 550, context),
+                  marginBox(
+                      'Profit Margin',
+                      (!widget.profitMargin.isNaN &&
+                              !widget.profitMargin.isInfinite)
+                          ? widget.profitMargin
+                          : 0,
+                      widget.profit,
+                      context),
                 ],
               ),
               SizedBox(height: 20),
