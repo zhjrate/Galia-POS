@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
 class TicketBloc {
   /// The [ticketStreamController] is an object of the StreamController class
   /// .broadcast enables the stream to be read in multiple screens of our app
@@ -17,18 +20,17 @@ class TicketBloc {
     'Discount': 0,
     'IVA': 0,
     'Total': 0,
+    'Color': Colors.white,
   };
 
   /// [retrieveOrder] removes items from the cart, back to the shop
-  void retrieveOrder(
-      orderName, paymentType, items, subtotal, discount, tax, total) {
+  void retrieveOrder(orderName, paymentType, items, discount, tax, color) {
     ticketItems['Order Name'] = orderName;
     ticketItems['Payment Type'] = paymentType;
     ticketItems['Items'] = items;
-    ticketItems['Subtotal'] = subtotal;
     ticketItems['Discount'] = discount;
     ticketItems['IVA'] = tax;
-    ticketItems['Total'] = total;
+    ticketItems['Color'] = color;
 
     ticketStreamController.sink.add(ticketItems);
   }
@@ -60,6 +62,7 @@ class TicketBloc {
     ticketItems['Subtotal'] = 0;
     ticketItems['Discount'] = 0;
     ticketItems['Total'] = 0;
+    ticketItems['Color'] = Colors.white;
 
     ticketStreamController.sink.add(ticketItems);
   }

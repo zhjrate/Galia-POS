@@ -215,6 +215,34 @@ class _POSDeskState extends State<POSDesk> {
                                     ),
                                   ),
                                 ),
+                                //Extras
+                                FlatButton(
+                                  color: (category == 'Extras')
+                                      ? Colors.black
+                                      : Colors.transparent,
+                                  hoverColor: Colors.grey[350],
+                                  height: 50,
+                                  onPressed: () {
+                                    setState(() {
+                                      category = 'Extras';
+                                    });
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 5.0),
+                                    child: Center(
+                                      child: Text(
+                                        'Extras',
+                                        style: TextStyle(
+                                            color: (category == 'Extras')
+                                                ? Colors.white
+                                                : Colors.black,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400),
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ],
                             )
                           ],
@@ -392,6 +420,34 @@ class _POSDeskState extends State<POSDesk> {
                                   ),
                                 ),
                               ),
+                              //Extras
+                              FlatButton(
+                                color: (category == 'Extras')
+                                    ? Colors.black
+                                    : Colors.transparent,
+                                hoverColor: Colors.grey[350],
+                                height: 50,
+                                onPressed: () {
+                                  setState(() {
+                                    category = 'Extras';
+                                  });
+                                },
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 5.0),
+                                  child: Center(
+                                    child: Text(
+                                      'Extras',
+                                      style: TextStyle(
+                                          color: (category == 'Extras')
+                                              ? Colors.white
+                                              : Colors.black,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -405,6 +461,7 @@ class _POSDeskState extends State<POSDesk> {
                       fit: FlexFit.loose,
                       child: Container(
                           child: StreamProvider<List<Products>>.value(
+                              initialData: [],
                               value: DatabaseService().productList(category),
                               child:
                                   PlateSelectionDesktop(category: category)))),

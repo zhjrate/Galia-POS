@@ -159,7 +159,7 @@ class DailySales extends StatelessWidget {
                               Expanded(
                                 child: Container(
                                     decoration: BoxDecoration(
-                                      color: Colors.grey[100],
+                                      color: Colors.white,
                                       borderRadius: BorderRadius.circular(15.0),
                                     ),
                                     child: CachedNetworkImage(

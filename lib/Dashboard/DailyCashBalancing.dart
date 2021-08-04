@@ -1,4 +1,3 @@
-import 'package:denario/Backend/DatabaseService.dart';
 import 'package:denario/Dashboard/CloseCashRegisterDialog.dart';
 import 'package:denario/Dashboard/OpenCashRegisterDialog.dart';
 import 'package:denario/Dashboard/UpdateCashRegisterDialog.dart';
@@ -13,6 +12,7 @@ class DailyCashBalancing extends StatefulWidget {
 }
 
 class _DailyCashBalancingState extends State<DailyCashBalancing> {
+  final formatCurrency = new NumberFormat.simpleCurrency();
   Widget closedRegister() {
     return Container(
       height: 40,
@@ -403,12 +403,11 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       //Fecha
                                       Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 8),
+                                          width: 50,
                                           child: Text(
                                             DateFormat.MMMd()
                                                 .format(dailyTransactionsList[i]
@@ -421,8 +420,7 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
                                       //SizedBox(width: 10),
                                       //Apertura
                                       Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 8),
+                                          width: 50,
                                           child: Text(
                                             '${(dailyTransactionsList[i].openDate).hour}:${(dailyTransactionsList[i].openDate).minute}',
                                             style: TextStyle(
@@ -432,8 +430,7 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
                                       //SizedBox(width: 10),
                                       //Cierre
                                       Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 8),
+                                          width: 50,
                                           child: Text(
                                             '${(dailyTransactionsList[i].closeDate).hour}:${(dailyTransactionsList[i].closeDate).minute}',
                                             style: TextStyle(
@@ -443,36 +440,41 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
                                       //SizedBox(width: 10),
                                       //Usuario
                                       Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 8),
+                                          width: 70,
                                           child: Center(
                                             child: Text(
                                               '${dailyTransactionsList[i].user}',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.w500),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
                                             ),
                                           )),
                                       //SizedBox(width: 10),
                                       //Monto Inicial
                                       Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 8),
+                                          width: 70,
                                           child: Center(
                                             child: Text(
-                                                '\$${dailyTransactionsList[i].initialAmount}',
-                                                style: TextStyle(
-                                                    color: Colors.grey)),
+                                              '${formatCurrency.format(dailyTransactionsList[i].initialAmount)}',
+                                              style:
+                                                  TextStyle(color: Colors.grey),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
                                           )),
                                       //Monto Cierre
                                       Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 8),
+                                          width: 70,
                                           child: Center(
                                             child: Text(
-                                                '\$${dailyTransactionsList[i].closeAmount}',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.w800,
-                                                    color: Colors.black)),
+                                              '${formatCurrency.format(dailyTransactionsList[i].closeAmount)}',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w800,
+                                                  color: Colors.black),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
                                           )),
                                     ],
                                   ),

@@ -28,6 +28,7 @@ class _TicketViewState extends State<TicketView> {
   double tax = 0;
   double discount = 0;
   double total = 0;
+  Color color = Colors.white;
 
   String paymentType = 'Efectivo';
 
@@ -59,6 +60,7 @@ class _TicketViewState extends State<TicketView> {
           discount = snapshot.data["Discount"];
           total = snapshot.data["Total"];
           orderName = snapshot.data["Order Name"];
+          color = snapshot.data["Color"];
 
           for (var i = 0; i < bloc.ticketItems['Items'].length; i++) {
             subTotal += bloc.ticketItems['Items'][i]["Price"] *
@@ -79,7 +81,7 @@ class _TicketViewState extends State<TicketView> {
                         value: DatabaseService().orderList(),
                         child: ActiveOrders()),
                     Divider(thickness: 0.5, indent: 0, endIndent: 0),
-                    SizedBox(height: 5),
+                    SizedBox(height: 3),
                     //Order Name
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -88,7 +90,7 @@ class _TicketViewState extends State<TicketView> {
                         Text(
                           'Pedido: ',
                           style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w300),
+                              fontSize: 14, fontWeight: FontWeight.w300),
                         ),
                         Expanded(
                           child: Container(
@@ -98,7 +100,7 @@ class _TicketViewState extends State<TicketView> {
                               controller:
                                   _controller, //..text = snapshot.data["Order Name"],
                               style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w300),
+                                  fontSize: 14, fontWeight: FontWeight.w300),
                               inputFormatters: [
                                 LengthLimitingTextInputFormatter(15)
                               ],
@@ -107,8 +109,8 @@ class _TicketViewState extends State<TicketView> {
                                 hintText: (snapshot.data["Order Name"] == '')
                                     ? 'Mesa 1'
                                     : snapshot.data["Order Name"],
-                                hintStyle:
-                                    TextStyle(color: Colors.grey.shade700),
+                                hintStyle: TextStyle(
+                                    color: Colors.grey.shade700, fontSize: 14),
                               ),
                               onChanged: (val) {
                                 bloc.changeOrderName(val);
@@ -135,7 +137,7 @@ class _TicketViewState extends State<TicketView> {
                             icon: Icon(Icons.delete, color: Colors.black))
                       ],
                     ),
-                    SizedBox(height: 5),
+                    SizedBox(height: 3),
                     Divider(thickness: 0.5, indent: 0, endIndent: 0),
                     SizedBox(height: 5),
                     //List of Products
@@ -224,11 +226,11 @@ class _TicketViewState extends State<TicketView> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
-                            constraints: BoxConstraints(maxWidth: 150),
-                            child: Text('Subtotal:'),
-                          ),
+                              constraints: BoxConstraints(maxWidth: 150),
+                              child: Text('Subtotal:',
+                                  style: TextStyle(fontSize: 11))),
                           Spacer(),
-                          Text('\$$subTotal'),
+                          Text('\$$subTotal', style: TextStyle(fontSize: 11)),
                         ],
                       ),
                     ),
@@ -400,10 +402,12 @@ class _TicketViewState extends State<TicketView> {
                           children: [
                             Container(
                               constraints: BoxConstraints(maxWidth: 150),
-                              child: Text('IVA:'),
+                              child:
+                                  Text('IVA:', style: TextStyle(fontSize: 11)),
                             ),
                             Spacer(),
-                            Text('\$${(subTotal * tax).toStringAsFixed(1)}'),
+                            Text('\$${(subTotal * tax).toStringAsFixed(1)}',
+                                style: TextStyle(fontSize: 11)),
                           ],
                         ),
                       ),
@@ -529,10 +533,11 @@ class _TicketViewState extends State<TicketView> {
                           children: [
                             Container(
                               constraints: BoxConstraints(maxWidth: 150),
-                              child: Text('Descuetos:'),
+                              child: Text('Descuetos:',
+                                  style: TextStyle(fontSize: 11)),
                             ),
                             Spacer(),
-                            Text('\$$discount'),
+                            Text('\$$discount', style: TextStyle(fontSize: 11)),
                           ],
                         ),
                       ),
@@ -604,112 +609,6 @@ class _TicketViewState extends State<TicketView> {
                             );
                           }),
                     ),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    //   crossAxisAlignment: CrossAxisAlignment.start,
-                    //   children: [
-                    //     //Efectivo
-                    //     InkWell(
-                    //       onTap: () {
-                    //         setState(() {
-                    //           paymentType = 'Efectivo';
-                    //         });
-                    //       },
-                    //       child: Container(
-                    //         height: 35,
-                    //         width: 35,
-                    //         decoration: BoxDecoration(
-                    //             borderRadius:
-                    //                 BorderRadius.all(Radius.circular(8)),
-                    //             color: Colors.white,
-                    //             border: Border.all(
-                    //                 color: (paymentType == 'Efectivo')
-                    //                     ? Colors.green
-                    //                     : Colors.white10,
-                    //                 width: 2),
-                    //             image: DecorationImage(
-                    //               image: AssetImage('images/Cash.png'),
-                    //               fit: BoxFit.cover,
-                    //             )),
-                    //       ),
-                    //     ),
-                    //     //MercadoPago
-                    //     InkWell(
-                    //       onTap: () {
-                    //         setState(() {
-                    //           paymentType = 'MercadoPago';
-                    //         });
-                    //       },
-                    //       child: Container(
-                    //         height: 35,
-                    //         width: 35,
-                    //         decoration: BoxDecoration(
-                    //             borderRadius:
-                    //                 BorderRadius.all(Radius.circular(8)),
-                    //             color: Colors.white,
-                    //             border: Border.all(
-                    //                 color: (paymentType == 'MercadoPago')
-                    //                     ? Colors.green
-                    //                     : Colors.white10,
-                    //                 width: 2),
-                    //             image: DecorationImage(
-                    //               image: AssetImage('images/MP.png'),
-                    //               fit: BoxFit.cover,
-                    //             )),
-                    //       ),
-                    //     ),
-                    //     //Card
-                    //     InkWell(
-                    //       onTap: () {
-                    //         setState(() {
-                    //           paymentType = 'LAPOS';
-                    //         });
-                    //       },
-                    //       child: Container(
-                    //         height: 35,
-                    //         width: 35,
-                    //         decoration: BoxDecoration(
-                    //             borderRadius:
-                    //                 BorderRadius.all(Radius.circular(8)),
-                    //             color: Colors.white,
-                    //             border: Border.all(
-                    //                 color: (paymentType == 'LAPOS')
-                    //                     ? Colors.green
-                    //                     : Colors.white10,
-                    //                 width: 2),
-                    //             image: DecorationImage(
-                    //               image: AssetImage('images/CreditCard.png'),
-                    //               fit: BoxFit.cover,
-                    //             )),
-                    //       ),
-                    //     ),
-                    //     //PedidosYA
-                    //     InkWell(
-                    //       onTap: () {
-                    //         setState(() {
-                    //           paymentType = 'PedidosYa';
-                    //         });
-                    //       },
-                    //       child: Container(
-                    //         height: 35,
-                    //         width: 35,
-                    //         decoration: BoxDecoration(
-                    //             borderRadius:
-                    //                 BorderRadius.all(Radius.circular(8)),
-                    //             color: Colors.white,
-                    //             border: Border.all(
-                    //                 color: (paymentType == 'PedidosYa')
-                    //                     ? Colors.green
-                    //                     : Colors.white10,
-                    //                 width: 2),
-                    //             image: DecorationImage(
-                    //               image: AssetImage('images/PedidosYA.png'),
-                    //               fit: BoxFit.cover,
-                    //             )),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
                     SizedBox(height: 15),
                     //Actions (Save, Process)
                     Row(
@@ -736,20 +635,16 @@ class _TicketViewState extends State<TicketView> {
                                 orderDetail,
                                 orderName,
                                 paymentType,
-                                Colors
-                                    .primaries[Random()
-                                        .nextInt(Colors.primaries.length)]
-                                    .value,
+                                (color == Colors.white)
+                                    ? Colors
+                                        .primaries[Random()
+                                            .nextInt(Colors.primaries.length)]
+                                        .value
+                                    : color.value,
                               );
 
                               //Clear Variables
-                              bloc.removeAllFromCart();
-                              _controller.clear();
-                              setState(() {
-                                discount = 0;
-                                tax = 0;
-                                paymentType = 'Efectivo';
-                              });
+                              clearVariables();
                             },
                             child: Center(
                                 child: Icon(

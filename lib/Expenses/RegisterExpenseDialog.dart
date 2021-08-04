@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:denario/Backend/DatabaseService.dart';
+import 'package:denario/Models/DailyCash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -14,6 +15,9 @@ class RegisterExpenseDialog extends StatefulWidget {
   final int qty;
   final double price;
   final double total;
+  final CashRegister registerStatus;
+  final DailyTransactions dailyTransactions;
+  final clearVariables;
 
   RegisterExpenseDialog(
       this.costType,
@@ -23,7 +27,14 @@ class RegisterExpenseDialog extends StatefulWidget {
       this.expenseDescription,
       this.qty,
       this.price,
-      this.total);
+      this.total,
+      this.registerStatus,
+      this.dailyTransactions,
+      this.clearVariables);
+
+  get currentRegister => null;
+
+  String get transactionType => null;
 
   @override
   _RegisterExpenseDialogState createState() => _RegisterExpenseDialogState();
@@ -223,109 +234,124 @@ class _RegisterExpenseDialogState extends State<RegisterExpenseDialog> {
                         height: 5,
                       ),
                       //Use cashier money text
-                      Text(
-                        "¿Usar dinero de la caja?",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
+                      (paymentType == 'Efectivo' &&
+                              widget.registerStatus != null)
+                          ? Text(
+                              "¿Usar dinero de la caja?",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            )
+                          : Container(),
                       SizedBox(
                         height: 12,
                       ),
                       //Use money in petty cash?
-                      Container(
-                        width: double.infinity,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            checkBox(),
-                            isChecked ? SizedBox(width: 15) : Container(),
-                            isChecked
-                                ? Container(
-                                    width: 100,
-                                    height: 40,
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 5),
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(color: Colors.grey)),
-                                    alignment: Alignment.center,
-                                    child: TextFormField(
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: Colors.grey, fontSize: 14),
-                                      autofocus: true,
-                                      validator: (val) => val.isEmpty
-                                          ? "No olvides agregar un monto"
-                                          : null,
-                                      inputFormatters: <TextInputFormatter>[
-                                        FilteringTextInputFormatter.digitsOnly
-                                      ],
-                                      cursorColor: Colors.grey,
-                                      decoration: InputDecoration.collapsed(
-                                        hintText: "¿Cuánto?",
-                                        hintStyle: TextStyle(
-                                            color: Colors.grey.shade700),
-                                      ),
-                                      onChanged: (val) {
-                                        setState(() => cashRegisterAmount =
-                                            double.parse(val));
-                                      },
-                                    ),
-                                  )
-                                : Container(),
-                            isChecked ? SizedBox(width: 15) : Container(),
-                            isChecked
-                                ? ElevatedButton(
-                                    style: ButtonStyle(
-                                      side: MaterialStateProperty.all(
-                                          BorderSide(
-                                              width: 2,
-                                              color: useEntireAmount
-                                                  ? Colors.green
-                                                  : Colors.white)),
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              Colors.white),
-                                      overlayColor: MaterialStateProperty
-                                          .resolveWith<Color>(
-                                        (Set<MaterialState> states) {
-                                          if (states
-                                              .contains(MaterialState.hovered))
-                                            return Colors.grey.shade100;
-                                          if (states.contains(
-                                                  MaterialState.focused) ||
-                                              states.contains(
-                                                  MaterialState.pressed))
-                                            return Colors.grey.shade200;
-                                          return null; // Defer to the widget's default.
-                                        },
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        useEntireAmount = !useEntireAmount;
-                                      });
-                                    },
-                                    child: Center(
-                                        child: Text(
-                                      'Todo el importe',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: useEntireAmount
-                                              ? Colors.green
-                                              : Colors.grey,
-                                          fontSize: 11),
-                                    )))
-                                : Container(),
-                          ],
-                        ),
-                      ),
+                      (paymentType == 'Efectivo')
+                          ? Container(
+                              width: double.infinity,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  checkBox(),
+                                  isChecked ? SizedBox(width: 15) : Container(),
+                                  isChecked
+                                      ? Container(
+                                          width: 100,
+                                          height: 40,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 12, vertical: 5),
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              border: Border.all(
+                                                  color: Colors.grey)),
+                                          alignment: Alignment.center,
+                                          child: TextFormField(
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 14),
+                                            autofocus: true,
+                                            validator: (val) => val.isEmpty
+                                                ? "No olvides agregar un monto"
+                                                : null,
+                                            inputFormatters: <
+                                                TextInputFormatter>[
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly
+                                            ],
+                                            cursorColor: Colors.grey,
+                                            decoration:
+                                                InputDecoration.collapsed(
+                                              hintText: "¿Cuánto?",
+                                              hintStyle: TextStyle(
+                                                  color: Colors.grey.shade700),
+                                            ),
+                                            onChanged: (val) {
+                                              setState(() =>
+                                                  cashRegisterAmount =
+                                                      double.parse(val));
+                                            },
+                                          ),
+                                        )
+                                      : Container(),
+                                  isChecked ? SizedBox(width: 15) : Container(),
+                                  isChecked
+                                      ? ElevatedButton(
+                                          style: ButtonStyle(
+                                            side: MaterialStateProperty.all(
+                                                BorderSide(
+                                                    width: 2,
+                                                    color: useEntireAmount
+                                                        ? Colors.green
+                                                        : Colors.white)),
+                                            backgroundColor:
+                                                MaterialStateProperty.all<
+                                                    Color>(Colors.white),
+                                            overlayColor: MaterialStateProperty
+                                                .resolveWith<Color>(
+                                              (Set<MaterialState> states) {
+                                                if (states.contains(
+                                                    MaterialState.hovered))
+                                                  return Colors.grey.shade100;
+                                                if (states.contains(
+                                                        MaterialState
+                                                            .focused) ||
+                                                    states.contains(
+                                                        MaterialState.pressed))
+                                                  return Colors.grey.shade200;
+                                                return null; // Defer to the widget's default.
+                                              },
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            setState(() {
+                                              useEntireAmount =
+                                                  !useEntireAmount;
+                                              cashRegisterAmount = widget.total;
+                                            });
+                                          },
+                                          child: Center(
+                                              child: Text(
+                                            'Todo el importe',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                color: useEntireAmount
+                                                    ? Colors.green
+                                                    : Colors.grey,
+                                                fontSize: 11),
+                                          )))
+                                      : Container(),
+                                ],
+                              ),
+                            )
+                          : Container(),
                       SizedBox(
                         height: 25,
                       ),
@@ -353,6 +379,30 @@ class _RegisterExpenseDialogState extends State<RegisterExpenseDialog> {
                                 currentAccountAmount,
                                 currentCategoryAmount);
 
+                            ///////////If we use money in cash register ///////////////
+                            if (isChecked &&
+                                widget.registerStatus.registerisOpen) {
+                              double totalTransactionAmount =
+                                  widget.dailyTransactions.outflows +
+                                      cashRegisterAmount;
+
+                              double totalTransactions =
+                                  widget.dailyTransactions.dailyTransactions -
+                                      cashRegisterAmount;
+
+                              DatabaseService().updateCashRegister(
+                                  widget.registerStatus.registerName,
+                                  'Egresos',
+                                  totalTransactionAmount,
+                                  totalTransactions, {
+                                'Amount': widget.total,
+                                'Type': 'Gasto',
+                                'Motive': 'Gasto',
+                              });
+                            }
+
+                            //Clear Expenses Variables and go back
+                            widget.clearVariables();
                             Navigator.of(context).pop();
                           },
                           shape: RoundedRectangleBorder(

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:denario/PnL/PnlMargins.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class PnL extends StatefulWidget {
   final List pnlAccountGroups;
@@ -15,7 +16,7 @@ class PnL extends StatefulWidget {
 }
 
 class _PnLState extends State<PnL> {
-  // Future currentValuesBuilt;
+  final formatCurrency = new NumberFormat.simpleCurrency();
 
   double totalVentas;
   double totalCostodeVentas;
@@ -196,7 +197,8 @@ class _PnLState extends State<PnL> {
                                                     '${widget.pnlMapping[widget.pnlAccountGroups[i]][x]}'),
                                                 Spacer(),
                                                 //Monto
-                                                Text('\$$itemAmount'),
+                                                Text(
+                                                    '${formatCurrency.format(itemAmount)}'),
                                               ]),
                                             );
                                           }),
@@ -215,7 +217,8 @@ class _PnLState extends State<PnL> {
                                         ),
                                         Spacer(),
                                         //Monto
-                                        Text('\$$categoryAmount',
+                                        Text(
+                                            '${formatCurrency.format(categoryAmount)}',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w800)),
                                       ]),

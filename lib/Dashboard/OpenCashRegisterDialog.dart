@@ -65,7 +65,7 @@ class _OpenCashRegisterDialogState extends State<OpenCashRegisterDialog> {
                         ),
                         //Name
                         Container(
-                          width: 100,
+                          width: double.infinity,
                           height: 40,
                           padding:
                               EdgeInsets.symmetric(horizontal: 20, vertical: 8),

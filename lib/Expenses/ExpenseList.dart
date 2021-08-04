@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 class ExpenseList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final formatCurrency = new NumberFormat.simpleCurrency();
     final expenses = Provider.of<List<Expenses>>(context);
 
     if (expenses == null) {
@@ -55,7 +56,7 @@ class ExpenseList extends StatelessWidget {
       child: ListView.builder(
           itemCount: (expenseList.length > 7) ? 7 : expenseList.length,
           shrinkWrap: true,
-          reverse: true,
+          reverse: false,
           physics: BouncingScrollPhysics(),
           itemBuilder: (context, i) {
             return Container(
@@ -63,21 +64,23 @@ class ExpenseList extends StatelessWidget {
               width: double.infinity,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   //Fecha
                   Container(
-                      //width: 50,
+                      width: 50,
                       child: Text(
-                    DateFormat.MMMd().format(expenseList[i].date).toString(),
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )),
+                        DateFormat.MMMd()
+                            .format(expenseList[i].date)
+                            .toString(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )),
                   SizedBox(width: 10),
                   //Detail
                   Container(
-                    //width: 250,
+                    width: 150,
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -86,6 +89,8 @@ class ExpenseList extends StatelessWidget {
                           Container(
                               child: Text(
                             '${expenseList[i].product}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(fontWeight: FontWeight.w400),
                           )),
                           SizedBox(height: 5),
@@ -93,6 +98,8 @@ class ExpenseList extends StatelessWidget {
                           Container(
                               child: Text(
                             '${expenseList[i].vendor} • ${expenseList[i].category}',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.grey,
@@ -105,23 +112,29 @@ class ExpenseList extends StatelessWidget {
                   SizedBox(width: 10),
                   //Cost Type
                   Container(
-                      //width: 150,
+                      width: (MediaQuery.of(context).size.width > 1200)
+                          ? 150
+                          : 100,
                       child: Center(
-                    child: Text(
-                      '${expenseList[i].costType}',
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                  )),
+                        child: Text(
+                          '${expenseList[i].costType}',
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                      )),
                   SizedBox(width: 10),
                   //Total
                   Container(
-                      //width: 75,
+                      width: 70,
                       child: Center(
-                    child: Text('\$${expenseList[i].total}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        )),
-                  )),
+                        child: Text(
+                            '${formatCurrency.format(expenseList[i].total)}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            )),
+                      )),
                 ],
               ),
             );

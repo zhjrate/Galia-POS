@@ -31,9 +31,8 @@ class ExpensesDesk extends StatelessWidget {
                     initialData: null, value: DatabaseService().expenseList()),
               ],
               child: Container(
-                  height: (MediaQuery.of(context).size.width > 1100)
-                      ? MediaQuery.of(context).size.height * 0.7
-                      : 700,
+                  height:
+                      (MediaQuery.of(context).size.width > 1100) ? 700 : 1000,
                   width: double.infinity,
                   padding: EdgeInsets.all(30),
                   decoration: BoxDecoration(
@@ -91,10 +90,12 @@ class ExpensesDesk extends StatelessWidget {
                           ],
                         )
                       : Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             //ExpenseList
-                            Expanded(
+                            Container(
+                              height: 500,
+                              width: double.infinity,
                               child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -113,7 +114,9 @@ class ExpensesDesk extends StatelessWidget {
                             ),
                             SizedBox(height: 20),
                             //Graph
-                            Expanded(
+                            Container(
+                              height: 400,
+                              width: double.infinity,
                               child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.start,

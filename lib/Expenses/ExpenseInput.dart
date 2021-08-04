@@ -1,5 +1,6 @@
 import 'package:denario/Expenses/RegisterExpenseDialog.dart';
 import 'package:denario/Models/Categories.dart';
+import 'package:denario/Models/DailyCash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -14,7 +15,7 @@ class _ExpenseInputState extends State<ExpenseInput> {
   final dateFormat = new DateFormat('dd/MMMM');
 
   int qty = 1;
-  double price = 100;
+  double price = 0;
   String costType = '';
 
   Widget costSelection(
@@ -55,6 +56,35 @@ class _ExpenseInputState extends State<ExpenseInput> {
     );
   }
 
+  Widget showRegisterExpenseDalog(
+      CashRegister registerStatus, DailyTransactions dailyTransactions) {
+    return InkWell(
+      onTap: () {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return RegisterExpenseDialog(
+                  costType,
+                  selectedVendor,
+                  selectedAccount,
+                  selectedCategory,
+                  expenseDescription,
+                  qty,
+                  price,
+                  qty * price,
+                  registerStatus,
+                  dailyTransactions,
+                  clearVariables);
+            });
+      },
+      child: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+          ),
+          child: Icon(Icons.add_circle_outline, color: Colors.black, size: 50)),
+    );
+  }
+
   //Form variables
   String selectedCategory = 'Café';
   int categoryInt = 0;
@@ -67,10 +97,32 @@ class _ExpenseInputState extends State<ExpenseInput> {
   String costAccount = '';
   int accountInt = 0;
 
+  void clearVariables() {
+    setState(() {
+      costType = '';
+      selectedCategory = 'Café';
+      categoryInt = 0;
+      selectedAccount = '';
+      selectedVendor = 'Caxambú';
+      categoryList = [];
+      categoriesVendors = [];
+      expenseDescription = '';
+
+      costAccount = '';
+      accountInt = 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final categoriesProvider = Provider.of<CategoryList>(context);
     final accountsProvider = Provider.of<AccountsList>(context);
+    final registerStatus = Provider.of<CashRegister>(context);
+    final dailyTransactions = Provider.of<DailyTransactions>(context);
+
+    if (registerStatus == null || dailyTransactions == null) {
+      return Container();
+    }
 
     if (categoriesProvider == null || accountsProvider == null) {
       return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -356,30 +408,7 @@ class _ExpenseInputState extends State<ExpenseInput> {
               ],
             ),
             //Payment Method
-            InkWell(
-              onTap: () {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return RegisterExpenseDialog(
-                        costType,
-                        selectedVendor,
-                        'Costo de Ventas',
-                        'Costos de $selectedCategory',
-                        expenseDescription,
-                        qty,
-                        price,
-                        qty * price,
-                      );
-                    });
-              },
-              child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(Icons.add_circle_outline,
-                      color: Colors.black, size: 50)),
-            ),
+            showRegisterExpenseDalog(registerStatus, dailyTransactions)
           ],
         ),
       );
@@ -652,30 +681,7 @@ class _ExpenseInputState extends State<ExpenseInput> {
               ],
             ),
             //Payment Method
-            InkWell(
-              onTap: () {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return RegisterExpenseDialog(
-                        costType,
-                        selectedVendor,
-                        selectedAccount,
-                        selectedCategory,
-                        expenseDescription,
-                        qty,
-                        price,
-                        qty * price,
-                      );
-                    });
-              },
-              child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(Icons.add_circle_outline,
-                      color: Colors.black, size: 50)),
-            ),
+            showRegisterExpenseDalog(registerStatus, dailyTransactions)
           ],
         ),
       );
@@ -948,30 +954,7 @@ class _ExpenseInputState extends State<ExpenseInput> {
               ],
             ),
             //Payment Method
-            InkWell(
-              onTap: () {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return RegisterExpenseDialog(
-                        costType,
-                        selectedVendor,
-                        selectedAccount,
-                        selectedCategory,
-                        expenseDescription,
-                        qty,
-                        price,
-                        qty * price,
-                      );
-                    });
-              },
-              child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(Icons.add_circle_outline,
-                      color: Colors.black, size: 50)),
-            ),
+            showRegisterExpenseDalog(registerStatus, dailyTransactions)
           ],
         ),
       );
@@ -1243,30 +1226,7 @@ class _ExpenseInputState extends State<ExpenseInput> {
               ],
             ),
             //Payment Method
-            InkWell(
-              onTap: () {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return RegisterExpenseDialog(
-                        costType,
-                        selectedVendor,
-                        selectedAccount,
-                        selectedCategory,
-                        expenseDescription,
-                        qty,
-                        price,
-                        qty * price,
-                      );
-                    });
-              },
-              child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(Icons.add_circle_outline,
-                      color: Colors.black, size: 50)),
-            ),
+            showRegisterExpenseDalog(registerStatus, dailyTransactions)
           ],
         ),
       );
@@ -1538,30 +1498,7 @@ class _ExpenseInputState extends State<ExpenseInput> {
               ],
             ),
             //Payment Method
-            InkWell(
-              onTap: () {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return RegisterExpenseDialog(
-                        costType,
-                        selectedVendor,
-                        selectedAccount,
-                        selectedCategory,
-                        expenseDescription,
-                        qty,
-                        price,
-                        qty * price,
-                      );
-                    });
-              },
-              child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(Icons.add_circle_outline,
-                      color: Colors.black, size: 50)),
-            ),
+            showRegisterExpenseDalog(registerStatus, dailyTransactions)
           ],
         ),
       );

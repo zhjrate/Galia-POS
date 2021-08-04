@@ -12,7 +12,7 @@ class CloseCashRegisterDialog extends StatefulWidget {
 }
 
 class _CloseCashRegisterDialogState extends State<CloseCashRegisterDialog> {
-  int closeAmount;
+  int closeAmount = 0;
   final controller = PageController(initialPage: 0);
   final int totalPages = 2;
 

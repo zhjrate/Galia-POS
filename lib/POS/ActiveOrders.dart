@@ -17,7 +17,7 @@ class ActiveOrders extends StatelessWidget {
 
     return Row(children: [
       //Texto
-      Text('Guardados: '),
+      Text('Guardados: ', style: TextStyle(fontSize: 14)),
       SizedBox(width: 5),
       //Saved Orders
       Expanded(
@@ -34,14 +34,12 @@ class ActiveOrders extends StatelessWidget {
                   child: InkWell(
                     onTap: () {
                       bloc.retrieveOrder(
-                        savedOrders[i].orderName,
-                        savedOrders[i].paymentType,
-                        savedOrders[i].orderDetail,
-                        savedOrders[i].subTotal,
-                        savedOrders[i].discount,
-                        savedOrders[i].tax,
-                        savedOrders[i].total,
-                      );
+                          savedOrders[i].orderName,
+                          savedOrders[i].paymentType,
+                          savedOrders[i].orderDetail,
+                          savedOrders[i].discount,
+                          savedOrders[i].tax,
+                          Color(savedOrders[i].orderColor));
 
                       DatabaseService().deleteOrder(savedOrders[i].id);
                     },

@@ -390,7 +390,8 @@ class DatabaseService {
       'Ingresos': 0,
       'Egresos': 0,
       'Monto al Cierre': 0,
-      'Ventas por Medio': []
+      'Ventas por Medio': [],
+      'Detalle de Ingresos y Egresos': []
     });
   }
 
@@ -405,24 +406,44 @@ class DatabaseService {
   }
 
   //Update Cash Register (Inflows/Outflows)
-  Future updateCashRegister(registerDate, String transactionType,
-      double transactionAmount, double totalDailyTransactions) async {
+  Future updateCashRegister(
+      registerDate,
+      String transactionType,
+      double transactionAmount,
+      double totalDailyTransactions,
+      Map transactionDetails) async {
     DateTime date = DateTime.parse(registerDate);
 
     var year = date.year.toString();
     var month = date.month.toString();
 
-    return await FirebaseFirestore.instance
-        .collection('ERP')
-        .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
-        .collection(year)
-        .doc(month)
-        .collection('Daily')
-        .doc('$registerDate')
-        .update({
-      'Transacciones del Día': totalDailyTransactions,
-      transactionType: transactionAmount,
-    });
+    if (transactionDetails.isEmpty) {
+      return await FirebaseFirestore.instance
+          .collection('ERP')
+          .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
+          .collection(year)
+          .doc(month)
+          .collection('Daily')
+          .doc('$registerDate')
+          .update({
+        'Transacciones del Día': totalDailyTransactions,
+        transactionType: transactionAmount
+      });
+    } else {
+      return await FirebaseFirestore.instance
+          .collection('ERP')
+          .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
+          .collection(year)
+          .doc(month)
+          .collection('Daily')
+          .doc('$registerDate')
+          .update({
+        'Transacciones del Día': totalDailyTransactions,
+        transactionType: transactionAmount,
+        'Detalle de Ingresos y Egresos':
+            FieldValue.arrayUnion([transactionDetails])
+      });
+    }
   }
 
   //Update Cash Register (Inflows/Outflows)
