@@ -9,7 +9,7 @@ class OpenCashRegisterDialog extends StatefulWidget {
 
 class _OpenCashRegisterDialogState extends State<OpenCashRegisterDialog> {
   String name;
-  int initialAmount;
+  int initialAmount = 0;
   final controller = PageController(initialPage: 0);
   final int totalPages = 2;
 

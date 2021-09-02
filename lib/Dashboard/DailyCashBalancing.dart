@@ -37,10 +37,13 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
     );
   }
 
+  List<DailyTransactions> dailyTransactionsList = [];
+
   @override
   Widget build(BuildContext context) {
     final registerStatus = Provider.of<CashRegister>(context);
-    final dailyTransactionsList = Provider.of<List<DailyTransactions>>(context);
+    final dailyTransactionsListOrigina =
+        Provider.of<List<DailyTransactions>>(context);
     final dailyTransactions = Provider.of<DailyTransactions>(context);
 
     if (registerStatus == null || dailyTransactionsList == null) {
@@ -124,6 +127,8 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
         ],
       );
     }
+
+    dailyTransactionsList = dailyTransactionsListOrigina.reversed.toList();
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,

@@ -4,6 +4,7 @@ import 'package:denario/Models/DailyCash.dart';
 import 'package:denario/Models/Expenses.dart';
 import 'package:denario/Models/Mapping.dart';
 import 'package:denario/Models/Products.dart';
+import 'package:denario/Models/Sales.dart';
 import 'package:denario/Models/SavedOrders.dart';
 
 class DatabaseService {
@@ -27,9 +28,17 @@ class DatabaseService {
           category: doc.data()['Category'] ?? 0,
           image: doc.data()['Image'] ?? '',
           description: doc.data()['Description'] ?? '',
-          options: doc.data()['Options'] ?? [],
+          priceOptions: (doc.data()['Price Options'] == null)
+              ? []
+              : doc.data()['Price Options'].map<PriceOptions>((item) {
+                  return PriceOptions(
+                    item['Option'] ?? '',
+                    item['Price'] ?? 0,
+                  );
+                }).toList(),
           available: doc.data()['Available'] ?? false,
           milkOptions: doc.data()['MilkOptions'] ?? false,
+          productID: doc.id,
         );
       }).toList();
     } catch (e) {
@@ -44,6 +53,13 @@ class DatabaseService {
         .where('Category', isEqualTo: category)
         .snapshots()
         .map(_productListFromSnapshot);
+  }
+
+  //Make Product Availble/Unavailable
+  Future updateProductAvailability(String productID, bool available) async {
+    return await menu.doc(productID).update({
+      'Available': available,
+    });
   }
 
   // Product List from snapshot
@@ -586,5 +602,56 @@ class DatabaseService {
         .collection('Daily')
         .snapshots()
         .map(_dailyTransactionsListFromSnapshot);
+  }
+
+  ///////////////////////// Sales Data from Firestore //////////////////////////
+
+  // Sales List from snapshot
+  List<Sales> _salesFromSnapshot(QuerySnapshot snapshot) {
+    try {
+      return snapshot.docs.map((doc) {
+        return Sales(
+          account: doc.data()['Account'] ?? '',
+          date: doc.data()['Date'].toDate() ?? DateTime.now(),
+          discount: doc.data()['Discount'] ?? 0,
+          tax: doc.data()['IVA'] ?? 0,
+          soldItems: doc.data()['Items'].map<SoldItems>((item) {
+                return SoldItems(
+                  product: item['Name'] ?? '',
+                  category: item['Category'] ?? '',
+                  price: item['Price'] ?? 0,
+                  qty: item['Quantity'] ?? 0,
+                  total: item['Total Price'] ?? 0,
+                );
+              }).toList() ??
+              [],
+          orderName: doc.data()['Order Name'] ?? '',
+          //orderID: doc.data()['Order'] ?? '',
+          subTotal: doc.data()['Subtotal'] ?? 0,
+          total: doc.data()['Total'] ?? 0,
+          paymentType: doc.data()['Payment Type'] ?? '',
+        );
+      }).toList();
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  // Sales Stream
+  Stream<List<Sales>> salesList() async* {
+    var year = DateTime.now().year.toString();
+    var month = DateTime.now().month.toString();
+
+    yield* FirebaseFirestore.instance
+        .collection('ERP')
+        .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
+        .collection(year)
+        .doc(month)
+        .collection('Sales')
+        .where('Date',
+            isGreaterThan: DateTime.now().subtract(Duration(days: 1)))
+        .snapshots()
+        .map(_salesFromSnapshot);
   }
 }

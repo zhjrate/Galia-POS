@@ -67,7 +67,9 @@ class _ExpenseInputState extends State<ExpenseInput> {
                   costType,
                   selectedVendor,
                   selectedAccount,
-                  selectedCategory,
+                  (costType == 'Costo de Ventas')
+                      ? 'Costos de $selectedCategory'
+                      : selectedCategory,
                   expenseDescription,
                   qty,
                   price,

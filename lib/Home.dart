@@ -1,4 +1,5 @@
 import 'package:denario/Backend/DatabaseService.dart';
+import 'package:denario/Backend/auth.dart';
 import 'package:denario/Home_Desk.dart';
 import 'package:denario/Home_Mobile.dart';
 import 'package:denario/Models/Mapping.dart';

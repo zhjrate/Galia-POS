@@ -1,8 +1,11 @@
 import 'package:denario/Backend/DatabaseService.dart';
+import 'package:denario/Backend/auth.dart';
 import 'package:denario/Dashboard/DailyDesk.dart';
 import 'package:denario/Expenses/ExpensesDesk.dart';
 import 'package:denario/Models/DailyCash.dart';
 import 'package:denario/PnL/PnlDesk.dart';
+import 'package:denario/Wrapper.dart';
+import 'package:denario/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,11 +17,14 @@ class HomeDesk extends StatefulWidget {
 }
 
 class _HomeDeskState extends State<HomeDesk> {
+  final _auth = AuthService();
   int pageIndex = 0;
 
   final tabs = [
     POSDesk(),
-    DailyDesk(),
+    Navigator(onGenerateRoute: (routeSettings) {
+      return MaterialPageRoute(builder: (context) => DailyDesk());
+    }),
     ExpensesDesk(),
     PnlDesk(),
   ];
@@ -80,24 +86,32 @@ class _HomeDeskState extends State<HomeDesk> {
                         image: AssetImage('images/Denario Tag.png'))),
               ),
             ),
-            // actions: [
-            //   Row(
-            //     children: [
-            //       //User Image
-            //       Container(
-            //         height: 30,
-            //         width: 30,
-            //         decoration: BoxDecoration(
-            //             shape: BoxShape.circle, color: Colors.grey),
-            //       ),
-            //       SizedBox(width: 8),
-            //       //Logout
-            //       FlatButton(
-            //           child: Text('Salir de mi cuenta'), onPressed: () {}),
-            //       SizedBox(width: 8),
-            //     ],
-            //   )
-            // ],
+            actions: [
+              Row(
+                children: [
+                  //User Image
+                  Container(
+                    height: 30,
+                    width: 30,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle, color: Colors.grey),
+                  ),
+                  SizedBox(width: 8),
+                  //Logout
+                  TextButton(
+                      onPressed: () async {
+                        await _auth.signOut();
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Wrapper()));
+                      },
+                      child: Text(
+                        'Salir',
+                        style: TextStyle(color: Colors.grey),
+                      )),
+                  SizedBox(width: 8),
+                ],
+              )
+            ],
           ),
           body: Container(
             height: double.infinity,

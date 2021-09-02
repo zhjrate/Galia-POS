@@ -1,6 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:denario/Backend/DatabaseService.dart';
 import 'package:denario/Dashboard/DailySalesGraph.dart';
+import 'package:denario/Dashboard/SalesDetailsView.dart';
 import 'package:denario/Models/DailyCash.dart';
+import 'package:denario/Models/Sales.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -72,12 +75,35 @@ class DailySales extends StatelessWidget {
                     //Title
                     Container(
                       width: double.infinity,
-                      child: Text(
-                        'Ventas',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18),
-                        textAlign: TextAlign.start,
-                      ),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            //Texto
+                            Text(
+                              'Ventas',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
+                              textAlign: TextAlign.start,
+                            ),
+                            Spacer(),
+                            IconButton(
+                                onPressed: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            MultiProvider(providers: [
+                                              StreamProvider<List<Sales>>.value(
+                                                  initialData: null,
+                                                  value: DatabaseService()
+                                                      .salesList())
+                                            ], child: SalesDetailsView()))),
+                                icon: Icon(
+                                  Icons.search,
+                                  color: Colors.black,
+                                  size: 24,
+                                ))
+                          ]),
                     ),
                     SizedBox(height: 15),
                     //Amount

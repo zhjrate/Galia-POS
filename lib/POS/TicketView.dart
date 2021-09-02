@@ -30,8 +30,6 @@ class _TicketViewState extends State<TicketView> {
   double total = 0;
   Color color = Colors.white;
 
-  String paymentType = 'Efectivo';
-
   void clearVariables() {
     bloc.removeAllFromCart();
     _controller.clear();
@@ -39,7 +37,6 @@ class _TicketViewState extends State<TicketView> {
     setState(() {
       discount = 0;
       tax = 0;
-      paymentType = 'Efectivo';
     });
   }
 
@@ -130,7 +127,6 @@ class _TicketViewState extends State<TicketView> {
                               setState(() {
                                 discount = 0;
                                 tax = 0;
-                                paymentType = 'Efectivo';
                                 orderCategories = {};
                               });
                             },
@@ -218,397 +214,6 @@ class _TicketViewState extends State<TicketView> {
                             }),
                       ),
                     ),
-                    Divider(thickness: 0.5, indent: 0, endIndent: 0),
-                    //Subtotal
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                              constraints: BoxConstraints(maxWidth: 150),
-                              child: Text('Subtotal:',
-                                  style: TextStyle(fontSize: 11))),
-                          Spacer(),
-                          Text('\$$subTotal', style: TextStyle(fontSize: 11)),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    //Tax
-                    InkWell(
-                      hoverColor: Colors.grey,
-                      onTap: () => showDialog(
-                          context: context,
-                          builder: (context) {
-                            return Dialog(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15.0)),
-                              child: Container(
-                                height: 200,
-                                width: 250,
-                                child: Padding(
-                                  padding:
-                                      EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        alignment: Alignment(1.0, 0.0),
-                                        child: IconButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context),
-                                            icon: Icon(Icons.close),
-                                            iconSize: 20.0),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 15.0, right: 5),
-                                        child: Text(
-                                          "IVA",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 35,
-                                      ),
-                                      Container(
-                                        width: double.infinity,
-                                        alignment: Alignment.center,
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            //Exento
-                                            Container(
-                                              height: 35.0,
-                                              width: 100,
-                                              child: RaisedButton(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    tax = 0;
-                                                    bloc.removeTaxAmount();
-                                                  });
-                                                  Navigator.pop(context);
-                                                },
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            25)),
-                                                padding: EdgeInsets.all(0.0),
-                                                child: Ink(
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.black,
-                                                    border: Border.all(
-                                                        color: Theme.of(context)
-                                                            .accentColor,
-                                                        width: 0.8),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            25),
-                                                  ),
-                                                  child: Container(
-                                                    constraints: BoxConstraints(
-                                                        maxWidth: 200.0,
-                                                        minHeight: 50.0),
-                                                    alignment: Alignment.center,
-                                                    child: Text(
-                                                      "Exento",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: Colors.white),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(width: 20),
-                                            //21
-                                            Container(
-                                              height: 35.0,
-                                              width: 100,
-                                              child: RaisedButton(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    tax = 0.21;
-                                                    bloc.setTaxAmount(tax);
-                                                  });
-                                                  Navigator.pop(context);
-                                                },
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            25)),
-                                                padding: EdgeInsets.all(0.0),
-                                                child: Ink(
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.black,
-                                                    border: Border.all(
-                                                        color: Theme.of(context)
-                                                            .accentColor,
-                                                        width: 0.8),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            25),
-                                                  ),
-                                                  child: Container(
-                                                    constraints: BoxConstraints(
-                                                        maxWidth: 200.0,
-                                                        minHeight: 50.0),
-                                                    alignment: Alignment.center,
-                                                    child: Text(
-                                                      "21%",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: Colors.white),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          }),
-                      child: Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              constraints: BoxConstraints(maxWidth: 150),
-                              child:
-                                  Text('IVA:', style: TextStyle(fontSize: 11)),
-                            ),
-                            Spacer(),
-                            Text('\$${(subTotal * tax).toStringAsFixed(1)}',
-                                style: TextStyle(fontSize: 11)),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    //Discounts
-                    InkWell(
-                      hoverColor: Colors.grey,
-                      onTap: () => showDialog(
-                          context: context,
-                          builder: (context) {
-                            return Dialog(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15.0)),
-                              child: Container(
-                                height: 250,
-                                width: 250,
-                                child: Padding(
-                                  padding:
-                                      EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        alignment: Alignment(1.0, 0.0),
-                                        child: IconButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context),
-                                            icon: Icon(Icons.close),
-                                            iconSize: 20.0),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 15.0, right: 5),
-                                        child: Text(
-                                          "Aplica un descuento",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 20,
-                                      ),
-                                      Container(
-                                        width: 70,
-                                        child: Center(
-                                          child: TextFormField(
-                                            autofocus: true,
-                                            controller: _discountTextController,
-                                            inputFormatters: [
-                                              FilteringTextInputFormatter
-                                                  .digitsOnly
-                                            ],
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.w300),
-                                            textAlign: TextAlign.center,
-                                            keyboardType: TextInputType.number,
-                                            cursorColor:
-                                                Theme.of(context).accentColor,
-                                            decoration:
-                                                InputDecoration.collapsed(
-                                              hintText: '\$10',
-                                              hintStyle: TextStyle(
-                                                  color: Colors.grey.shade700),
-                                            ),
-                                            onChanged: (val) {
-                                              if (val == null || val == '') {
-                                                setState(() {
-                                                  discount = 0;
-                                                });
-                                              } else {
-                                                setState(() {
-                                                  discount =
-                                                      double.tryParse(val);
-                                                  bloc.setDiscountAmount(
-                                                      discount);
-                                                });
-                                              }
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 20,
-                                      ),
-                                      Container(
-                                        width: double.infinity,
-                                        child: RaisedButton(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                          ),
-                                          color: Colors.black,
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Center(
-                                              child: Text('Guardar',
-                                                  style: TextStyle(
-                                                      color: Colors.white))),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          }),
-                      child: Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              constraints: BoxConstraints(maxWidth: 150),
-                              child: Text('Descuetos:',
-                                  style: TextStyle(fontSize: 11)),
-                            ),
-                            Spacer(),
-                            Text('\$$discount', style: TextStyle(fontSize: 11)),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    //Total
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            constraints: BoxConstraints(maxWidth: 150),
-                            child: Text('TOTAL',
-                                style: TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.bold)),
-                          ),
-                          Spacer(),
-                          Text('\$$total',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    //Payment type
-                    Container(
-                      height: 50,
-                      width: double.infinity,
-                      child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: registerStatus.paymentTypes.length,
-                          itemBuilder: (context, i) {
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 5.0),
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    paymentType =
-                                        registerStatus.paymentTypes[i]['Type'];
-                                  });
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Container(
-                                    height: 35,
-                                    width: 35,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(8)),
-                                        color: Colors.white,
-                                        border: Border.all(
-                                            color: (paymentType ==
-                                                    registerStatus
-                                                            .paymentTypes[i]
-                                                        ['Type'])
-                                                ? Colors.green
-                                                : Colors.white10,
-                                            width: 2),
-                                        image: DecorationImage(
-                                          image: NetworkImage(registerStatus
-                                              .paymentTypes[i]['Image']),
-                                          fit: BoxFit.cover,
-                                        )),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }),
-                    ),
                     SizedBox(height: 15),
                     //Actions (Save, Process)
                     Row(
@@ -617,13 +222,24 @@ class _TicketViewState extends State<TicketView> {
                       children: [
                         //Guardar
                         Container(
-                          width: 50,
                           height: 40,
-                          child: RaisedButton(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
+                          width: 40,
+                          child: OutlinedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  Colors.white70),
+                              overlayColor:
+                                  MaterialStateProperty.resolveWith<Color>(
+                                (Set<MaterialState> states) {
+                                  if (states.contains(MaterialState.hovered))
+                                    return Colors.grey.shade300;
+                                  if (states.contains(MaterialState.focused) ||
+                                      states.contains(MaterialState.pressed))
+                                    return Colors.white;
+                                  return null; // Defer to the widget's default.
+                                },
+                              ),
                             ),
-                            color: Colors.white70,
                             onPressed: () {
                               //Save Order
                               DatabaseService().saveOrder(
@@ -634,7 +250,7 @@ class _TicketViewState extends State<TicketView> {
                                 total,
                                 orderDetail,
                                 orderName,
-                                paymentType,
+                                '',
                                 (color == Colors.white)
                                     ? Colors
                                         .primaries[Random()
@@ -650,10 +266,160 @@ class _TicketViewState extends State<TicketView> {
                                 child: Icon(
                               Icons.save,
                               color: Colors.black,
+                              size: 18,
                             )),
                           ),
                         ),
-                        SizedBox(width: 15),
+                        SizedBox(width: 10),
+                        //Discount
+                        Container(
+                          height: 40,
+                          width: 40,
+                          child: OutlinedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  Colors.white70),
+                              overlayColor:
+                                  MaterialStateProperty.resolveWith<Color>(
+                                (Set<MaterialState> states) {
+                                  if (states.contains(MaterialState.hovered))
+                                    return Colors.grey.shade300;
+                                  if (states.contains(MaterialState.focused) ||
+                                      states.contains(MaterialState.pressed))
+                                    return Colors.white;
+                                  return null; // Defer to the widget's default.
+                                },
+                              ),
+                            ),
+                            onPressed: () => showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return Dialog(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(15.0)),
+                                    child: Container(
+                                      height: 250,
+                                      width: 250,
+                                      child: Padding(
+                                        padding: EdgeInsets.fromLTRB(
+                                            20.0, 10.0, 20.0, 10),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              alignment: Alignment(1.0, 0.0),
+                                              child: IconButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(context),
+                                                  icon: Icon(Icons.close),
+                                                  iconSize: 20.0),
+                                            ),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 15.0, right: 5),
+                                              child: Text(
+                                                "Aplica un descuento",
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 16.0,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 20,
+                                            ),
+                                            Container(
+                                              width: 70,
+                                              child: Center(
+                                                child: TextFormField(
+                                                  autofocus: true,
+                                                  controller:
+                                                      _discountTextController,
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly
+                                                  ],
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.w300),
+                                                  textAlign: TextAlign.center,
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  cursorColor: Theme.of(context)
+                                                      .accentColor,
+                                                  decoration:
+                                                      InputDecoration.collapsed(
+                                                    hintText: '\$10',
+                                                    hintStyle: TextStyle(
+                                                        color: Colors
+                                                            .grey.shade700),
+                                                  ),
+                                                  onChanged: (val) {
+                                                    if (val == null ||
+                                                        val == '') {
+                                                      setState(() {
+                                                        discount = 0;
+                                                      });
+                                                    } else {
+                                                      setState(() {
+                                                        discount =
+                                                            double.tryParse(
+                                                                val);
+                                                        bloc.setDiscountAmount(
+                                                            discount);
+                                                      });
+                                                    }
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 20,
+                                            ),
+                                            Container(
+                                              width: double.infinity,
+                                              child: RaisedButton(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                ),
+                                                color: Colors.black,
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Center(
+                                                    child: Text('Guardar',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white))),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }),
+                            child: Center(
+                                child: Icon(
+                              Icons.local_offer,
+                              color: Colors.black,
+                              size: 18,
+                            )),
+                          ),
+                        ),
+                        SizedBox(width: 10),
                         //Pagar
                         Expanded(
                             child: Container(
@@ -679,16 +445,17 @@ class _TicketViewState extends State<TicketView> {
                                           discount: discount,
                                           orderDetail: orderDetail,
                                           orderName: orderName,
-                                          paymentType: paymentType,
                                           subTotal: subTotal,
                                           tax: tax,
                                           controller: _controller,
-                                          clearVariables: clearVariables),
+                                          clearVariables: clearVariables,
+                                          paymentTypes:
+                                              registerStatus.paymentTypes),
                                     );
                                   });
                             },
                             child: Center(
-                                child: Text('Ordenar',
+                                child: Text('Pagar  \$ $total',
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.w400))),
