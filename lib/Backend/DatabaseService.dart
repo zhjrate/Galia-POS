@@ -6,18 +6,9 @@ import 'package:denario/Models/Mapping.dart';
 import 'package:denario/Models/Products.dart';
 import 'package:denario/Models/Sales.dart';
 import 'package:denario/Models/SavedOrders.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class DatabaseService {
-  //Collection reference products
-  final CollectionReference menu = FirebaseFirestore.instance
-      .collection('Products')
-      .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
-      .collection('Menu');
-  final CollectionReference masterData = FirebaseFirestore.instance
-      .collection('ERP')
-      .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
-      .collection('Master Data');
-
   // Product List from snapshot
   List<Products> _productListFromSnapshot(QuerySnapshot snapshot) {
     try {
@@ -49,7 +40,13 @@ class DatabaseService {
 
   // Product Stream
   Stream<List<Products>> productList(String category) async* {
-    yield* menu
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
+
+    yield* FirebaseFirestore.instance
+        .collection('Products')
+        .doc(uid)
+        .collection('Menu')
         .where('Category', isEqualTo: category)
         .snapshots()
         .map(_productListFromSnapshot);
@@ -57,7 +54,14 @@ class DatabaseService {
 
   //Make Product Availble/Unavailable
   Future updateProductAvailability(String productID, bool available) async {
-    return await menu.doc(productID).update({
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
+    return await FirebaseFirestore.instance
+        .collection('Products')
+        .doc(uid)
+        .collection('Menu')
+        .doc(productID)
+        .update({
       'Available': available,
     });
   }
@@ -86,9 +90,12 @@ class DatabaseService {
 
   // Product Stream
   Stream<List<SavedOrders>> orderList() async* {
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
+
     yield* FirebaseFirestore.instance
         .collection('ERP')
-        .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
+        .doc(uid)
         .collection('Saved')
         .snapshots()
         .map(_savedOrderListFromSnapshot);
@@ -99,12 +106,12 @@ class DatabaseService {
   //Create Order
   Future createOrder(String year, String month, String transactionID, subTotal,
       discount, tax, total, orderDetail, orderName, paymentType) async {
-    // final User user = FirebaseAuth.instance.currentUser;
-    // final String uid = user.uid.toString();
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
 
     return await FirebaseFirestore.instance
         .collection('ERP')
-        .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
+        .doc(uid)
         .collection(year)
         .doc(month)
         .collection('Sales')
@@ -127,17 +134,20 @@ class DatabaseService {
     var year = DateTime.now().year.toString();
     var month = DateTime.now().month.toString();
 
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
+
     try {
       return await FirebaseFirestore.instance
           .collection('ERP')
-          .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
+          .doc(uid)
           .collection(year)
           .doc(month)
           .update(salesByCategory);
     } catch (e) {
       return await FirebaseFirestore.instance
           .collection('ERP')
-          .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
+          .doc(uid)
           .collection(year)
           .doc(month)
           .set(salesByCategory);
@@ -147,12 +157,12 @@ class DatabaseService {
   //Save Order
   Future saveOrder(String transactionID, subTotal, discount, tax, total,
       orderDetail, orderName, paymentType, orderColor) async {
-    // final User user = FirebaseAuth.instance.currentUser;
-    // final String uid = user.uid.toString();
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
 
     return await FirebaseFirestore.instance
         .collection('ERP')
-        .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
+        .doc(uid)
         .collection('Saved')
         .doc(transactionID)
         .set({
@@ -169,11 +179,12 @@ class DatabaseService {
   }
 
   //Delete Saved Order
-
   Future deleteOrder(orderDoc) async {
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
     return await FirebaseFirestore.instance
         .collection('ERP')
-        .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
+        .doc(uid)
         .collection('Saved')
         .doc(orderDoc)
         .delete();
@@ -196,7 +207,12 @@ class DatabaseService {
 
   //High Level Mapping Stream
   Stream<HighLevelMapping> highLevelMapping() async* {
-    yield* masterData
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
+    yield* FirebaseFirestore.instance
+        .collection('ERP')
+        .doc(uid)
+        .collection('Master Data')
         .doc('High Level Mapping')
         .snapshots()
         .map(_highLevelMappingFromSnapshot);
@@ -224,7 +240,12 @@ class DatabaseService {
 
   //Categories Stream (Costo de Ventas)
   Stream<CategoryList> get categoriesList async* {
-    yield* masterData
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
+    yield* FirebaseFirestore.instance
+        .collection('ERP')
+        .doc(uid)
+        .collection('Master Data')
         .doc('Categories')
         .snapshots()
         .map(_categoriesFromSnapshot);
@@ -266,7 +287,12 @@ class DatabaseService {
 
   //Categories Stream
   Stream<AccountsList> get accountsList async* {
-    yield* masterData
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
+    yield* FirebaseFirestore.instance
+        .collection('ERP')
+        .doc(uid)
+        .collection('Master Data')
         .doc('Account Mapping')
         .snapshots()
         .map(_accountsFromSnapshot);
@@ -279,10 +305,11 @@ class DatabaseService {
     var orderNo = DateTime.now().toString();
     var year = DateTime.now().year.toString();
     var month = DateTime.now().month.toString();
-
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
     return await FirebaseFirestore.instance
         .collection('ERP')
-        .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
+        .doc(uid)
         .collection(year)
         .doc(month)
         .collection('Expenses')
@@ -306,11 +333,13 @@ class DatabaseService {
       amountAccount, amountCategory) async {
     var year = DateTime.now().year.toString();
     var month = DateTime.now().month.toString();
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
     try {
       if (account != "" && account != null) {
         return await FirebaseFirestore.instance
             .collection('ERP')
-            .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
+            .doc(uid)
             .collection(year)
             .doc(month)
             .update({
@@ -321,7 +350,7 @@ class DatabaseService {
       } else {
         return await FirebaseFirestore.instance
             .collection('ERP')
-            .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
+            .doc(uid)
             .collection(year)
             .doc(month)
             .update({
@@ -332,7 +361,7 @@ class DatabaseService {
     } catch (e) {
       return await FirebaseFirestore.instance
           .collection('ERP')
-          .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
+          .doc(uid)
           .collection(year)
           .doc(month)
           .set({
@@ -370,10 +399,12 @@ class DatabaseService {
   Stream<List<Expenses>> expenseList() async* {
     var year = DateTime.now().year.toString();
     var month = DateTime.now().month.toString();
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
 
     yield* FirebaseFirestore.instance
         .collection('ERP')
-        .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
+        .doc(uid)
         .collection(year)
         .doc(month)
         .collection('Expenses')
@@ -384,13 +415,15 @@ class DatabaseService {
   /////////////////////////////////Cash Register ///////////////////////////
 
   //Open Cash Register
-  Future openCashRegister(user, initialAmount, DateTime date) async {
+  Future openCashRegister(userName, initialAmount, DateTime date) async {
     var year = DateTime.now().year.toString();
     var month = DateTime.now().month.toString();
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
 
     return await FirebaseFirestore.instance
         .collection('ERP')
-        .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
+        .doc(uid)
         .collection(year)
         .doc(month)
         .collection('Daily')
@@ -398,7 +431,7 @@ class DatabaseService {
         .set({
       'Fecha Apertura': date,
       'Fecha Cierre': date,
-      'Usuario': user,
+      'Usuario': userName,
       'Monto Inicial': initialAmount,
       'Abierto': true,
       'Transacciones del Día': 0,
@@ -412,10 +445,9 @@ class DatabaseService {
   }
 
   Future recordOpenedRegister(bool openRegister, String registerID) async {
-    return await FirebaseFirestore.instance
-        .collection('ERP')
-        .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
-        .update({
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
+    return await FirebaseFirestore.instance.collection('ERP').doc(uid).update({
       'Caja Abierta': openRegister,
       'Caja Actual': registerID,
     });
@@ -432,11 +464,13 @@ class DatabaseService {
 
     var year = date.year.toString();
     var month = date.month.toString();
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
 
     if (transactionDetails.isEmpty) {
       return await FirebaseFirestore.instance
           .collection('ERP')
-          .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
+          .doc(uid)
           .collection(year)
           .doc(month)
           .collection('Daily')
@@ -448,7 +482,7 @@ class DatabaseService {
     } else {
       return await FirebaseFirestore.instance
           .collection('ERP')
-          .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
+          .doc(uid)
           .collection(year)
           .doc(month)
           .collection('Daily')
@@ -466,13 +500,15 @@ class DatabaseService {
   Future updateSalesinCashRegister(registerDate, double totalSales,
       List salesByMedium, double totalDailyTransactions) async {
     DateTime date = DateTime.parse(registerDate);
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
 
     var year = date.year.toString();
     var month = date.month.toString();
 
     return await FirebaseFirestore.instance
         .collection('ERP')
-        .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
+        .doc(uid)
         .collection(year)
         .doc(month)
         .collection('Daily')
@@ -490,10 +526,12 @@ class DatabaseService {
 
     var year = date.year.toString();
     var month = date.month.toString();
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
 
     return await FirebaseFirestore.instance
         .collection('ERP')
-        .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
+        .doc(uid)
         .collection(year)
         .doc(month)
         .collection('Daily')
@@ -521,9 +559,11 @@ class DatabaseService {
 
   //Categories Stream (Costo de Ventas)
   Stream<CashRegister> get cashRegisterStatus async* {
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
     yield* FirebaseFirestore.instance
         .collection('ERP')
-        .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
+        .doc(uid)
         .snapshots()
         .map(_cashRegisterFromSnapshot);
   }
@@ -553,10 +593,12 @@ class DatabaseService {
   Stream<DailyTransactions> dailyTransactions(String openRegister) async* {
     var year = DateTime.now().year.toString();
     var month = DateTime.now().month.toString();
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
 
     yield* FirebaseFirestore.instance
         .collection('ERP')
-        .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
+        .doc(uid)
         .collection(year)
         .doc(month)
         .collection('Daily')
@@ -593,10 +635,12 @@ class DatabaseService {
   Stream<List<DailyTransactions>> dailyTransactionsList() async* {
     var year = DateTime.now().year.toString();
     var month = DateTime.now().month.toString();
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
 
     yield* FirebaseFirestore.instance
         .collection('ERP')
-        .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
+        .doc(uid)
         .collection(year)
         .doc(month)
         .collection('Daily')
@@ -642,10 +686,12 @@ class DatabaseService {
   Stream<List<Sales>> salesList() async* {
     var year = DateTime.now().year.toString();
     var month = DateTime.now().month.toString();
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
 
     yield* FirebaseFirestore.instance
         .collection('ERP')
-        .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
+        .doc(uid)
         .collection(year)
         .doc(month)
         .collection('Sales')

@@ -21,7 +21,7 @@ class _WrapperState extends State<Wrapper> {
 
   @override
   Widget build(BuildContext context) {
-    if (user == null) {
+    if (FirebaseAuth.instance.currentUser == null && user == null) {
       return LogIn();
     } else {
       return Home();

@@ -43,7 +43,7 @@ class _LogInState extends State<LogIn> {
                 body: Center(
               child: Container(
                 width: 400,
-                constraints: BoxConstraints(minHeight: 300, maxHeight: 500),
+                constraints: BoxConstraints(minHeight: 300, maxHeight: 400),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(25),
@@ -76,22 +76,20 @@ class _LogInState extends State<LogIn> {
                         style: TextStyle(color: Colors.black, fontSize: 14),
                         validator: (val) =>
                             val.isEmpty ? "Agrega un email" : null,
-                        cursorColor: Theme.of(context).accentColor,
+                        cursorColor: Colors.grey,
                         focusNode: _emailNode,
                         textInputAction: TextInputAction.next,
                         decoration: InputDecoration(
                             hintText: "email",
-                            hintStyle:
-                                TextStyle(color: Theme.of(context).canvasColor),
+                            hintStyle: TextStyle(color: Colors.grey.shade400),
                             errorStyle: TextStyle(
                                 color: Colors.redAccent[700], fontSize: 12),
                             prefixIcon: Icon(
                               Icons.person_outline,
-                              color: Theme.of(context).accentColor,
+                              color: Colors.grey,
                             ),
                             focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Theme.of(context).accentColor))),
+                                borderSide: BorderSide(color: Colors.grey))),
                         onFieldSubmitted: (term) {
                           _emailNode.unfocus();
                           FocusScope.of(context).requestFocus(_passwordNode);
@@ -108,21 +106,19 @@ class _LogInState extends State<LogIn> {
                         validator: (val) => val.length < 6
                             ? "La contraseña debe tener al menos 6 caracteres"
                             : null,
-                        cursorColor: Theme.of(context).accentColor,
+                        cursorColor: Colors.grey,
                         focusNode: _passwordNode,
                         decoration: InputDecoration(
                             hintText: "contraseña",
-                            hintStyle:
-                                TextStyle(color: Theme.of(context).canvasColor),
+                            hintStyle: TextStyle(color: Colors.grey.shade400),
                             errorStyle: TextStyle(
                                 color: Colors.redAccent[700], fontSize: 12),
                             prefixIcon: Icon(
                               Icons.lock_outline,
-                              color: Theme.of(context).accentColor,
+                              color: Colors.grey,
                             ),
                             focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Theme.of(context).accentColor))),
+                                borderSide: BorderSide(color: Colors.grey))),
                         obscureText: true,
                         onChanged: (val) {
                           setState(() => password = val);
@@ -131,79 +127,80 @@ class _LogInState extends State<LogIn> {
 
                       ///Button Register
                       SizedBox(height: 50),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          height: 35.0,
-                          child: RaisedButton(
-                            onPressed: () async {
-                              if (_formKey.currentState.validate()) {
-                                //Loading
-                                setState(() => loading = true);
-
-                                try {
-                                  await FirebaseAuth.instance
-                                      .signInWithEmailAndPassword(
-                                          email: email, password: password);
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Wrapper()));
-                                } on FirebaseAuthException catch (e) {
-                                  if (e.code == 'user-not-found') {
-                                    setState(() {
-                                      error =
-                                          'No encontramos el usuario $email. Revisa de nuevo';
-                                      loading = false;
-                                    });
-                                  } else if (e.code == 'wrong-password') {
-                                    setState(() {
-                                      error =
-                                          'Contraseña incorrecta, intenta de nuevo';
-                                      loading = false;
-                                    });
-                                  } else {
-                                    setState(() {
-                                      error = 'Oops.. Algo salió mal';
-                                      loading = false;
-                                    });
-                                  }
-                                } catch (e) {
-                                  setState(() {
-                                    error = 'Oops.. Algo salió mal';
-                                    loading = false;
-                                  });
-                                  // return null;
-                                }
-                              }
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(12.0),
+                          )),
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(Colors.black),
+                          overlayColor:
+                              MaterialStateProperty.resolveWith<Color>(
+                            (Set<MaterialState> states) {
+                              if (states.contains(MaterialState.hovered))
+                                return Colors.grey.shade800;
+                              if (states.contains(MaterialState.focused) ||
+                                  states.contains(MaterialState.pressed))
+                                return Colors.grey.shade500;
+                              ;
+                              return null; // Defer to the widget's default.
                             },
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25)),
-                            padding: EdgeInsets.all(0.0),
-                            child: Ink(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Theme.of(context).accentColor,
-                                    Theme.of(context).primaryColor
-                                  ],
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
-                                ),
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              child: Container(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  "ENTRAR",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white),
-                                ),
-                              ),
-                            ),
+                          ),
+                        ),
+                        onPressed: () async {
+                          print(FirebaseAuth.instance.currentUser);
+                          if (_formKey.currentState.validate()) {
+                            //Loading
+                            setState(() => loading = true);
+
+                            try {
+                              await FirebaseAuth.instance
+                                  .signInWithEmailAndPassword(
+                                      email: email, password: password);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Wrapper()));
+                            } on FirebaseAuthException catch (e) {
+                              if (e.code == 'user-not-found') {
+                                setState(() {
+                                  error =
+                                      'No encontramos el usuario $email. Revisa de nuevo';
+                                  loading = false;
+                                });
+                              } else if (e.code == 'wrong-password') {
+                                setState(() {
+                                  error =
+                                      'Contraseña incorrecta, intenta de nuevo';
+                                  loading = false;
+                                });
+                              } else {
+                                setState(() {
+                                  error = 'Oops.. Algo salió mal';
+                                  loading = false;
+                                });
+                              }
+                            } catch (e) {
+                              setState(() {
+                                error = 'Oops.. Algo salió mal';
+                                loading = false;
+                              });
+                              // return null
+                            }
+                          }
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          alignment: Alignment.center,
+                          child: Text(
+                            "ENTRAR",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white),
                           ),
                         ),
                       ),
