@@ -29,7 +29,7 @@ class DailyDesk extends StatelessWidget {
                               )
                             ],
                           ),
-                          height: 650,
+                          height: MediaQuery.of(context).size.height * 0.8,
                           child: DailyCashBalancing()),
                     ),
                     SizedBox(width: 15),
@@ -57,7 +57,7 @@ class DailyDesk extends StatelessWidget {
                               )
                             ],
                           ),
-                          height: 650,
+                          height: MediaQuery.of(context).size.height * 0.8,
                           child: DailyCashBalancing()),
                     ),
                     SizedBox(height: 15),
