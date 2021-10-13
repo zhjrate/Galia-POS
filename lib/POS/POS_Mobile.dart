@@ -33,6 +33,8 @@ class _POSMobileState extends State<POSMobile> {
 
   @override
   Widget build(BuildContext context) {
+    //final categoriesProvider = Provider.of<CategoryList>(context);
+
     return Scaffold(
       key: _scaffoldKeyMobile,
       endDrawer: Drawer(

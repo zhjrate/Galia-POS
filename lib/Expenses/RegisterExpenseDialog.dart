@@ -134,6 +134,10 @@ class _RegisterExpenseDialogState extends State<RegisterExpenseDialog> {
             setState(() {
               isChecked = !isChecked;
             });
+
+            if (isChecked) {
+              useEntireAmount = true;
+            }
           },
           child: Center(
               child: Icon(Icons.check,
@@ -297,6 +301,7 @@ class _RegisterExpenseDialogState extends State<RegisterExpenseDialog> {
                                               setState(() =>
                                                   cashRegisterAmount =
                                                       double.parse(val));
+                                              useEntireAmount = false;
                                             },
                                           ),
                                         )

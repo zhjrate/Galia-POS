@@ -2,7 +2,9 @@ import 'package:denario/Backend/DatabaseService.dart';
 import 'package:denario/Backend/auth.dart';
 import 'package:denario/Dashboard/DailyDesk.dart';
 import 'package:denario/Expenses/ExpensesDesk.dart';
+import 'package:denario/Models/Categories.dart';
 import 'package:denario/Models/DailyCash.dart';
+import 'package:denario/Models/Mapping.dart';
 import 'package:denario/PnL/PnlDesk.dart';
 import 'package:denario/Wrapper.dart';
 import 'package:denario/main.dart';
@@ -67,6 +69,10 @@ class _HomeDeskState extends State<HomeDesk> {
 
     return MultiProvider(
       providers: [
+        StreamProvider<HighLevelMapping>.value(
+            initialData: null, value: DatabaseService().highLevelMapping()),
+        StreamProvider<CategoryList>.value(
+            initialData: null, value: DatabaseService().categoriesList),
         StreamProvider<DailyTransactions>.value(
             initialData: null,
             value: DatabaseService()
