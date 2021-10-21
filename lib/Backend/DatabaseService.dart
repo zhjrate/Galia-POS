@@ -228,8 +228,8 @@ class DatabaseService {
         categoriesList: snapshot.data()['Categories'].map<Categories>((item) {
           return Categories(
             category: item['Category'] ?? '',
-            products: item['Products'] ?? [],
-            vendors: item['Vendors'] ?? [],
+            // products: item['Products'] ?? [],
+            // vendors: item['Vendors'] ?? [],
           );
         }).toList(),
       );
@@ -256,37 +256,37 @@ class DatabaseService {
   AccountsList _accountsFromSnapshot(DocumentSnapshot snapshot) {
     try {
       return AccountsList(
-          costodeVentas:
-              snapshot.data()['Costo de Ventas'].map<Categories>((item) {
-            return Categories(
-              category: item['Category'] ?? '',
-              productDescription: item['Description'] ?? '',
-              vendors: item['Vendors'] ?? [],
-            );
-          }).toList(),
-          gastosdeEmpleados:
-              snapshot.data()['Gastos de Empleados'].map<Categories>((item) {
-            return Categories(
-              category: item['Category'] ?? '',
-              productDescription: item['Description'] ?? '',
-              vendors: item['Vendors'] ?? [],
-            );
-          }).toList(),
-          gastosdelLocal:
-              snapshot.data()['Gastos del Local'].map<Categories>((item) {
-            return Categories(
-              category: item['Category'] ?? '',
-              productDescription: item['Description'] ?? '',
-              vendors: item['Vendors'] ?? [],
-            );
-          }).toList(),
-          otrosGastos: snapshot.data()['Otros Gastos'].map<Categories>((item) {
-            return Categories(
-              category: item['Category'] ?? '',
-              productDescription: item['Description'] ?? '',
-              vendors: item['Vendors'] ?? [],
-            );
-          }).toList(),
+          // costodeVentas:
+          //     snapshot.data()['Costo de Ventas'].map<Categories>((item) {
+          //   return Categories(
+          //     category: item['Category'] ?? '',
+          //     productDescription: item['Description'] ?? '',
+          //     vendors: item['Vendors'] ?? [],
+          //   );
+          // }).toList(),
+          // gastosdeEmpleados:
+          //     snapshot.data()['Gastos de Empleados'].map<Categories>((item) {
+          //   return Categories(
+          //     category: item['Category'] ?? '',
+          //     productDescription: item['Description'] ?? '',
+          //     vendors: item['Vendors'] ?? [],
+          //   );
+          // }).toList(),
+          // gastosdelLocal:
+          //     snapshot.data()['Gastos del Local'].map<Categories>((item) {
+          //   return Categories(
+          //     category: item['Category'] ?? '',
+          //     productDescription: item['Description'] ?? '',
+          //     vendors: item['Vendors'] ?? [],
+          //   );
+          // }).toList(),
+          // otrosGastos: snapshot.data()['Otros Gastos'].map<Categories>((item) {
+          //   return Categories(
+          //     category: item['Category'] ?? '',
+          //     productDescription: item['Description'] ?? '',
+          //     vendors: item['Vendors'] ?? [],
+          //   );
+          // }).toList(),
           accountsMapping: snapshot.data()['Account Mapping']);
     } catch (e) {
       print(e);

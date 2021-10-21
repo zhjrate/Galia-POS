@@ -120,16 +120,21 @@ class _ExpenseInputState extends State<ExpenseInput> {
   void clearVariables() {
     setState(() {
       costType = '';
-      selectedCategory = 'Café';
+      selectedCategory = '';
       categoryInt = 0;
       selectedAccount = '';
-      selectedVendor = 'Caxambú';
+      selectedVendor = '';
       categoryList = [];
       categoriesVendors = [];
       expenseDescription = '';
+      dropdownCategories = [];
+      dropdownVendors = [];
 
       costAccount = '';
       accountInt = 0;
+      qty = 1;
+      price = 0;
+      costType = '';
     });
   }
 
@@ -285,6 +290,9 @@ class _ExpenseInputState extends State<ExpenseInput> {
                       onTap: () {
                         setState(() {
                           categoryInt = dropdownCategories.indexOf(x);
+                          if (costType == 'Costo de Ventas') {
+                            selectedAccount = 'Costo de Ventas';
+                          }
                           selectedCategory = dropdownCategories[categoryInt];
 
                           dropdownVendors = accountsProvider

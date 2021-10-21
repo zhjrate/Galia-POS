@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/gestures.dart';
@@ -48,15 +49,13 @@ class _ExpenseSummaryState extends State<ExpenseSummary> {
   Future currentValue() async {
     var year = DateTime.now().year.toString();
     var month = DateTime.now().month.toString();
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
 
     var firestore = FirebaseFirestore.instance;
 
-    var docRef = firestore
-        .collection('ERP')
-        .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
-        .collection(year)
-        .doc(month)
-        .get();
+    var docRef =
+        firestore.collection('ERP').doc(uid).collection(year).doc(month).get();
     return docRef;
   }
 

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:denario/Backend/DatabaseService.dart';
 import 'package:denario/Models/DailyCash.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -47,21 +48,19 @@ class _RegisterExpenseDialogState extends State<RegisterExpenseDialog> {
   double currentCategoryAmount = 0;
   Future currentValuesBuilt;
   bool isChecked;
-  double cashRegisterAmount;
+  double cashRegisterAmount = 0;
   bool useEntireAmount;
 
   Future currentValue() async {
     var year = DateTime.now().year.toString();
     var month = DateTime.now().month.toString();
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
 
     var firestore = FirebaseFirestore.instance;
 
-    var docRef = firestore
-        .collection('ERP')
-        .doc('VTam7iYZhiWiAFs3IVRBaLB5s3m2')
-        .collection(year)
-        .doc(month)
-        .get();
+    var docRef =
+        firestore.collection('ERP').doc(uid).collection(year).doc(month).get();
     return docRef;
   }
 
@@ -137,6 +136,9 @@ class _RegisterExpenseDialogState extends State<RegisterExpenseDialog> {
 
             if (isChecked) {
               useEntireAmount = true;
+              setState(() {
+                cashRegisterAmount = widget.total;
+              });
             }
           },
           child: Center(
@@ -400,9 +402,9 @@ class _RegisterExpenseDialogState extends State<RegisterExpenseDialog> {
                                   'Egresos',
                                   totalTransactionAmount,
                                   totalTransactions, {
-                                'Amount': widget.total,
-                                'Type': 'Gasto',
-                                'Motive': 'Gasto',
+                                'Amount': cashRegisterAmount,
+                                'Type': widget.costType,
+                                'Motive': widget.expenseDescription,
                               });
                             }
 

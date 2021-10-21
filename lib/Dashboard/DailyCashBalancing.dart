@@ -15,6 +15,7 @@ class DailyCashBalancing extends StatefulWidget {
 class _DailyCashBalancingState extends State<DailyCashBalancing> {
   final formatCurrency = new NumberFormat.simpleCurrency();
   int indexOfCashSales = 0;
+  double cashaSales = 0;
   double expectedInRegister = 0;
   Widget closedRegister() {
     return Container(
@@ -137,8 +138,9 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
           dailyTransactions.inflows -
           dailyTransactions.outflows;
     } else {
-      expectedInRegister = dailyTransactions.salesByMedium[indexOfCashSales]
-              ['Amount'] +
+      cashaSales = dailyTransactions.salesByMedium[indexOfCashSales]['Amount'];
+
+      expectedInRegister = cashaSales +
           dailyTransactions.initialAmount +
           dailyTransactions.inflows -
           dailyTransactions.outflows;
@@ -288,7 +290,7 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
                             SizedBox(height: 15),
                             //Sales
                             Text(
-                              'Ventas: ${formatCurrency.format(dailyTransactions.sales)}',
+                              'Ventas en efectivo: ${formatCurrency.format(cashaSales)}',
                               style: TextStyle(fontWeight: FontWeight.w500),
                             ),
                             SizedBox(height: 15),
