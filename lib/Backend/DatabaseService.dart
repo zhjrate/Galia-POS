@@ -6,6 +6,7 @@ import 'package:denario/Models/Mapping.dart';
 import 'package:denario/Models/Products.dart';
 import 'package:denario/Models/Sales.dart';
 import 'package:denario/Models/SavedOrders.dart';
+import 'package:denario/Models/Stats.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class DatabaseService {
@@ -129,6 +130,86 @@ class DatabaseService {
     });
   }
 
+  //Wastage Order
+  Future createWastage(
+    String year,
+    String month,
+    String transactionID,
+    totalCost,
+    totalSale,
+    orderDetail,
+  ) async {
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
+
+    return await FirebaseFirestore.instance
+        .collection('ERP')
+        .doc(uid)
+        .collection(year)
+        .doc(month)
+        .collection('Wastage and Employee Consumption')
+        .doc('Wastage')
+        .collection('History')
+        .doc(transactionID)
+        .set({
+      'Date': DateTime.now(),
+      'Items': orderDetail,
+      'Total Cost': totalCost,
+      'Total Sale': totalSale,
+    });
+  }
+
+  //Save Wastage Details
+  Future saveWastageDetails(String ticketConcept, Map wastageByCategory) async {
+    var year = DateTime.now().year.toString();
+    var month = DateTime.now().month.toString();
+
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
+
+    if (ticketConcept == 'Desperdicios') {
+      try {
+        return await FirebaseFirestore.instance
+            .collection('ERP')
+            .doc(uid)
+            .collection(year)
+            .doc(month)
+            .collection('Wastage and Employee Consumption')
+            .doc('Wastage')
+            .update(wastageByCategory);
+      } catch (e) {
+        return await FirebaseFirestore.instance
+            .collection('ERP')
+            .doc(uid)
+            .collection(year)
+            .doc(month)
+            .collection('Wastage and Employee Consumption')
+            .doc('Wastage')
+            .set(wastageByCategory);
+      }
+    } else if (ticketConcept == 'Consumo de Empleados') {
+      try {
+        return await FirebaseFirestore.instance
+            .collection('ERP')
+            .doc(uid)
+            .collection(year)
+            .doc(month)
+            .collection('Wastage and Employee Consumption')
+            .doc('Employee Consumption')
+            .update(wastageByCategory);
+      } catch (e) {
+        return await FirebaseFirestore.instance
+            .collection('ERP')
+            .doc(uid)
+            .collection(year)
+            .doc(month)
+            .collection('Wastage and Employee Consumption')
+            .doc('Employee Consumption')
+            .set(wastageByCategory);
+      }
+    }
+  }
+
   //Save Account/Category
   Future saveOrderType(Map salesByCategory) async {
     var year = DateTime.now().year.toString();
@@ -151,6 +232,34 @@ class DatabaseService {
           .collection(year)
           .doc(month)
           .set(salesByCategory);
+    }
+  }
+
+  //Save Stats Details
+  Future saveOrderStats(Map orderStats) async {
+    var year = DateTime.now().year.toString();
+    var month = DateTime.now().month.toString();
+
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
+    try {
+      return await FirebaseFirestore.instance
+          .collection('ERP')
+          .doc(uid)
+          .collection(year)
+          .doc(month)
+          .collection('Stats')
+          .doc('Monthly Stats')
+          .update(orderStats);
+    } catch (e) {
+      return await FirebaseFirestore.instance
+          .collection('ERP')
+          .doc(uid)
+          .collection(year)
+          .doc(month)
+          .collection('Stats')
+          .doc('Monthly Stats')
+          .set(orderStats);
     }
   }
 
@@ -294,7 +403,7 @@ class DatabaseService {
     }
   }
 
-  //Categories Stream
+  //Accounts Stream
   Stream<AccountsList> get accountsList async* {
     final User user = FirebaseAuth.instance.currentUser;
     final String uid = user.uid.toString();
@@ -405,9 +514,7 @@ class DatabaseService {
   }
 
   // Expense Stream
-  Stream<List<Expenses>> expenseList() async* {
-    var year = DateTime.now().year.toString();
-    var month = DateTime.now().month.toString();
+  Stream<List<Expenses>> expenseList(month, year) async* {
     final User user = FirebaseAuth.instance.currentUser;
     final String uid = user.uid.toString();
 
@@ -449,7 +556,12 @@ class DatabaseService {
       'Egresos': 0,
       'Monto al Cierre': 0,
       'Ventas por Medio': [],
-      'Detalle de Ingresos y Egresos': []
+      'Detalle de Ingresos y Egresos': [],
+      'Total Items Sold': 0,
+      'Total Sales Count': 0,
+      'Sales Count by Product': {},
+      'Sales Count by Category': {},
+      'Sales Amount by Product': {},
     });
   }
 
@@ -591,7 +703,12 @@ class DatabaseService {
           inflows: snapshot.data()['Ingresos'],
           outflows: snapshot.data()['Egresos'],
           closeAmount: snapshot.data()['Monto al Cierre'],
-          salesByMedium: snapshot.data()['Ventas por Medio']);
+          salesByMedium: snapshot.data()['Ventas por Medio'],
+          totalItemsSold: snapshot.data()['Total Items Sold'],
+          totalSalesCount: snapshot.data()['Total Sales Count'],
+          salesCountbyProduct: snapshot.data()['Sales Count by Product'],
+          salesCountbyCategory: snapshot.data()['Sales Count by Category'],
+          salesAmountbyProduct: snapshot.data()['Sales Amount by Product']);
     } catch (e) {
       print(e);
       return null;
@@ -632,7 +749,12 @@ class DatabaseService {
             inflows: doc.data()['Ingresos'],
             outflows: doc.data()['Egresos'],
             closeAmount: doc.data()['Monto al Cierre'],
-            salesByMedium: doc.data()['Ventas por Medio']);
+            salesByMedium: doc.data()['Ventas por Medio'],
+            totalItemsSold: doc.data()['Total Items Sold'],
+            totalSalesCount: doc.data()['Total Sales Count'],
+            salesCountbyProduct: doc.data()['Sales Count by Product'],
+            salesCountbyCategory: doc.data()['Sales Count by Category'],
+            salesAmountbyProduct: doc.data()['Sales Amount by Product']);
       }).toList();
     } catch (e) {
       print(e);
@@ -655,6 +777,36 @@ class DatabaseService {
         .collection('Daily')
         .snapshots()
         .map(_dailyTransactionsListFromSnapshot);
+  }
+
+  //Save Stats Details
+  Future saveDailyOrderStats(
+      registerDate,
+      int totalItemsSold,
+      int totalSalesCount,
+      Map salesCountbyProduct,
+      Map salesCountbyCategory,
+      Map salesAmountbyProduct) async {
+    var year = DateTime.now().year.toString();
+    var month = DateTime.now().month.toString();
+
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
+
+    return await FirebaseFirestore.instance
+        .collection('ERP')
+        .doc(uid)
+        .collection(year)
+        .doc(month)
+        .collection('Daily')
+        .doc('$registerDate')
+        .update({
+      'Total Items Sold': totalItemsSold,
+      'Total Sales Count': totalSalesCount,
+      'Sales Count by Product': salesCountbyProduct,
+      'Sales Count by Category': salesCountbyCategory,
+      'Sales Amount by Product': salesAmountbyProduct,
+    });
   }
 
   ///////////////////////// Sales Data from Firestore //////////////////////////
@@ -706,7 +858,42 @@ class DatabaseService {
         .collection('Sales')
         .where('Date',
             isGreaterThan: DateTime.now().subtract(Duration(days: 1)))
+        // .where('Payment Type', isEqualTo: 'Efectivo')
+        // .where('Order Name', isEqualTo: '1')
         .snapshots()
         .map(_salesFromSnapshot);
+  }
+
+  //Stats from Snap
+  Stream<MonthlyStats> monthlyStatsfromSnapshot() async* {
+    var year = DateTime.now().year.toString();
+    var month = DateTime.now().month.toString();
+    final User user = FirebaseAuth.instance.currentUser;
+    final String uid = user.uid.toString();
+
+    yield* FirebaseFirestore.instance
+        .collection('ERP')
+        .doc(uid)
+        .collection(year)
+        .doc(month)
+        .collection('Stats')
+        .doc('Monthly Stats')
+        .snapshots()
+        .map(_monthlyStats);
+  }
+
+  //Get Daily Transactions
+  MonthlyStats _monthlyStats(DocumentSnapshot snapshot) {
+    try {
+      return MonthlyStats(
+          totalSalesCount: snapshot.data()['Total Sales Count'],
+          totalItemsSold: snapshot.data()['Total Items Sold'],
+          salesCountbyProduct: snapshot.data()['Sales Count by Product'],
+          salesAmountbyProduct: snapshot.data()['Sales Amount by Product'],
+          salesCountbyCategory: snapshot.data()['Sales Count by Category']);
+    } catch (e) {
+      print(e);
+      return null;
+    }
   }
 }
