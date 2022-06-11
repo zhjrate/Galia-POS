@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class POSDesk extends StatefulWidget {
+  final String firstCategory;
+  POSDesk({this.firstCategory});
+
   @override
   _POSDeskState createState() => _POSDeskState();
 }
@@ -17,7 +20,7 @@ class _POSDeskState extends State<POSDesk> {
 
   @override
   void initState() {
-    category = 'Café';
+    category = widget.firstCategory;
     super.initState();
   }
 

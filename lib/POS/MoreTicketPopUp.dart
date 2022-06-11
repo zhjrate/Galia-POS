@@ -31,7 +31,7 @@ class _MoreTicketPopUpState extends State<MoreTicketPopUp> {
   @override
   void initState() {
     categoriesList = widget.categoriesProvider.categoriesList;
-    selectedCategory = categoriesList.last.category;
+    selectedCategory = categoriesList.first.category;
     super.initState();
   }
 
@@ -482,10 +482,19 @@ class _MoreTicketPopUpState extends State<MoreTicketPopUp> {
                                   onPressed: () {
                                     bloc.addToCart({
                                       'Name': newItemdescription,
-                                      'Category': newItemCategory,
+                                      'Category': selectedCategory,
                                       'Price': newItemPrice,
                                       'Quantity': 1,
                                       'Total Price': newItemPrice
+                                    });
+
+                                    setState(() {
+                                      _newItemdescriptionTextController.clear();
+                                      _newItemPriceTextController.clear();
+                                      _newItemPriceTextController.clear();
+
+                                      newItemdescription = '';
+                                      newItemPrice = 0;
                                     });
                                     Navigator.pop(context);
                                   },

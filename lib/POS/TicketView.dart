@@ -5,8 +5,11 @@ import 'package:denario/Backend/Ticket.dart';
 import 'package:denario/Models/Categories.dart';
 import 'package:denario/Models/DailyCash.dart';
 import 'package:denario/Models/SavedOrders.dart';
+import 'package:denario/Models/Stats.dart';
 import 'package:denario/POS/ActiveOrders.dart';
 import 'package:denario/POS/ConfirmOrder.dart';
+import 'package:denario/POS/ConfirmStats.dart';
+import 'package:denario/POS/ConfirmWastage.dart';
 import 'package:denario/POS/MoreTicketPopUp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -19,23 +22,37 @@ class TicketView extends StatefulWidget {
 }
 
 class _TicketViewState extends State<TicketView> {
-  String orderName = 'Sin Agregar';
+  String orderName;
   var _controller = TextEditingController();
 
   var orderDetail;
   Map<String, dynamic> orderCategories;
   Map currentValues;
-  double subTotal = 0;
-  double tax = 0;
-  double discount = 0;
-  double total = 0;
+  double subTotal;
+  double tax;
+  double discount;
+  double total;
   Color color = Colors.white;
+  String ticketConcept;
+
+  @override
+  void initState() {
+    ticketConcept = 'Ticket';
+    orderName = 'Sin Agregar';
+    subTotal = 0;
+    tax = 0;
+    discount = 0;
+    total = 0;
+
+    super.initState();
+  }
 
   void clearVariables() {
     bloc.removeAllFromCart();
     _controller.clear();
 
     setState(() {
+      ticketConcept = 'Ticket';
       discount = 0;
       tax = 0;
     });
@@ -86,40 +103,142 @@ class _TicketViewState extends State<TicketView> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          'Pedido: ',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w300),
-                        ),
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 5, vertical: 5),
-                            child: TextFormField(
-                              controller:
-                                  _controller, //..text = snapshot.data["Order Name"],
-                              style: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.w300),
-                              inputFormatters: [
-                                LengthLimitingTextInputFormatter(15)
-                              ],
-                              cursorColor: Theme.of(context).accentColor,
-                              decoration: InputDecoration.collapsed(
-                                hintText: (snapshot.data["Order Name"] == '')
-                                    ? 'Mesa 1'
-                                    : snapshot.data["Order Name"],
-                                hintStyle: TextStyle(
-                                    color: Colors.grey.shade700, fontSize: 14),
-                              ),
-                              onChanged: (val) {
-                                bloc.changeOrderName(val);
-                                setState(() {
-                                  orderName = val;
-                                });
-                              },
+                        PopupMenuButton<int>(
+                            child: Container(
+                              child: Row(children: [
+                                //Text
+                                Text(
+                                  ticketConcept,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  softWrap: true,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                SizedBox(width: 5),
+                                //Icon
+                                Icon(Icons.keyboard_arrow_down, size: 14),
+                              ]),
                             ),
-                          ),
-                        ),
+                            onSelected: (value) {
+                              switch (value) {
+                                case 0:
+                                  setState(() {
+                                    ticketConcept = 'Ticket';
+                                  });
+                                  break;
+                                case 1:
+                                  setState(() {
+                                    ticketConcept = 'Consumo de Empleados';
+                                  });
+                                  break;
+                                case 2:
+                                  setState(() {
+                                    ticketConcept = 'Desperdicios';
+                                  });
+                                  break;
+                                // case 3:
+                                //   setState(() {
+                                //     ticketConcept = 'Stats';
+                                //   });
+                                //   break;
+                              }
+                            },
+                            itemBuilder: (context) => [
+                                  //Ticket
+                                  PopupMenuItem<int>(
+                                      value: 0,
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.assignment_outlined,
+                                            color: Colors.black,
+                                            size: 16,
+                                          ),
+                                          SizedBox(width: 10),
+                                          Text("Ticket")
+                                        ],
+                                      )),
+                                  //Consumo
+                                  PopupMenuItem<int>(
+                                      value: 1,
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.coffee_outlined,
+                                            color: Colors.black,
+                                            size: 16,
+                                          ),
+                                          SizedBox(width: 10),
+                                          Text("Consumo de Empleados")
+                                        ],
+                                      )),
+                                  //Desperdicios
+                                  PopupMenuItem<int>(
+                                      value: 2,
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.takeout_dining_outlined,
+                                            color: Colors.black,
+                                            size: 16,
+                                          ),
+                                          SizedBox(width: 10),
+                                          Text("Desperdicios")
+                                        ],
+                                      )),
+                                  //Stats
+                                  // PopupMenuItem<int>(
+                                  //     value: 3,
+                                  //     child: Row(
+                                  //       children: [
+                                  //         Icon(
+                                  //           Icons.takeout_dining_outlined,
+                                  //           color: Colors.black,
+                                  //           size: 16,
+                                  //         ),
+                                  //         SizedBox(width: 10),
+                                  //         Text("Stats")
+                                  //       ],
+                                  //     )),
+                                ]),
+                        (ticketConcept == 'Ticket')
+                            ? Expanded(
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 5, vertical: 5),
+                                  child: TextFormField(
+                                    controller:
+                                        _controller, //..text = snapshot.data["Order Name"],
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w300),
+                                    inputFormatters: [
+                                      LengthLimitingTextInputFormatter(15)
+                                    ],
+                                    cursorColor: Theme.of(context).accentColor,
+                                    decoration: InputDecoration.collapsed(
+                                      hintText:
+                                          (snapshot.data["Order Name"] == '')
+                                              ? 'Mesa 1'
+                                              : snapshot.data["Order Name"],
+                                      hintStyle: TextStyle(
+                                          color: Colors.grey.shade700,
+                                          fontSize: 14),
+                                    ),
+                                    onChanged: (val) {
+                                      bloc.changeOrderName(val);
+                                      setState(() {
+                                        orderName = val;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              )
+                            : Container(),
                         Spacer(),
                         //Delete Order
                         IconButton(
@@ -130,6 +249,7 @@ class _TicketViewState extends State<TicketView> {
                                 discount = 0;
                                 tax = 0;
                                 orderCategories = {};
+                                ticketConcept = 'Ticket';
                               });
                             },
                             icon: Icon(Icons.delete, color: Colors.black))
@@ -286,32 +406,79 @@ class _TicketViewState extends State<TicketView> {
                             ),
                             color: Colors.black,
                             onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return StreamProvider<
-                                        DailyTransactions>.value(
-                                      initialData: null,
-                                      value: DatabaseService()
-                                          .dailyTransactions(
-                                              registerStatus.registerName),
-                                      child: ConfirmOrder(
+                              if (ticketConcept == 'Ticket') {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return MultiProvider(
+                                        providers: [
+                                          StreamProvider<
+                                                  DailyTransactions>.value(
+                                              initialData: null,
+                                              value: DatabaseService()
+                                                  .dailyTransactions(
+                                                      registerStatus
+                                                          .registerName)),
+                                          StreamProvider<MonthlyStats>.value(
+                                              initialData: null,
+                                              value: DatabaseService()
+                                                  .monthlyStatsfromSnapshot()),
+                                        ],
+                                        child: ConfirmOrder(
+                                            total: total,
+                                            items: snapshot.data["Items"],
+                                            discount: discount,
+                                            orderDetail: orderDetail,
+                                            orderName: orderName,
+                                            subTotal: subTotal,
+                                            tax: tax,
+                                            controller: _controller,
+                                            clearVariables: clearVariables,
+                                            paymentTypes:
+                                                registerStatus.paymentTypes),
+                                      );
+                                    });
+                              }
+                              // else if (ticketConcept == 'Stats') {
+                              //   showDialog(
+                              //       context: context,
+                              //       builder: (context) {
+                              //         return MultiProvider(
+                              //           providers: [
+                              //             StreamProvider<MonthlyStats>.value(
+                              //                 initialData: null,
+                              //                 value: DatabaseService()
+                              //                     .monthlyStatsfromSnapshot()),
+                              //           ],
+                              //           child: ConfirmStats(
+                              //               total: total,
+                              //               orderDetail: orderDetail,
+                              //               items: snapshot.data["Items"],
+                              //               controller: _controller,
+                              //               clearVariables: clearVariables,
+                              //               ticketConcept: ticketConcept),
+                              //         );
+                              //       });
+                              // }
+                              else {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return ConfirmWastage(
                                           total: total,
-                                          items: snapshot.data["Items"],
-                                          discount: discount,
                                           orderDetail: orderDetail,
-                                          orderName: orderName,
-                                          subTotal: subTotal,
-                                          tax: tax,
+                                          items: snapshot.data["Items"],
                                           controller: _controller,
                                           clearVariables: clearVariables,
-                                          paymentTypes:
-                                              registerStatus.paymentTypes),
-                                    );
-                                  });
+                                          ticketConcept: ticketConcept);
+                                    });
+                              }
                             },
                             child: Center(
-                                child: Text('Pagar  \$ $total',
+                                child: Text(
+                                    (ticketConcept == 'Ticket')
+                                        ? 'Pagar  \$ $total'
+                                        : 'Registrar',
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.w400))),
