@@ -17,6 +17,11 @@ class DailyTransactions {
   double outflows;
   double closeAmount;
   List salesByMedium;
+  int totalItemsSold;
+  int totalSalesCount;
+  Map salesCountbyProduct;
+  Map salesCountbyCategory;
+  Map salesAmountbyProduct;
 
   DailyTransactions(
       {this.openDate,
@@ -29,5 +34,10 @@ class DailyTransactions {
       this.inflows,
       this.outflows,
       this.closeAmount,
-      this.salesByMedium});
+      this.salesByMedium,
+      this.totalSalesCount,
+      this.totalItemsSold,
+      this.salesAmountbyProduct,
+      this.salesCountbyCategory,
+      this.salesCountbyProduct});
 }
