@@ -1404,7 +1404,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                               DatabaseService().saveOrderType(
                                                   orderCategories);
 
-                                              /////////////////////////// STATS ///////////////////////////
+                                              /////////////////////////// MONTH STATS ///////////////////////////
 
                                               //Sales Count
                                               if (currentSalesCount == null ||
@@ -1526,6 +1526,140 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                               //Save Details to FB Historic
                                               DatabaseService()
                                                   .saveOrderStats(orderStats);
+
+                                              /////////////////////////// DAILY STATS ///////////////////////////
+
+                                              //Get current values from Firestore into variables
+                                              try {
+                                                currentDailyItemsCount =
+                                                    dailyTransactions
+                                                        .salesCountbyProduct;
+                                              } catch (e) {
+                                                currentDailyItemsCount = {};
+                                              }
+                                              try {
+                                                currentDailyItemsAmount =
+                                                    dailyTransactions
+                                                        .salesAmountbyProduct;
+                                              } catch (e) {
+                                                currentDailyItemsAmount = {};
+                                              }
+                                              // try {
+                                              //   dailyTicketItemsCount = monthlyStats.totalItemsSold;
+                                              // } catch (e) {
+                                              //   currentTicketItemsCount = 0;
+                                              // }
+                                              try {
+                                                dailySalesCountbyCategory =
+                                                    dailyTransactions
+                                                        .salesCountbyCategory;
+                                              } catch (e) {
+                                                dailySalesCountbyCategory = {};
+                                              }
+
+                                              //Sales Count
+                                              newDailySalesCount =
+                                                  dailyTransactions
+                                                          .totalSalesCount +
+                                                      1;
+
+                                              //Items Sold
+                                              newDailyTicketItemsCount =
+                                                  dailyTransactions
+                                                          .totalItemsSold +
+                                                      cartList.length;
+
+                                              ////////////////////////////Add amounts by category/account
+
+                                              //Logic to add up categories totals in current ticket
+                                              for (var i = 0;
+                                                  i < cartList.length;
+                                                  i++) {
+                                                //Check if the map contains the key
+                                                if (dailySalesCountbyCategory
+                                                    .containsKey(
+                                                        '${cartList[i]["Category"]}')) {
+                                                  //Add to existing category amount
+                                                  dailySalesCountbyCategory.update(
+                                                      '${cartList[i]["Category"]}',
+                                                      (value) =>
+                                                          value +
+                                                          (cartList[i]
+                                                                  ["Price"] *
+                                                              cartList[i][
+                                                                  "Quantity"]));
+                                                } else {
+                                                  //Add new category with amount
+                                                  dailySalesCountbyCategory[
+                                                          '${cartList[i]["Category"]}'] =
+                                                      cartList[i]["Price"] *
+                                                          cartList[i]
+                                                              ["Quantity"];
+                                                }
+                                              }
+
+                                              ////////////////////////////Add by item count
+
+                                              //Logic to add up item count  in current ticket
+                                              for (var i = 0;
+                                                  i < cartList.length;
+                                                  i++) {
+                                                //Check if the map contains the key
+                                                if (currentDailyItemsCount
+                                                    .containsKey(
+                                                        '${cartList[i]["Name"]}')) {
+                                                  //Add to existing category amount
+                                                  currentDailyItemsCount.update(
+                                                      '${cartList[i]["Name"]}',
+                                                      (value) =>
+                                                          value +
+                                                          cartList[i]
+                                                              ["Quantity"]);
+                                                } else {
+                                                  //Add new category with amount
+                                                  currentDailyItemsCount[
+                                                          '${cartList[i]["Name"]}'] =
+                                                      cartList[i]["Quantity"];
+                                                }
+                                              }
+
+                                              //Logic to add up item Amount  in current ticket
+                                              for (var i = 0;
+                                                  i < cartList.length;
+                                                  i++) {
+                                                //Check if the map contains the key
+                                                if (currentDailyItemsAmount
+                                                    .containsKey(
+                                                        '${cartList[i]["Name"]}')) {
+                                                  //Add to existing category amount
+                                                  currentDailyItemsAmount.update(
+                                                      '${cartList[i]["Name"]}',
+                                                      (value) =>
+                                                          value +
+                                                          (cartList[i]
+                                                                  ["Price"] *
+                                                              cartList[i][
+                                                                  "Quantity"]));
+                                                } else {
+                                                  //Add new category with amount
+                                                  currentDailyItemsAmount[
+                                                          '${cartList[i]["Name"]}'] =
+                                                      (cartList[i]["Price"] *
+                                                          cartList[i]
+                                                              ["Quantity"]);
+                                                }
+                                              }
+
+                                              //Save Details to FB Historic
+                                              DatabaseService()
+                                                  .saveDailyOrderStats(
+                                                      dailyTransactions.openDate
+                                                          .toString(),
+                                                      newDailyTicketItemsCount,
+                                                      newDailySalesCount,
+                                                      currentDailyItemsCount,
+                                                      dailySalesCountbyCategory,
+                                                      currentDailyItemsAmount);
 
                                               // ///////////////////////////Register in Daily Transactions
                                               double totalDailySales = 0;
