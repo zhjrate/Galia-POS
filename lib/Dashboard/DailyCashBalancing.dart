@@ -1,5 +1,6 @@
 import 'package:denario/Dashboard/CloseCashRegisterDialog.dart';
 import 'package:denario/Dashboard/DailyHistory.dart';
+import 'package:denario/Dashboard/DailyTransactionsList.dart';
 import 'package:denario/Dashboard/OpenCashRegisterDialog.dart';
 import 'package:denario/Dashboard/UpdateCashRegisterDialog.dart';
 import 'package:denario/Models/DailyCash.dart';
@@ -173,6 +174,21 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
                             textAlign: TextAlign.start,
                           ),
                           Spacer(),
+                          //List of Transactions
+                          IconButton(
+                              onPressed: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          DailyTransactionsList(
+                                              dailyTransactions
+                                                  .registerTransactionList))),
+                              icon: Icon(
+                                Icons.list,
+                                color: Colors.black,
+                                size: 24,
+                              )),
+                          SizedBox(width: 10),
                           //Historic Cash Balancing
                           IconButton(
                               onPressed: () => Navigator.push(
@@ -180,7 +196,7 @@ class _DailyCashBalancingState extends State<DailyCashBalancing> {
                                   MaterialPageRoute(
                                       builder: (context) => DailyHistory())),
                               icon: Icon(
-                                Icons.list,
+                                Icons.history,
                                 color: Colors.black,
                                 size: 24,
                               ))

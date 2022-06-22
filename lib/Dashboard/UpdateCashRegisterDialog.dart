@@ -240,6 +240,9 @@ class _UpdateCashRegisterDialogState extends State<UpdateCashRegisterDialog> {
                                     widget.currentTransactions + amount;
                               }
 
+                              registerTransactionDetails['Time'] =
+                                  DateTime.now();
+
                               DatabaseService().updateCashRegister(
                                   widget.currentRegister,
                                   widget.transactionType,

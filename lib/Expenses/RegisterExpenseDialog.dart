@@ -405,6 +405,7 @@ class _RegisterExpenseDialogState extends State<RegisterExpenseDialog> {
                                 'Amount': cashRegisterAmount,
                                 'Type': widget.costType,
                                 'Motive': widget.expenseDescription,
+                                'Time': DateTime.now()
                               });
                             }
 

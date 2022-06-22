@@ -12,6 +12,7 @@ class DailyTransactions {
   double initialAmount;
   bool isOpen;
   double dailyTransactions;
+  List registerTransactionList;
   double sales;
   double inflows;
   double outflows;
@@ -31,6 +32,7 @@ class DailyTransactions {
       this.initialAmount,
       this.isOpen,
       this.dailyTransactions,
+      this.registerTransactionList,
       this.sales,
       this.inflows,
       this.outflows,

@@ -556,7 +556,14 @@ class DatabaseService {
       'Egresos': 0,
       'Monto al Cierre': 0,
       'Ventas por Medio': [],
-      'Detalle de Ingresos y Egresos': [],
+      'Detalle de Ingresos y Egresos': [
+        {
+          'Type': 'Apertura',
+          'Motive': 'Apertura de Caja',
+          'Amount': initialAmount,
+          'Time': DateTime.now()
+        }
+      ],
       'Total Items Sold': 0,
       'Total Sales Count': 0,
       'Sales Count by Product': {},
@@ -665,6 +672,14 @@ class DatabaseService {
       'Fecha Cierre': DateTime.now(),
       'Abierto': false,
       'Monto al Cierre': closeAmount,
+      'Detalle de Ingresos y Egresos': FieldValue.arrayUnion([
+        {
+          'Type': 'Cierre',
+          'Motive': 'Cierre de Caja',
+          'Amount': closeAmount,
+          'Time': DateTime.now()
+        }
+      ])
     });
   }
 
@@ -703,6 +718,8 @@ class DatabaseService {
         initialAmount: snapshot.data()['Monto Inicial'],
         isOpen: snapshot.data()['Abierto'],
         dailyTransactions: snapshot.data()['Transacciones del Día'],
+        registerTransactionList:
+            snapshot.data()['Detalle de Ingresos y Egresos'],
         sales: snapshot.data()['Ventas'],
         inflows: snapshot.data()['Ingresos'],
         outflows: snapshot.data()['Egresos'],
@@ -750,6 +767,8 @@ class DatabaseService {
             initialAmount: doc.data()['Monto Inicial'],
             isOpen: doc.data()['Abierto'],
             dailyTransactions: doc.data()['Transacciones del día'],
+            registerTransactionList:
+                doc.data()['Detalle de Ingresos y Egresos'],
             sales: doc.data()['Ventas'],
             inflows: doc.data()['Ingresos'],
             outflows: doc.data()['Egresos'],
