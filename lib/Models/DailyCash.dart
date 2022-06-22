@@ -22,6 +22,7 @@ class DailyTransactions {
   Map salesCountbyProduct;
   Map salesCountbyCategory;
   Map salesAmountbyProduct;
+  Map salesbyCategory;
 
   DailyTransactions(
       {this.openDate,
@@ -39,5 +40,6 @@ class DailyTransactions {
       this.totalItemsSold,
       this.salesAmountbyProduct,
       this.salesCountbyCategory,
-      this.salesCountbyProduct});
+      this.salesCountbyProduct,
+      this.salesbyCategory});
 }

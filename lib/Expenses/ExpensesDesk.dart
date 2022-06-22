@@ -2,6 +2,7 @@ import 'package:denario/Backend/DatabaseService.dart';
 import 'package:denario/Expenses/ExpenseInput.dart';
 import 'package:denario/Expenses/ExpenseList.dart';
 import 'package:denario/Expenses/ExpenseSummary.dart';
+import 'package:denario/Expenses/ExpensesHistory.dart';
 import 'package:denario/Models/Categories.dart';
 import 'package:denario/Models/Expenses.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,10 @@ class ExpensesDesk extends StatelessWidget {
             MultiProvider(
               providers: [
                 StreamProvider<List<Expenses>>.value(
-                    initialData: null, value: DatabaseService().expenseList()),
+                    initialData: null,
+                    value: DatabaseService().expenseList(
+                        DateTime.now().month.toString(),
+                        DateTime.now().year.toString())),
               ],
               child: Container(
                   height:
@@ -49,6 +53,7 @@ class ExpensesDesk extends StatelessWidget {
                   child: (MediaQuery.of(context).size.width > 1100)
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             //ExpenseList
                             Expanded(
@@ -57,12 +62,28 @@ class ExpensesDesk extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     //Title
-                                    Text(
-                                      'Gastos del mes',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16),
-                                    ),
+                                    Row(children: [
+                                      Text(
+                                        'Gastos del mes',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                      Spacer(),
+                                      IconButton(
+                                          iconSize: 16,
+                                          splashRadius: 0.2,
+                                          onPressed: () => Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ExpensesHistory())),
+                                          icon: Icon(
+                                            Icons.list,
+                                            color: Colors.black,
+                                            size: 24,
+                                          ))
+                                    ]),
                                     SizedBox(height: 15),
                                     //Expenses List
                                     ExpenseList()

@@ -61,6 +61,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
   Map<String, dynamic> currentDailyItemsCount;
   Map<String, dynamic> currentDailyItemsAmount;
   Map<String, dynamic> dailySalesCountbyCategory;
+  Map<String, dynamic> dailySalesbyCategory;
   int newDailySalesCount;
   int newDailyTicketItemsCount;
 
@@ -252,7 +253,6 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                               'Amount': 0
                                             });
                                           }
-                                          print(splitPaymentDetails);
                                           controller.nextPage(
                                               duration:
                                                   Duration(milliseconds: 500),
@@ -739,8 +739,8 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                               try {
                                                 orderCategories.update(
                                                     k,
-                                                    (value) =>
-                                                        v = v + snap.data['']);
+                                                    (value) => v =
+                                                        v + snap.data['$k']);
                                               } catch (e) {
                                                 //Do nothing
                                               }
@@ -867,6 +867,8 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                               }
                                             }
 
+                                            orderStats['Total Sales'] =
+                                                newSalesAmount;
                                             orderStats['Total Sales Count'] =
                                                 newSalesCount;
                                             orderStats['Total Items Sold'] =
@@ -902,11 +904,6 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                             } catch (e) {
                                               currentDailyItemsAmount = {};
                                             }
-                                            // try {
-                                            //   dailyTicketItemsCount = monthlyStats.totalItemsSold;
-                                            // } catch (e) {
-                                            //   currentTicketItemsCount = 0;
-                                            // }
                                             try {
                                               dailySalesCountbyCategory =
                                                   dailyTransactions
@@ -1372,22 +1369,24 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                                               ["Quantity"];
                                                 }
                                               }
+
                                               //Logic to add Sales by Categories to Firebase based on current Values from snap
                                               orderCategories.forEach((k, v) {
                                                 try {
                                                   orderCategories.update(
                                                       k,
                                                       (value) => v =
-                                                          v + snap.data['']);
+                                                          v + snap.data['$k']);
                                                 } catch (e) {
                                                   //Do nothing
                                                 }
                                               });
-                                              //Add Total sales edited to map
+
+                                              // Add Total sales edited to map
                                               orderCategories['Ventas'] =
                                                   newSalesAmount;
 
-                                              //Create Sale
+                                              // Create Sale
                                               DatabaseService().createOrder(
                                                   year,
                                                   month,
@@ -1400,13 +1399,13 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                                   widget.orderName,
                                                   splitPaymentDetails);
 
-                                              /////Save Sales and Order Categories to database
+                                              ///Save Sales and Order Categories to database
                                               DatabaseService().saveOrderType(
                                                   orderCategories);
 
-                                              /////////////////////////// MONTH STATS ///////////////////////////
+                                              ///////////////////////// MONTH STATS ///////////////////////////
 
-                                              //Sales Count
+                                              // Sales Count
                                               if (currentSalesCount == null ||
                                                   currentSalesCount < 1) {
                                                 newSalesCount = 1;
@@ -1415,10 +1414,10 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                                     currentSalesCount + 1;
                                               }
 
-                                              //Set Categories Variables
+                                              // Set Categories Variables
                                               orderStats = {};
 
-                                              //Items Sold
+                                              // Items Sold
                                               if (currentTicketItemsCount ==
                                                       null ||
                                                   currentTicketItemsCount < 1) {
@@ -1430,7 +1429,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                                         cartList.length;
                                               }
 
-                                              ////////////////////////////Add amounts by category/account///////////////////
+                                              //////////////////////////Add amounts by category/account///////////////////
 
                                               //Logic to add up categories totals in current ticket
                                               for (var i = 0;
@@ -1440,7 +1439,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                                 if (salesCountbyCategory
                                                     .containsKey(
                                                         '${cartList[i]["Category"]}')) {
-                                                  //Add to existing category amount
+                                                  // Add to existing category amount
                                                   salesCountbyCategory.update(
                                                       '${cartList[i]["Category"]}',
                                                       (value) =>
@@ -1459,9 +1458,9 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                                 }
                                               }
 
-                                              ////////////////////////////Add by item count///////////////////
+                                              //////////////////////////Add by item count///////////////////
 
-                                              //Logic to add up item count  in current ticket
+                                              // Logic to add up item count  in current ticket
                                               for (var i = 0;
                                                   i < cartList.length;
                                                   i++) {
@@ -1483,14 +1482,14 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                                 }
                                               }
 
-                                              //Logic to add up item Amount  in current ticket
+                                              // Logic to add up item Amount  in current ticket
                                               for (var i = 0;
                                                   i < cartList.length;
                                                   i++) {
-                                                //Check if the map contains the key
+                                                //   Check if the map contains the key
                                                 if (currentItemsAmount.containsKey(
                                                     '${cartList[i]["Name"]}')) {
-                                                  //Add to existing category amount
+                                                  //     Add to existing category amount
                                                   currentItemsAmount.update(
                                                       '${cartList[i]["Name"]}',
                                                       (value) =>
@@ -1500,7 +1499,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                                               cartList[i][
                                                                   "Quantity"]));
                                                 } else {
-                                                  //Add new category with amount
+                                                  //     Add new category with amount
                                                   currentItemsAmount[
                                                           '${cartList[i]["Name"]}'] =
                                                       (cartList[i]["Price"] *
@@ -1509,6 +1508,8 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                                 }
                                               }
 
+                                              orderStats['Total Sales'] =
+                                                  newSalesAmount;
                                               orderStats['Total Sales Count'] =
                                                   newSalesCount;
                                               orderStats['Total Items Sold'] =
@@ -1523,13 +1524,13 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                                       'Sales Count by Category'] =
                                                   salesCountbyCategory;
 
-                                              //Save Details to FB Historic
+                                              // Save Details to FB Historic
                                               DatabaseService()
                                                   .saveOrderStats(orderStats);
 
-                                              /////////////////////////// DAILY STATS ///////////////////////////
+                                              ///////////////////////// DAILY STATS ///////////////////////////
 
-                                              //Get current values from Firestore into variables
+                                              // Get current values from Firestore into variables
                                               try {
                                                 currentDailyItemsCount =
                                                     dailyTransactions
@@ -1544,17 +1545,19 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                               } catch (e) {
                                                 currentDailyItemsAmount = {};
                                               }
-                                              // try {
-                                              //   dailyTicketItemsCount = monthlyStats.totalItemsSold;
-                                              // } catch (e) {
-                                              //   currentTicketItemsCount = 0;
-                                              // }
                                               try {
                                                 dailySalesCountbyCategory =
                                                     dailyTransactions
                                                         .salesCountbyCategory;
                                               } catch (e) {
                                                 dailySalesCountbyCategory = {};
+                                              }
+                                              try {
+                                                dailySalesbyCategory =
+                                                    dailyTransactions
+                                                        .salesbyCategory;
+                                              } catch (e) {
+                                                dailySalesbyCategory = {};
                                               }
 
                                               //Sales Count
@@ -1569,17 +1572,17 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                                           .totalItemsSold +
                                                       cartList.length;
 
-                                              ////////////////////////////Add amounts by category/account
+                                              //////////////////////////Add amounts by category/account
 
-                                              //Logic to add up categories totals in current ticket
+                                              // Logic to add up categories count
                                               for (var i = 0;
                                                   i < cartList.length;
                                                   i++) {
-                                                //Check if the map contains the key
+                                                //   Check if the map contains the key
                                                 if (dailySalesCountbyCategory
                                                     .containsKey(
                                                         '${cartList[i]["Category"]}')) {
-                                                  //Add to existing category amount
+                                                  //     Add to existing category amount
                                                   dailySalesCountbyCategory.update(
                                                       '${cartList[i]["Category"]}',
                                                       (value) =>
@@ -1589,7 +1592,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                                               cartList[i][
                                                                   "Quantity"]));
                                                 } else {
-                                                  //Add new category with amount
+                                                  //     Add new category with amount
                                                   dailySalesCountbyCategory[
                                                           '${cartList[i]["Category"]}'] =
                                                       cartList[i]["Price"] *
@@ -1598,17 +1601,17 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                                 }
                                               }
 
-                                              ////////////////////////////Add by item count
+                                              // //////////////////////////Add by item count
 
-                                              //Logic to add up item count  in current ticket
+                                              // Logic to add up item count  in current ticket
                                               for (var i = 0;
                                                   i < cartList.length;
                                                   i++) {
-                                                //Check if the map contains the key
+                                                //   Check if the map contains the key
                                                 if (currentDailyItemsCount
                                                     .containsKey(
                                                         '${cartList[i]["Name"]}')) {
-                                                  //Add to existing category amount
+                                                  //     Add to existing category amount
                                                   currentDailyItemsCount.update(
                                                       '${cartList[i]["Name"]}',
                                                       (value) =>
@@ -1616,22 +1619,22 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                                           cartList[i]
                                                               ["Quantity"]);
                                                 } else {
-                                                  //Add new category with amount
+                                                  //     Add new category with amount
                                                   currentDailyItemsCount[
                                                           '${cartList[i]["Name"]}'] =
                                                       cartList[i]["Quantity"];
                                                 }
                                               }
 
-                                              //Logic to add up item Amount  in current ticket
+                                              // Logic to add up item Amount  in current ticket
                                               for (var i = 0;
                                                   i < cartList.length;
                                                   i++) {
-                                                //Check if the map contains the key
+                                                //   Check if the map contains the key
                                                 if (currentDailyItemsAmount
                                                     .containsKey(
                                                         '${cartList[i]["Name"]}')) {
-                                                  //Add to existing category amount
+                                                  //     Add to existing category amount
                                                   currentDailyItemsAmount.update(
                                                       '${cartList[i]["Name"]}',
                                                       (value) =>
@@ -1641,7 +1644,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                                               cartList[i][
                                                                   "Quantity"]));
                                                 } else {
-                                                  //Add new category with amount
+                                                  //     Add new category with amount
                                                   currentDailyItemsAmount[
                                                           '${cartList[i]["Name"]}'] =
                                                       (cartList[i]["Price"] *
@@ -1650,7 +1653,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                                 }
                                               }
 
-                                              //Save Details to FB Historic
+                                              // Save Details to FB Historic
                                               DatabaseService()
                                                   .saveDailyOrderStats(
                                                       dailyTransactions.openDate
@@ -1661,7 +1664,7 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                                       dailySalesCountbyCategory,
                                                       currentDailyItemsAmount);
 
-                                              // ///////////////////////////Register in Daily Transactions
+                                              ///////////////////////////Register in Daily Transactions
                                               double totalDailySales = 0;
                                               double totalDailyTransactions = 0;
                                               List salesByMedium = [];
@@ -1677,7 +1680,8 @@ class _ConfirmOrderState extends State<ConfirmOrder> {
                                                     dailyTransactions
                                                         .salesByMedium;
                                               });
-                                              /////Update Sales by Medium
+
+                                              ///Update Sales by Medium
 
                                               for (var x
                                                   in splitPaymentDetails) {

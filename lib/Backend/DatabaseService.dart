@@ -618,8 +618,12 @@ class DatabaseService {
   }
 
   //Update Cash Register (Inflows/Outflows)
-  Future updateSalesinCashRegister(registerDate, double totalSales,
-      List salesByMedium, double totalDailyTransactions) async {
+  Future updateSalesinCashRegister(
+    registerDate,
+    double totalSales,
+    List salesByMedium,
+    double totalDailyTransactions,
+  ) async {
     DateTime date = DateTime.parse(registerDate);
     final User user = FirebaseAuth.instance.currentUser;
     final String uid = user.uid.toString();
@@ -637,7 +641,7 @@ class DatabaseService {
         .update({
       'Transacciones del Día': totalDailyTransactions,
       'Ventas': totalSales,
-      'Ventas por Medio': salesByMedium
+      'Ventas por Medio': salesByMedium,
     });
   }
 
@@ -693,22 +697,23 @@ class DatabaseService {
   DailyTransactions _dailyTransactionsFromSnapshot(DocumentSnapshot snapshot) {
     try {
       return DailyTransactions(
-          openDate: snapshot.data()['Fecha Apertura'].toDate(),
-          closeDate: snapshot.data()['Fecha Cierre'].toDate(),
-          user: snapshot.data()['Usuario'],
-          initialAmount: snapshot.data()['Monto Inicial'],
-          isOpen: snapshot.data()['Abierto'],
-          dailyTransactions: snapshot.data()['Transacciones del Día'],
-          sales: snapshot.data()['Ventas'],
-          inflows: snapshot.data()['Ingresos'],
-          outflows: snapshot.data()['Egresos'],
-          closeAmount: snapshot.data()['Monto al Cierre'],
-          salesByMedium: snapshot.data()['Ventas por Medio'],
-          totalItemsSold: snapshot.data()['Total Items Sold'],
-          totalSalesCount: snapshot.data()['Total Sales Count'],
-          salesCountbyProduct: snapshot.data()['Sales Count by Product'],
-          salesCountbyCategory: snapshot.data()['Sales Count by Category'],
-          salesAmountbyProduct: snapshot.data()['Sales Amount by Product']);
+        openDate: snapshot.data()['Fecha Apertura'].toDate(),
+        closeDate: snapshot.data()['Fecha Cierre'].toDate(),
+        user: snapshot.data()['Usuario'],
+        initialAmount: snapshot.data()['Monto Inicial'],
+        isOpen: snapshot.data()['Abierto'],
+        dailyTransactions: snapshot.data()['Transacciones del Día'],
+        sales: snapshot.data()['Ventas'],
+        inflows: snapshot.data()['Ingresos'],
+        outflows: snapshot.data()['Egresos'],
+        closeAmount: snapshot.data()['Monto al Cierre'],
+        salesByMedium: snapshot.data()['Ventas por Medio'],
+        totalItemsSold: snapshot.data()['Total Items Sold'],
+        totalSalesCount: snapshot.data()['Total Sales Count'],
+        salesCountbyProduct: snapshot.data()['Sales Count by Product'],
+        salesCountbyCategory: snapshot.data()['Sales Count by Category'],
+        salesAmountbyProduct: snapshot.data()['Sales Amount by Product'],
+      );
     } catch (e) {
       print(e);
       return null;
@@ -886,6 +891,7 @@ class DatabaseService {
   MonthlyStats _monthlyStats(DocumentSnapshot snapshot) {
     try {
       return MonthlyStats(
+          totalSales: snapshot.data()['Total Sales'],
           totalSalesCount: snapshot.data()['Total Sales Count'],
           totalItemsSold: snapshot.data()['Total Items Sold'],
           salesCountbyProduct: snapshot.data()['Sales Count by Product'],

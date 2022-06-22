@@ -5,9 +5,10 @@ import 'package:denario/Expenses/ExpensesDesk.dart';
 import 'package:denario/Models/Categories.dart';
 import 'package:denario/Models/DailyCash.dart';
 import 'package:denario/Models/Mapping.dart';
+import 'package:denario/Models/Stats.dart';
 import 'package:denario/PnL/PnlDesk.dart';
+import 'package:denario/Stats/StatsDesk.dart';
 import 'package:denario/Wrapper.dart';
-import 'package:denario/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,15 +22,6 @@ class HomeDesk extends StatefulWidget {
 class _HomeDeskState extends State<HomeDesk> {
   final _auth = AuthService();
   int pageIndex = 0;
-
-  final tabs = [
-    POSDesk(),
-    Navigator(onGenerateRoute: (routeSettings) {
-      return MaterialPageRoute(builder: (context) => DailyDesk());
-    }),
-    ExpensesDesk(),
-    PnlDesk(),
-  ];
 
   Widget screenNavigator(String screenName, IconData screenIcon, int index) {
     return FlatButton(
@@ -62,21 +54,25 @@ class _HomeDeskState extends State<HomeDesk> {
   @override
   Widget build(BuildContext context) {
     final registerStatus = Provider.of<CashRegister>(context);
+    final categoriesProvider = Provider.of<CategoryList>(context);
 
-    if (registerStatus == null) {
+    if (registerStatus == null || categoriesProvider == null) {
       return Container();
     }
 
     return MultiProvider(
       providers: [
-        StreamProvider<HighLevelMapping>.value(
-            initialData: null, value: DatabaseService().highLevelMapping()),
         StreamProvider<CategoryList>.value(
             initialData: null, value: DatabaseService().categoriesList),
+        StreamProvider<HighLevelMapping>.value(
+            initialData: null, value: DatabaseService().highLevelMapping()),
         StreamProvider<DailyTransactions>.value(
             initialData: null,
             value: DatabaseService()
                 .dailyTransactions(registerStatus.registerName)),
+        StreamProvider<MonthlyStats>.value(
+            initialData: null,
+            value: DatabaseService().monthlyStatsfromSnapshot()),
         StreamProvider<List<DailyTransactions>>.value(
             initialData: null, value: DatabaseService().dailyTransactionsList())
       ],
@@ -144,13 +140,37 @@ class _HomeDeskState extends State<HomeDesk> {
                               screenNavigator(
                                   'Gastos', Icons.multiline_chart, 2),
                               SizedBox(height: 20),
-                              screenNavigator('PnL', Icons.data_usage, 3)
+                              screenNavigator(
+                                  'Stats', Icons.query_stats_outlined, 3),
+                              SizedBox(height: 20),
+                              screenNavigator('PnL', Icons.data_usage, 4)
                             ]))),
                 //Dynamic Body
                 Expanded(
                   child: Container(
-                    child: tabs[pageIndex],
-                  ),
+                      child: IndexedStack(index: pageIndex, children: [
+                    Navigator(onGenerateRoute: (routeSettings) {
+                      return MaterialPageRoute(
+                          builder: (context) => POSDesk(
+                              firstCategory: categoriesProvider
+                                  .categoriesList[0].category));
+                    }),
+                    Navigator(onGenerateRoute: (routeSettings) {
+                      return MaterialPageRoute(
+                          builder: (context) => DailyDesk());
+                    }),
+                    Navigator(onGenerateRoute: (routeSettings) {
+                      return MaterialPageRoute(
+                          builder: (context) => ExpensesDesk());
+                    }),
+                    Navigator(onGenerateRoute: (routeSettings) {
+                      return MaterialPageRoute(
+                          builder: (context) => StatsDesk());
+                    }),
+                    Navigator(onGenerateRoute: (routeSettings) {
+                      return MaterialPageRoute(builder: (context) => PnlDesk());
+                    }),
+                  ])),
                 )
               ],
             ),

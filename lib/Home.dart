@@ -1,7 +1,7 @@
 import 'package:denario/Backend/DatabaseService.dart';
-import 'package:denario/Backend/auth.dart';
 import 'package:denario/Home_Desk.dart';
 import 'package:denario/Home_Mobile.dart';
+import 'package:denario/Models/Categories.dart';
 import 'package:denario/Models/Mapping.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +16,9 @@ class Home extends StatelessWidget {
         StreamProvider<CashRegister>.value(
             initialData: null, value: DatabaseService().cashRegisterStatus),
         StreamProvider<HighLevelMapping>.value(
-            initialData: null, value: DatabaseService().highLevelMapping())
+            initialData: null, value: DatabaseService().highLevelMapping()),
+        StreamProvider<CategoryList>.value(
+            initialData: null, value: DatabaseService().categoriesList),
       ],
       child: LayoutBuilder(
         builder: (context, constraints) {
