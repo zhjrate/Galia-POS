@@ -527,7 +527,7 @@ class DailyStats extends StatelessWidget {
                                   children: [
                                     //Amount
                                     Text(
-                                      '${dailyTransactions.sales}',
+                                      '${formatCurrency.format(dailyTransactions.sales)}',
                                       style: TextStyle(
                                           fontWeight: FontWeight.w900,
                                           fontSize: 25),
@@ -649,7 +649,7 @@ class DailyStats extends StatelessWidget {
                                   children: [
                                     //Amount
                                     Text(
-                                      '${dailyTransactions.sales / dailyTransactions.totalSalesCount}',
+                                      '${formatCurrency.format(dailyTransactions.sales / dailyTransactions.totalSalesCount)}',
                                       style: TextStyle(
                                           fontWeight: FontWeight.w900,
                                           fontSize: 25),

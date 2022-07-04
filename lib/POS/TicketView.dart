@@ -14,6 +14,7 @@ import 'package:denario/POS/MoreTicketPopUp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class TicketView extends StatefulWidget {
@@ -22,6 +23,7 @@ class TicketView extends StatefulWidget {
 }
 
 class _TicketViewState extends State<TicketView> {
+  final formatCurrency = new NumberFormat.simpleCurrency();
   String orderName;
   var _controller = TextEditingController();
 
@@ -322,8 +324,8 @@ class _TicketViewState extends State<TicketView> {
                                       ),
                                       //Amount
                                       Spacer(),
-                                      Text(cartList[i]['Total Price']
-                                          .toString()),
+                                      Text(formatCurrency
+                                          .format(cartList[i]['Total Price'])),
                                       SizedBox(width: 10),
                                       //Delete
                                       IconButton(
@@ -477,7 +479,7 @@ class _TicketViewState extends State<TicketView> {
                             child: Center(
                                 child: Text(
                                     (ticketConcept == 'Ticket')
-                                        ? 'Pagar  \$ $total'
+                                        ? 'Pagar ${formatCurrency.format(total)}'
                                         : 'Registrar',
                                     style: TextStyle(
                                         color: Colors.white,

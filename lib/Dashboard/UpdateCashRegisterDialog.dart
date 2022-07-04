@@ -107,6 +107,8 @@ class _UpdateCashRegisterDialogState extends State<UpdateCashRegisterDialog> {
                                 registerTransactionDetails['Amount'] = amount;
                                 registerTransactionDetails['Type'] =
                                     widget.transactionType;
+                                registerTransactionDetails['Motive'] =
+                                    widget.transactionType;
                               });
                             },
                           ),
