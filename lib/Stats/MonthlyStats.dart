@@ -404,7 +404,7 @@ class MonthStats extends StatelessWidget {
                                       child: Container(
                                         child: ListView.builder(
                                             itemCount: categoriesProvider
-                                                .categoriesList.length,
+                                                .categoryList.length,
                                             shrinkWrap: true,
                                             reverse: false,
                                             physics: BouncingScrollPhysics(),
@@ -423,7 +423,7 @@ class MonthStats extends StatelessWidget {
                                                     Container(
                                                         width: 150,
                                                         child: Text(
-                                                          '${categoriesProvider.categoriesList[i].category}',
+                                                          '${categoriesProvider.categoryList[i]}',
                                                           style: TextStyle(
                                                               fontWeight:
                                                                   FontWeight
@@ -438,12 +438,11 @@ class MonthStats extends StatelessWidget {
                                                         width: 120,
                                                         child: Center(
                                                           child: Text(
-                                                            (monthlyStats.salesCountbyCategory[(categoriesProvider
-                                                                        .categoriesList[
-                                                                            i]
-                                                                        .category)] !=
+                                                            (monthlyStats.salesCountbyCategory[
+                                                                        (categoriesProvider
+                                                                            .categoryList[i])] !=
                                                                     null)
-                                                                ? '${formatCurrency.format(monthlyStats.salesCountbyCategory[(categoriesProvider.categoriesList[i].category)])}'
+                                                                ? '${formatCurrency.format(monthlyStats.salesCountbyCategory[(categoriesProvider.categoryList[i])])}'
                                                                 : '${formatCurrency.format(0)}',
                                                             maxLines: 1,
                                                             overflow:
@@ -850,7 +849,7 @@ class MonthStats extends StatelessWidget {
                                   child: Container(
                                     child: ListView.builder(
                                         itemCount: categoriesProvider
-                                            .categoriesList.length,
+                                            .categoryList.length,
                                         shrinkWrap: true,
                                         reverse: false,
                                         physics: BouncingScrollPhysics(),
@@ -868,7 +867,7 @@ class MonthStats extends StatelessWidget {
                                                 Container(
                                                     width: 150,
                                                     child: Text(
-                                                      '${categoriesProvider.categoriesList[i].category}',
+                                                      '${categoriesProvider.categoryList[i]}',
                                                       style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold),
@@ -884,11 +883,10 @@ class MonthStats extends StatelessWidget {
                                                       child: Text(
                                                         (monthlyStats.salesCountbyCategory[
                                                                     (categoriesProvider
-                                                                        .categoriesList[
-                                                                            i]
-                                                                        .category)] !=
+                                                                            .categoryList[
+                                                                        i])] !=
                                                                 null)
-                                                            ? '${formatCurrency.format(monthlyStats.salesCountbyCategory[(categoriesProvider.categoriesList[i].category)])}'
+                                                            ? '${formatCurrency.format(monthlyStats.salesCountbyCategory[(categoriesProvider.categoryList[i])])}'
                                                             : '${formatCurrency.format(0)}',
                                                         maxLines: 1,
                                                         overflow: TextOverflow

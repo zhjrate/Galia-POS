@@ -21,9 +21,7 @@ class _StatsDeskState extends State<StatsDesk> {
     return SingleChildScrollView(
       child: Container(
         width: double.infinity,
-        height: (MediaQuery.of(context).size.height > 950)
-            ? MediaQuery.of(context).size.height
-            : 1500,
+        height: MediaQuery.of(context).size.height * 1.2,
         padding: EdgeInsets.all(30),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,

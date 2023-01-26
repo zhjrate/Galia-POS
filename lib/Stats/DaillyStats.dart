@@ -75,7 +75,7 @@ class DailyStats extends StatelessWidget {
                               children: [
                                 //Amount
                                 Text(
-                                  '${dailyTransactions.sales}',
+                                  '${formatCurrency.format(dailyTransactions.sales)}',
                                   style: TextStyle(
                                       fontWeight: FontWeight.w900,
                                       fontSize: 25),
@@ -192,7 +192,7 @@ class DailyStats extends StatelessWidget {
                               children: [
                                 //Amount
                                 Text(
-                                  '${dailyTransactions.sales / dailyTransactions.totalSalesCount}',
+                                  '${formatCurrency.format(dailyTransactions.sales / dailyTransactions.totalSalesCount)}',
                                   style: TextStyle(
                                       fontWeight: FontWeight.w900,
                                       fontSize: 25),
@@ -222,6 +222,7 @@ class DailyStats extends StatelessWidget {
                           //By Product
                           Expanded(
                             child: Container(
+                              height: MediaQuery.of(context).size.width * 0.6,
                               padding: EdgeInsets.all(30),
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -391,6 +392,7 @@ class DailyStats extends StatelessWidget {
                           //By Categories
                           Expanded(
                             child: Container(
+                              height: MediaQuery.of(context).size.width * 0.6,
                               padding: EdgeInsets.all(30),
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -427,7 +429,7 @@ class DailyStats extends StatelessWidget {
                                       child: Container(
                                         child: ListView.builder(
                                             itemCount: categoriesProvider
-                                                .categoriesList.length,
+                                                .categoryList.length,
                                             shrinkWrap: true,
                                             reverse: false,
                                             physics: BouncingScrollPhysics(),
@@ -446,7 +448,7 @@ class DailyStats extends StatelessWidget {
                                                     Container(
                                                         width: 150,
                                                         child: Text(
-                                                          '${categoriesProvider.categoriesList[i].category}',
+                                                          '${categoriesProvider.categoryList[i]}',
                                                           style: TextStyle(
                                                               fontWeight:
                                                                   FontWeight
@@ -462,12 +464,11 @@ class DailyStats extends StatelessWidget {
                                                         child: Center(
                                                           child: Text(
                                                             (dailyTransactions
-                                                                            .salesCountbyCategory[
-                                                                        (categoriesProvider
-                                                                            .categoriesList[i]
-                                                                            .category)] !=
+                                                                        .salesCountbyCategory[(categoriesProvider
+                                                                            .categoryList[
+                                                                        i])] !=
                                                                     null)
-                                                                ? '${formatCurrency.format(dailyTransactions.salesCountbyCategory[(categoriesProvider.categoriesList[i].category)])}'
+                                                                ? '${formatCurrency.format(dailyTransactions.salesCountbyCategory[(categoriesProvider.categoryList[i])])}'
                                                                 : '${formatCurrency.format(0)}',
                                                             maxLines: 1,
                                                             overflow:
@@ -679,7 +680,7 @@ class DailyStats extends StatelessWidget {
                         //By Product
                         Container(
                           width: double.infinity,
-                          height: 500,
+                          height: MediaQuery.of(context).size.width * 0.6,
                           padding: EdgeInsets.all(30),
                           decoration: BoxDecoration(
                             color: Colors.white,
@@ -839,7 +840,7 @@ class DailyStats extends StatelessWidget {
                         //By Categories
                         Container(
                           width: double.infinity,
-                          height: 500,
+                          height: MediaQuery.of(context).size.width * 0.6,
                           padding: EdgeInsets.all(30),
                           decoration: BoxDecoration(
                             color: Colors.white,
@@ -874,7 +875,7 @@ class DailyStats extends StatelessWidget {
                                   child: Container(
                                     child: ListView.builder(
                                         itemCount: categoriesProvider
-                                            .categoriesList.length,
+                                            .categoryList.length,
                                         shrinkWrap: true,
                                         reverse: false,
                                         physics: BouncingScrollPhysics(),
@@ -892,7 +893,7 @@ class DailyStats extends StatelessWidget {
                                                 Container(
                                                     width: 150,
                                                     child: Text(
-                                                      '${categoriesProvider.categoriesList[i].category}',
+                                                      '${categoriesProvider.categoryList[i]}',
                                                       style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold),
@@ -909,11 +910,10 @@ class DailyStats extends StatelessWidget {
                                                         (dailyTransactions
                                                                         .salesCountbyCategory[
                                                                     (categoriesProvider
-                                                                        .categoriesList[
-                                                                            i]
-                                                                        .category)] !=
+                                                                            .categoryList[
+                                                                        i])] !=
                                                                 null)
-                                                            ? '${formatCurrency.format(dailyTransactions.salesCountbyCategory[(categoriesProvider.categoriesList[i].category)])}'
+                                                            ? '${formatCurrency.format(dailyTransactions.salesCountbyCategory[(categoriesProvider.categoryList[i])])}'
                                                             : '${formatCurrency.format(0)}',
                                                         maxLines: 1,
                                                         overflow: TextOverflow

@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class PlateSelectionDesktop extends StatefulWidget {
+  final String businessID;
   final String category;
-  PlateSelectionDesktop({this.category});
+  PlateSelectionDesktop(this.businessID, this.category);
 
   @override
   _PlateSelectionDesktopState createState() => _PlateSelectionDesktopState();
@@ -59,7 +60,8 @@ class _PlateSelectionDesktopState extends State<PlateSelectionDesktop> {
                   //If ticket contains product, just add
                   for (var x = 0; x < bloc.ticketItems['Items'].length; x++) {
                     if (product[i].product ==
-                        bloc.ticketItems['Items'][x]["Name"]) {
+                            bloc.ticketItems['Items'][x]["Name"] &&
+                        bloc.ticketItems['Items'][x]["Options"].isEmpty) {
                       setState(() {
                         productExists = true;
                         itemIndex = x;
@@ -75,7 +77,8 @@ class _PlateSelectionDesktopState extends State<PlateSelectionDesktop> {
                       'Category': product[i].category,
                       'Price': product[i].price,
                       'Quantity': 1,
-                      'Total Price': product[i].price
+                      'Total Price': product[i].price,
+                      'Options': []
                     });
                   }
 
@@ -89,8 +92,9 @@ class _PlateSelectionDesktopState extends State<PlateSelectionDesktop> {
                       context: context,
                       builder: (context) {
                         return POSItemDialog(
+                            widget.businessID,
                             product[i].product,
-                            product[i].priceOptions,
+                            product[i].productOptions,
                             product[i].available,
                             product[i].price.toDouble(),
                             product[i].category,

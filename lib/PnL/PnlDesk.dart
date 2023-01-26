@@ -1,4 +1,5 @@
 import 'package:denario/Models/Mapping.dart';
+import 'package:denario/Models/User.dart';
 import 'package:denario/PnL/PnL.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +23,7 @@ class _PnlDeskState extends State<PnlDesk> {
   @override
   Widget build(BuildContext context) {
     final highLevelMapping = Provider.of<HighLevelMapping>(context);
+    final userProfile = Provider.of<UserData>(context);
 
     if (highLevelMapping == null) {
       return Center();
@@ -40,7 +42,7 @@ class _PnlDeskState extends State<PnlDesk> {
             //Title + Date
             Container(
               width: MediaQuery.of(context).size.width * 0.9,
-              padding: EdgeInsets.all(30),
+              padding: EdgeInsets.all(20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -59,8 +61,8 @@ class _PnlDeskState extends State<PnlDesk> {
                       borderRadius: BorderRadius.circular(25),
                       boxShadow: <BoxShadow>[
                         new BoxShadow(
-                          color: Colors.grey[200],
-                          offset: new Offset(15.0, 15.0),
+                          color: Colors.grey[350],
+                          offset: Offset(0.0, 0.0),
                           blurRadius: 10.0,
                         )
                       ],
@@ -160,10 +162,12 @@ class _PnlDeskState extends State<PnlDesk> {
             ),
             //PnL
             PnL(
-                pnlAccountGroups: pnlAccountGroups,
-                pnlMapping: pnlMapping,
-                pnlMonth: pnlMonth,
-                pnlYear: pnlYear)
+              pnlAccountGroups: pnlAccountGroups,
+              pnlMapping: pnlMapping,
+              pnlMonth: pnlMonth,
+              pnlYear: pnlYear,
+              activeBusiness: userProfile.activeBusiness,
+            )
           ],
         ),
       ),

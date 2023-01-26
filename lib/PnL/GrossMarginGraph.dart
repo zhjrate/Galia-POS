@@ -1,8 +1,9 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
 
 class GrossMarginGraph extends StatefulWidget {
+  final List pnlAccountGroups;
+  final Map<dynamic, dynamic> pnlMapping;
   final double cafeVentas;
   final double cafeCostos;
   final double postresVentas;
@@ -16,7 +17,9 @@ class GrossMarginGraph extends StatefulWidget {
   final double promosVentas;
   final double otrosCostos;
   GrossMarginGraph(
-      {this.cafeVentas,
+      {this.pnlAccountGroups,
+      this.pnlMapping,
+      this.cafeVentas,
       this.cafeCostos,
       this.postresVentas,
       this.postresCostos,
@@ -78,7 +81,7 @@ class GrossMarginGraphState extends State<GrossMarginGraph> {
     return Container(
       width: double.infinity,
       height: MediaQuery.of(context).size.height * 0.5,
-      padding: EdgeInsets.symmetric(vertical: 30, horizontal: 50),
+      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -98,59 +101,82 @@ class GrossMarginGraphState extends State<GrossMarginGraph> {
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: BarChart(
                 BarChartData(
-                  maxY: 300000,
+                  maxY: 500000,
+                  gridData: FlGridData(show: false),
                   titlesData: FlTitlesData(
                     show: true,
-                    bottomTitles: SideTitles(
+                    topTitles:
+                        AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
                       showTitles: true,
-                      getTextStyles: (value) => const TextStyle(
-                          color: Color(0xff7589a2),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12),
-                      margin: 20,
-                      getTitles: (double value) {
-                        switch (value.toInt()) {
-                          case 0:
-                            return 'Café';
-                          case 1:
-                            return 'Postres';
-                          case 2:
-                            return 'Panadería';
-                          case 3:
-                            return 'Platos';
-                          case 4:
-                            return 'Bebidas';
-                          case 5:
-                            return 'Promos';
-                          case 6:
-                            return 'Otros';
-                          default:
-                            return '';
-                        }
+                      // getTextStyles: (value) => const TextStyle(
+                      //     color: Color(0xff7589a2),
+                      //     fontWeight: FontWeight.bold,
+                      //     fontSize: 12),
+                      //margin: 20,
+                      getTitlesWidget: (double value, meta) {
+                        List<String> titles = [
+                          "Café",
+                          "Postres",
+                          "Panadería",
+                          "Platos",
+                          "Bebidas",
+                          "Promos",
+                          "Otros"
+                        ];
+
+                        Widget text = Text(
+                          titles[value.toInt()],
+                          style: const TextStyle(
+                            color: Color(0xff7589a2),
+                            fontWeight: FontWeight.normal,
+                            fontSize: 14,
+                          ),
+                        );
+
+                        return SideTitleWidget(
+                          axisSide: meta.axisSide,
+                          space: 8, //margin top
+                          child: text,
+                        );
                       },
-                    ),
-                    leftTitles: SideTitles(
-                      showTitles: true,
-                      getTextStyles: (value) => const TextStyle(
-                          color: Color(0xff7589a2),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14),
-                      margin: 32,
-                      reservedSize: 14,
-                      getTitles: (value) {
-                        if (value == 10000) {
-                          return '10K';
-                        } else if (value == 50000) {
-                          return '50K';
-                        } else if (value == 150000) {
-                          return '150K';
-                        } else if (value == 300000) {
-                          return '300K';
-                        } else {
-                          return '';
-                        }
-                      },
-                    ),
+                    )),
+                    rightTitles:
+                        AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    // leftTitles: AxisTitles(
+                    //   sideTitles: SideTitles(
+                    //     showTitles: true,
+                    //     reservedSize: 5,
+                    //     getTitlesWidget: (value, meta) {
+                    //       const style = TextStyle(
+                    //         color: Color(0xff7589a2),
+                    //         fontWeight: FontWeight.normal,
+                    //         fontSize: 14,
+                    //       );
+                    //       String text;
+
+                    //       if (value == 10000) {
+                    //         text = '10k';
+                    //       } else if (value == 50000) {
+                    //         text = '50K';
+                    //       } else if (value == 150000) {
+                    //         text = '150K';
+                    //       } else if (value == 300000) {
+                    //         text = '300K';
+                    //       } else {
+                    //         return Container();
+                    //       }
+
+                    //       return SideTitleWidget(
+                    //         axisSide: meta.axisSide,
+                    //         space: 0,
+                    //         child: Container(
+                    //             width: 50, child: Text(text, style: style)),
+                    //       );
+                    //     },
+                    //   ),
+                    // )
                   ),
                   borderData: FlBorderData(
                     show: false,
@@ -171,13 +197,13 @@ class GrossMarginGraphState extends State<GrossMarginGraph> {
   BarChartGroupData makeGroupData(int x, double y1, double y2) {
     return BarChartGroupData(barsSpace: 4, x: x, barRods: [
       BarChartRodData(
-        y: y1,
-        colors: [leftBarColor],
+        toY: y1,
+        color: leftBarColor,
         width: width,
       ),
       BarChartRodData(
-        y: y2,
-        colors: [rightBarColor],
+        toY: y2,
+        color: rightBarColor,
         width: width,
       ),
     ]);

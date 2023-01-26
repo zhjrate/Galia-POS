@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class PnlMargins extends StatefulWidget {
+  final List pnlAccountGroups;
+  final Map<dynamic, dynamic> pnlMapping;
   final double grossMargin;
   final double gross;
   final double operatingMargin;
@@ -12,7 +14,9 @@ class PnlMargins extends StatefulWidget {
   final AsyncSnapshot snapshot;
 
   PnlMargins(
-      {this.grossMargin,
+      {this.pnlAccountGroups,
+      this.pnlMapping,
+      this.grossMargin,
       this.gross,
       this.operatingMargin,
       this.operating,
@@ -37,8 +41,8 @@ class _PnlMarginsState extends State<PnlMargins> {
         borderRadius: BorderRadius.circular(25),
         boxShadow: <BoxShadow>[
           new BoxShadow(
-            color: Colors.grey[200],
-            offset: new Offset(15.0, 15.0),
+            color: Colors.grey[350],
+            offset: Offset(0.0, 0.0),
             blurRadius: 10.0,
           )
         ],
@@ -216,8 +220,8 @@ class _PnlMarginsState extends State<PnlMargins> {
                   borderRadius: BorderRadius.circular(25),
                   boxShadow: <BoxShadow>[
                     new BoxShadow(
-                      color: Colors.grey[200],
-                      offset: new Offset(15.0, 15.0),
+                      color: Colors.grey[350],
+                      offset: Offset(0.0, 0.0),
                       blurRadius: 10.0,
                     )
                   ],

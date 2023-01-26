@@ -2,18 +2,20 @@ import 'package:denario/Backend/DatabaseService.dart';
 import 'package:denario/Backend/Ticket.dart';
 import 'package:denario/Models/Products.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tags/flutter_tags.dart';
 import 'package:intl/intl.dart';
 
 class POSItemDialog extends StatefulWidget {
+  final String businessID;
   final String product;
-  final List<PriceOptions> priceOptions;
+  final List<ProductOptions> productOptions;
   final bool availableOnMenu;
   final double price;
   final String category;
   final String documentID;
 
-  POSItemDialog(this.product, this.priceOptions, this.availableOnMenu,
-      this.price, this.category, this.documentID);
+  POSItemDialog(this.businessID, this.product, this.productOptions,
+      this.availableOnMenu, this.price, this.category, this.documentID);
   @override
   _POSItemDialogState createState() => _POSItemDialogState();
 }
@@ -23,7 +25,38 @@ class _POSItemDialogState extends State<POSItemDialog> {
   bool changedAvailability;
   int quantity;
   double selectedPrice;
+  double basePrice;
   final formatCurrency = new NumberFormat.simpleCurrency();
+  List selectedTags = [];
+
+  double totalAmount(
+    double basePrice,
+    List selectedTags,
+  ) {
+    double total = 0;
+    List<double> additionalsList = [];
+    double additionalAmount = 0;
+
+    //Serch for base price
+    widget.productOptions.forEach((x) {
+      if (x.priceStructure == 'Aditional') {
+        for (var i = 0; i < x.priceOptions.length; i++) {
+          if (selectedTags.contains(x.priceOptions[i]['Option'])) {
+            additionalsList.add(x.priceOptions[i]['Price']);
+          }
+        }
+      }
+    });
+
+    //Add up
+    additionalsList.forEach((y) {
+      additionalAmount = additionalAmount + y;
+    });
+
+    total = basePrice + additionalAmount;
+
+    return total;
+  }
 
   @override
   void initState() {
@@ -31,6 +64,7 @@ class _POSItemDialogState extends State<POSItemDialog> {
     changedAvailability = false;
     quantity = 1;
     selectedPrice = widget.price;
+    basePrice = widget.price;
     super.initState();
   }
 
@@ -76,7 +110,7 @@ class _POSItemDialogState extends State<POSItemDialog> {
                 Container(
                   width: double.infinity,
                   child: Text(
-                    '${formatCurrency.format(selectedPrice)}',
+                    '${formatCurrency.format(totalAmount(basePrice, selectedTags))}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         color: Colors.grey.shade500,
@@ -118,60 +152,111 @@ class _POSItemDialogState extends State<POSItemDialog> {
                 ),
                 SizedBox(height: 20),
                 //Price Options
-                (widget.priceOptions.length == 0)
+                (widget.productOptions.length == 0)
                     ? Container()
-                    : Container(
-                        width: double.infinity,
-                        height: 35,
-                        child: ListView.builder(
-                            shrinkWrap: true,
-                            scrollDirection: Axis.horizontal,
-                            physics: BouncingScrollPhysics(),
-                            itemCount: widget.priceOptions.length,
-                            itemBuilder: (context, x) {
-                              return Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 5.0),
-                                child: OutlinedButton(
-                                    style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              Colors.white),
-                                      overlayColor: MaterialStateProperty
-                                          .resolveWith<Color>(
-                                        (Set<MaterialState> states) {
-                                          if (states
-                                              .contains(MaterialState.hovered))
-                                            return Colors.grey.shade300;
-                                          if (states.contains(
-                                                  MaterialState.focused) ||
-                                              states.contains(
-                                                  MaterialState.pressed))
-                                            return Colors.grey.shade300;
-                                          return null; // Defer to the widget's default.
-                                        },
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        selectedPrice =
-                                            widget.priceOptions[x].price;
-                                      });
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12, vertical: 5.0),
-                                      child: Center(
-                                          child: Text(
-                                        '${widget.priceOptions[x].option}',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400),
-                                      )),
-                                    )),
-                              );
-                            })),
-                SizedBox(height: (widget.priceOptions.length == 0) ? 0 : 30),
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: widget.productOptions.length,
+                        itemBuilder: (context, i) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 15.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                //Title
+                                Text(
+                                  widget.productOptions[i].title,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                      color: Colors.black),
+                                ),
+                                SizedBox(height: 10),
+                                //List
+                                Container(
+                                    width: double.infinity,
+                                    child: Tags(
+                                        itemCount: widget.productOptions[i]
+                                            .priceOptions.length,
+                                        itemBuilder: (int x) {
+                                          return ItemTags(
+                                              active: false,
+                                              padding: EdgeInsets.all(12),
+                                              key: Key(widget.productOptions[i]
+                                                  .priceOptions[x]['Option']),
+                                              index: x,
+                                              singleItem: !widget
+                                                  .productOptions[i]
+                                                  .multipleOptions,
+                                              title: widget.productOptions[i]
+                                                  .priceOptions[x]['Option'],
+                                              textColor: Colors.black,
+                                              textActiveColor: Colors.white,
+                                              color: Colors.white,
+                                              border: Border.all(
+                                                  color: Colors.grey),
+                                              activeColor:
+                                                  Colors.greenAccent[400],
+                                              onPressed: (item) {
+                                                if (!selectedTags.contains(
+                                                    widget.productOptions[i]
+                                                            .priceOptions[x]
+                                                        ['Option'])) {
+                                                  //IF SINGLE CHOICE, REMOVE OTHERS
+                                                  if (!widget.productOptions[i]
+                                                      .multipleOptions) {
+                                                    widget.productOptions[i]
+                                                        .priceOptions
+                                                        .forEach((x) {
+                                                      if (selectedTags.contains(
+                                                          x['Option'])) {
+                                                        selectedTags.remove(
+                                                            x['Option']);
+                                                      }
+                                                    });
+                                                  }
+                                                  //Add new
+                                                  setState(() {
+                                                    selectedTags.add(widget
+                                                            .productOptions[i]
+                                                            .priceOptions[x]
+                                                        ['Option']);
+                                                  });
+                                                }
+
+                                                if (widget.productOptions[i]
+                                                            .priceStructure ==
+                                                        'Aditional' &&
+                                                    !selectedTags.contains(
+                                                        widget.productOptions[i]
+                                                                .priceOptions[x]
+                                                            ['Option'])) {
+                                                  setState(() {
+                                                    selectedPrice = selectedPrice +
+                                                        widget.productOptions[i]
+                                                                .priceOptions[x]
+                                                            ['Price'];
+                                                  });
+                                                } else if (widget
+                                                        .productOptions[i]
+                                                        .priceStructure ==
+                                                    'Complete') {
+                                                  setState(() {
+                                                    basePrice = widget
+                                                            .productOptions[i]
+                                                            .priceOptions[x]
+                                                        ['Price'];
+                                                  });
+                                                }
+                                              });
+                                        })),
+                              ],
+                            ),
+                          );
+                        }),
+
+                SizedBox(height: (widget.productOptions.length == 0) ? 0 : 30),
                 //Quantity
                 Container(
                   width: double.infinity,
@@ -283,15 +368,19 @@ class _POSItemDialogState extends State<POSItemDialog> {
                           bloc.addToCart({
                             'Name': widget.product,
                             'Category': widget.category,
-                            'Price': selectedPrice,
+                            'Price': totalAmount(basePrice, selectedTags),
                             'Quantity': quantity,
-                            'Total Price': selectedPrice * quantity
+                            'Total Price':
+                                totalAmount(basePrice, selectedTags) * quantity,
+                            'Options': selectedTags
                           });
                         }
                         // Change Availability
                         if (changedAvailability) {
                           DatabaseService().updateProductAvailability(
-                              widget.documentID, isAvailable);
+                              widget.businessID,
+                              widget.documentID,
+                              isAvailable);
                         }
                         // Go Back
                         Navigator.of(context).pop();
