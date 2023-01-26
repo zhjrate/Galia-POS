@@ -4,7 +4,15 @@ import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: FirebaseOptions(
+        apiKey: "AIzaSyCGgaI2hxuYbr8yiqHuPStscPHlV08pmso",
+        appId: "1:414051585564:web:1a01eea9c4ed991ae459d9",
+        messagingSenderId: "414051585564",
+        projectId: "cafe-galia",
+        storageBucket: 'cafe-galia.appspot.com'),
+  );
+
   runApp(MyApp());
 }
 
@@ -20,6 +28,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        title: 'Denario POS',
         theme: ThemeData(
           visualDensity: VisualDensity.adaptivePlatformDensity,
           primaryColor: Colors.black,

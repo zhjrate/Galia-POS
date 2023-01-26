@@ -17,9 +17,10 @@ class _HomeMobileState extends State<HomeMobile> {
   ];
 
   Widget screenNavigator(String screenName, IconData screenIcon) {
-    return FlatButton(
-      hoverColor: Colors.black26,
-      height: 50,
+    return TextButton(
+      style: ElevatedButton.styleFrom(
+        minimumSize: Size(50, 50),
+      ),
       onPressed: () {},
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 5.0),

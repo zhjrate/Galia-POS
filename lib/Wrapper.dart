@@ -1,7 +1,12 @@
-import 'package:denario/Authentication/LogIn_Web.dart';
+import 'package:denario/Authentication/Authenticate.dart';
+import 'package:denario/Authentication/Onboarding.dart';
+import 'package:denario/Backend/DatabaseService.dart';
 import 'package:denario/Home.dart';
+import 'package:denario/Loading.dart';
+import 'package:denario/Models/User.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -21,10 +26,24 @@ class _WrapperState extends State<Wrapper> {
 
   @override
   Widget build(BuildContext context) {
-    if (FirebaseAuth.instance.currentUser == null && user == null) {
-      return LogIn();
+    if (user == null && FirebaseAuth.instance.currentUser == null) {
+      return Authenticate();
+    } else if (user != null) {
+      if (user.displayName == null || user.displayName == '') {
+        return StreamProvider<UserData>.value(
+          initialData: null,
+          value: DatabaseService().userProfile(user.uid),
+          child: Onboarding(),
+        );
+      } else {
+        return StreamProvider<UserData>.value(
+          initialData: null,
+          value: DatabaseService().userProfile(user.uid),
+          child: Home(),
+        );
+      }
     } else {
-      return Home();
+      return Loading();
     }
   }
 }
