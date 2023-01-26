@@ -1,17 +1,24 @@
+import 'package:denario/Backend/DatabaseService.dart';
+import 'package:denario/Expenses/SingleExpenseDialog.dart';
+import 'package:denario/Models/DailyCash.dart';
 import 'package:denario/Models/Expenses.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 class ExpenseList extends StatelessWidget {
+  final String businessID;
+  ExpenseList(this.businessID);
   @override
   Widget build(BuildContext context) {
     final formatCurrency = new NumberFormat.simpleCurrency();
     final expenses = Provider.of<List<Expenses>>(context);
+    final registerStatus = Provider.of<CashRegister>(context);
 
-    if (expenses == null) {
-      return Center();
+    if (registerStatus == null || expenses == null) {
+      return Container();
     }
+
     if (expenses.length == 0) {
       return Container(
         width: double.infinity,
@@ -59,83 +66,115 @@ class ExpenseList extends StatelessWidget {
           reverse: false,
           physics: BouncingScrollPhysics(),
           itemBuilder: (context, i) {
-            return Container(
-              height: 60,
-              width: double.infinity,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  //Fecha
-                  Container(
-                      width: 50,
-                      child: Text(
-                        DateFormat.MMMd()
-                            .format(expenseList[i].date)
-                            .toString(),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )),
-                  SizedBox(width: 10),
-                  //Detail
-                  Container(
-                    width: 150,
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          //Desc
-                          Container(
-                              child: Text(
-                            '${expenseList[i].product}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontWeight: FontWeight.w400),
-                          )),
-                          SizedBox(height: 5),
-                          //Vendor + Cat
-                          Container(
-                              child: Text(
-                            '${expenseList[i].vendor} • ${expenseList[i].category}',
+            String description;
+
+            if (expenseList[i].items.isEmpty) {
+              description = 'Sin descripción';
+            } else if (expenseList[i].items.length > 1) {
+              if (expenseList[i].items.length > 2) {
+                description =
+                    '${expenseList[i].items[0].product}, ${expenseList[i].items[1].product}...';
+              } else {
+                description =
+                    '${expenseList[i].items[0].product}, ${expenseList[i].items[1].product}';
+              }
+            } else {
+              description = expenseList[i].items.first.product;
+            }
+            return TextButton(
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return StreamProvider<DailyTransactions>.value(
+                          initialData: null,
+                          value: DatabaseService().dailyTransactions(
+                              businessID, registerStatus.registerName),
+                          child: SingleExpenseDialog(
+                              expenseList[i], businessID, registerStatus));
+                    });
+              },
+              child: Container(
+                height: 60,
+                width: double.infinity,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    //Fecha
+                    Container(
+                        width: 50,
+                        child: Text(
+                          DateFormat.MMMd()
+                              .format(expenseList[i].date)
+                              .toString(),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.black),
+                        )),
+                    SizedBox(width: 10),
+                    //Detail
+                    Container(
+                      width: 150,
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            //Desc
+                            Container(
+                                child: Text(
+                              description,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black),
+                            )),
+                            SizedBox(height: 5),
+                            //Vendor + Cat
+                            Container(
+                                child: Text(
+                              '${expenseList[i].vendor}',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 11,
+                              ),
+                            )),
+                          ]),
+                    ),
+                    SizedBox(width: 10),
+                    //Cost Type
+                    Container(
+                        width: (MediaQuery.of(context).size.width > 1200)
+                            ? 150
+                            : 100,
+                        child: Center(
+                          child: Text(
+                            '${expenseList[i].costType}',
+                            textAlign: TextAlign.center,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: Colors.grey,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 11,
-                            ),
-                          )),
-                        ]),
-                  ),
-                  SizedBox(width: 10),
-                  //Cost Type
-                  Container(
-                      width: (MediaQuery.of(context).size.width > 1200)
-                          ? 150
-                          : 100,
-                      child: Center(
-                        child: Text(
-                          '${expenseList[i].costType}',
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontWeight: FontWeight.w500),
-                        ),
-                      )),
-                  SizedBox(width: 10),
-                  //Total
-                  Container(
-                      width: 70,
-                      child: Center(
-                        child: Text(
-                            '${formatCurrency.format(expenseList[i].total)}',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            )),
-                      )),
-                ],
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black),
+                          ),
+                        )),
+                    SizedBox(width: 10),
+                    //Total
+                    Container(
+                        width: 70,
+                        child: Center(
+                          child: Text(
+                              '${formatCurrency.format(expenseList[i].total)}',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black)),
+                        )),
+                  ],
+                ),
               ),
             );
           }),

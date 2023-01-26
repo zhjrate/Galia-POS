@@ -1,6 +1,9 @@
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:denario/Backend/DatabaseService.dart';
+import 'package:denario/Models/User.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 class UpdateCashRegisterDialog extends StatefulWidget {
   final String currentRegister;
@@ -20,7 +23,7 @@ class UpdateCashRegisterDialog extends StatefulWidget {
 }
 
 class _UpdateCashRegisterDialogState extends State<UpdateCashRegisterDialog> {
-  int amount;
+  double amount;
   String motive;
   Map registerTransactionDetails = {};
   final controller = PageController(initialPage: 0);
@@ -31,6 +34,7 @@ class _UpdateCashRegisterDialogState extends State<UpdateCashRegisterDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final userProfile = Provider.of<UserData>(context);
     return SingleChildScrollView(
       child: Dialog(
         shape:
@@ -77,41 +81,48 @@ class _UpdateCashRegisterDialogState extends State<UpdateCashRegisterDialog> {
                           height: 25,
                         ),
                         //Amount
-                        Container(
-                          width: double.infinity,
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                          height: 75,
-                          color: Colors.white,
-                          alignment: Alignment.center,
-                          child: TextFormField(
-                            autofocus: true,
-                            focusNode: amountNode,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.black, fontSize: 40),
-                            validator: (val) => val.isEmpty
-                                ? "No olvides agregar un monto inicial"
-                                : null,
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            keyboardType: TextInputType.number,
-                            cursorColor: Colors.grey,
-                            decoration: InputDecoration.collapsed(
-                              hintText: "0",
-                              hintStyle: TextStyle(color: Colors.grey.shade700),
+                        TextFormField(
+                          autofocus: true,
+                          focusNode: amountNode,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.black, fontSize: 40),
+                          initialValue: '\$0.00',
+                          validator: (val) =>
+                              val.isEmpty ? "Agrega un monto válido" : null,
+                          inputFormatters: <TextInputFormatter>[
+                            CurrencyTextInputFormatter(
+                              name: '\$',
+                              locale: 'en',
+                              decimalDigits: 2,
                             ),
-                            onChanged: (val) {
-                              setState(() {
-                                amount = int.parse(val);
-                                registerTransactionDetails['Amount'] = amount;
-                                registerTransactionDetails['Type'] =
-                                    widget.transactionType;
-                                registerTransactionDetails['Motive'] =
-                                    widget.transactionType;
-                              });
-                            },
+                          ],
+                          keyboardType: TextInputType.number,
+                          cursorColor: Colors.grey,
+                          decoration: InputDecoration(
+                            border: new OutlineInputBorder(
+                              borderRadius: new BorderRadius.circular(12.0),
+                              borderSide: new BorderSide(
+                                color: Colors.grey,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: new BorderRadius.circular(12.0),
+                              borderSide: new BorderSide(
+                                color: Colors.green,
+                              ),
+                            ),
                           ),
+                          onChanged: (val) {
+                            setState(() {
+                              amount = double.tryParse(
+                                  (val.substring(1)).replaceAll(',', ''));
+                              registerTransactionDetails['Amount'] = amount;
+                              registerTransactionDetails['Type'] =
+                                  widget.transactionType;
+                              registerTransactionDetails['Motive'] =
+                                  widget.transactionType;
+                            });
+                          },
                         ),
                         SizedBox(
                           height: 35,
@@ -119,29 +130,30 @@ class _UpdateCashRegisterDialogState extends State<UpdateCashRegisterDialog> {
                         //Button
                         Container(
                           height: 35.0,
-                          child: RaisedButton(
-                            color: Colors.black,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black,
+                              minimumSize: Size(300, 50),
+                              padding: EdgeInsets.symmetric(horizontal: 15),
+                              shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8)),
+                              ),
+                            ),
                             onPressed: () {
                               controller.nextPage(
                                   duration: Duration(milliseconds: 500),
                                   curve: Curves.ease);
-                              nameNode.nextFocus();
+                              amountNode.unfocus();
+                              nameNode.requestFocus();
                             },
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25)),
-                            padding: EdgeInsets.all(0.0),
-                            child: Container(
-                              constraints: BoxConstraints(
-                                  maxWidth: 300.0, minHeight: 50.0),
-                              alignment: Alignment.center,
-                              child: Text(
-                                "SIGUIENTE",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.white),
-                              ),
+                            child: Text(
+                              "SIGUIENTE",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white),
                             ),
                           ),
                         ),
@@ -186,40 +198,42 @@ class _UpdateCashRegisterDialogState extends State<UpdateCashRegisterDialog> {
                           height: 25,
                         ),
                         //Motive
-                        Container(
-                          width: double.infinity,
-                          height: 75,
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(15),
-                              border: Border.all(color: Colors.black)),
-                          alignment: Alignment.center,
-                          child: TextFormField(
-                            focusNode: nameNode,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.black, fontSize: 24),
-                            autofocus: true,
-                            maxLines: 2,
-                            validator: (val) => val.isEmpty
-                                ? "No olvides agregar un motivo"
-                                : null,
-                            inputFormatters: [
-                              LengthLimitingTextInputFormatter(45)
-                            ],
-                            cursorColor: Colors.grey,
-                            decoration: InputDecoration.collapsed(
-                              hintText: "Motivo",
-                              hintStyle: TextStyle(color: Colors.grey.shade700),
+                        TextFormField(
+                          focusNode: nameNode,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.black, fontSize: 24),
+                          autofocus: true,
+                          maxLines: 2,
+                          validator: (val) => val.isEmpty
+                              ? "No olvides agregar un motivo"
+                              : null,
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(45)
+                          ],
+                          cursorColor: Colors.grey,
+                          decoration: InputDecoration(
+                            label: Text('Motivo'),
+                            labelStyle:
+                                TextStyle(color: Colors.grey, fontSize: 12),
+                            border: new OutlineInputBorder(
+                              borderRadius: new BorderRadius.circular(12.0),
+                              borderSide: new BorderSide(
+                                color: Colors.grey,
+                              ),
                             ),
-                            onChanged: (val) {
-                              setState(() {
-                                motive = val;
-                                registerTransactionDetails['Motive'] = motive;
-                              });
-                            },
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: new BorderRadius.circular(12.0),
+                              borderSide: new BorderSide(
+                                color: Colors.green,
+                              ),
+                            ),
                           ),
+                          onChanged: (val) {
+                            setState(() {
+                              motive = val;
+                              registerTransactionDetails['Motive'] = motive;
+                            });
+                          },
                         ),
                         SizedBox(
                           height: 35,
@@ -227,8 +241,16 @@ class _UpdateCashRegisterDialogState extends State<UpdateCashRegisterDialog> {
                         //Button
                         Container(
                           height: 35.0,
-                          child: RaisedButton(
-                            color: Colors.black,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black,
+                              minimumSize: Size(300, 50),
+                              padding: EdgeInsets.symmetric(horizontal: 15),
+                              shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8)),
+                              ),
+                            ),
                             onPressed: () {
                               double totalTransactionAmount =
                                   widget.transactionAmount + amount;
@@ -246,6 +268,7 @@ class _UpdateCashRegisterDialogState extends State<UpdateCashRegisterDialog> {
                                   DateTime.now();
 
                               DatabaseService().updateCashRegister(
+                                  userProfile.activeBusiness,
                                   widget.currentRegister,
                                   widget.transactionType,
                                   totalTransactionAmount,
@@ -254,21 +277,13 @@ class _UpdateCashRegisterDialogState extends State<UpdateCashRegisterDialog> {
 
                               Navigator.of(context).pop();
                             },
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25)),
-                            padding: EdgeInsets.all(0.0),
-                            child: Container(
-                              constraints: BoxConstraints(
-                                  maxWidth: 300.0, minHeight: 50.0),
-                              alignment: Alignment.center,
-                              child: Text(
-                                "REGISTRAR",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.white),
-                              ),
+                            child: Text(
+                              "REGISTRAR",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white),
                             ),
                           ),
                         ),

@@ -1,30 +1,32 @@
-class SavedOrders {
+class ScheduledSales {
   String orderName;
   double subTotal;
   double total;
   double tax;
   double discount;
-  String paymentType;
   List orderDetail;
-  int orderColor;
   String id;
-  bool isTable;
-  String orderType;
   DateTime savedDate;
+  DateTime dueDate;
   Map client;
+  double initialPayment;
+  double remainingBalance;
+  bool pending;
+  String note;
 
-  SavedOrders(
+  ScheduledSales(
       {this.orderName,
       this.subTotal,
       this.total,
       this.tax,
       this.discount,
-      this.paymentType,
       this.orderDetail,
-      this.orderColor,
       this.id,
-      this.isTable,
-      this.orderType,
+      this.dueDate,
       this.savedDate,
-      this.client});
+      this.client,
+      this.initialPayment,
+      this.remainingBalance,
+      this.pending,
+      this.note});
 }

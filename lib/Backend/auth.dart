@@ -29,19 +29,7 @@ class AuthService {
 
       if (user != null) {
         print('User is ${user.uid}');
-        // Navigator.push(context, MaterialPageRoute(
-        //   builder: (context) => InicioNew()));
       }
-
-      // await _auth.signInWithEmailAndPassword(
-      //   email: email,
-      //   password: password);
-
-      //  User user = (await _auth.signInWithEmailAndPassword(
-      //   email: email,
-      //   password: password)).user;
-      // return _userFromFirebaseUser(user);
-
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
@@ -51,6 +39,35 @@ class AuthService {
     } catch (e) {
       print(e.toString());
       return null;
+    }
+  }
+
+  //Register with email and password
+  Future registerWithEmailAndPassword(String email, String password) async {
+    try {
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('La contraseña es muy débil');
+      } else if (e.code == 'email-already-in-use') {
+        print('El email ya existe para un usuario');
+      }
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  //Update User Profile Data
+  Future updateUserData(String displayName) async {
+    try {
+      User user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        user.updateDisplayName(displayName);
+      }
+    } catch (e) {
+      print(e);
     }
   }
 

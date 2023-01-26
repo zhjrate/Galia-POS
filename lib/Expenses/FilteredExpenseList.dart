@@ -1,9 +1,16 @@
+import 'package:denario/Backend/DatabaseService.dart';
+import 'package:denario/Expenses/SingleExpenseDialog.dart';
+import 'package:denario/Models/DailyCash.dart';
 import 'package:denario/Models/Expenses.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class FilteredExpenseList extends StatelessWidget {
+  final String businessID;
+  final CashRegister registerStatus;
+  FilteredExpenseList(this.businessID, this.registerStatus);
+
   final formatCurrency = new NumberFormat.simpleCurrency();
 
   @override
@@ -18,15 +25,15 @@ class FilteredExpenseList extends StatelessWidget {
 
     return Expanded(
         child: Container(
-      padding: EdgeInsets.all(20),
       child: ListView.builder(
           shrinkWrap: true,
           physics: BouncingScrollPhysics(),
           itemCount: expensesList.length,
           itemBuilder: (context, i) {
             return Container(
-              height: 40,
+              color: i.isOdd ? Colors.grey[100] : Colors.white,
               width: double.infinity,
+              padding: EdgeInsets.all(5),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -41,6 +48,7 @@ class FilteredExpenseList extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
+                        textAlign: TextAlign.center,
                       )),
                   //Hora
                   Container(
@@ -49,6 +57,7 @@ class FilteredExpenseList extends StatelessWidget {
                         DateFormat('HH:mm:ss')
                             .format(expensesList[i].date)
                             .toString(),
+                        textAlign: TextAlign.center,
                       )),
                   //CostType
                   Container(
@@ -60,14 +69,7 @@ class FilteredExpenseList extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
-                      )),
-                  //Category
-                  Container(
-                      width: 120,
-                      child: Text(
-                        '${expensesList[i].category}',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
                       )),
                   //Vendor
                   Container(
@@ -76,16 +78,22 @@ class FilteredExpenseList extends StatelessWidget {
                         '${expensesList[i].vendor}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
                       )),
                   //Product
                   Container(
                       width: 120,
                       child: Text(
-                        (expensesList[i].product == '')
+                        (expensesList[i].items.isEmpty)
                             ? 'Sin descripción'
-                            : '${expensesList[i].product}',
+                            : (expensesList[i].items.length > 1)
+                                ? 'Varios'
+                                : (expensesList[i].items[0].product == '')
+                                    ? 'Sin descripción'
+                                    : '${expensesList[i].items[0].product}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
                       )),
                   //Payment Type
                   Container(
@@ -96,6 +104,7 @@ class FilteredExpenseList extends StatelessWidget {
                           style: TextStyle(color: Colors.grey),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
                         ),
                       )),
                   //Total
@@ -108,18 +117,23 @@ class FilteredExpenseList extends StatelessWidget {
                               fontWeight: FontWeight.w800, color: Colors.black),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
                         ),
                       )),
                   //More Button
                   IconButton(
                     icon: Icon(Icons.search, color: Colors.black, size: 20),
                     onPressed: () {
-                      // showDialog(
-                      //     context: context,
-                      //     builder: (context) {
-                      //       return SingleSaleDialog(
-                      //           sale: expensesList[i]);
-                      //     });
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return StreamProvider<DailyTransactions>.value(
+                                initialData: null,
+                                value: DatabaseService().dailyTransactions(
+                                    businessID, registerStatus.registerName),
+                                child: SingleExpenseDialog(expensesList[i],
+                                    businessID, registerStatus));
+                          });
                     },
                   )
                 ],

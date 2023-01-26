@@ -1,9 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:denario/Backend/DatabaseService.dart';
 import 'package:denario/Dashboard/DailySalesGraph.dart';
-import 'package:denario/Dashboard/SalesDetailsView.dart';
+import 'package:denario/Dashboard/SalesDetailsFilters.dart';
 import 'package:denario/Models/DailyCash.dart';
-import 'package:denario/Models/Sales.dart';
+import 'package:denario/Models/User.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -16,10 +15,28 @@ class DailySales extends StatelessWidget {
     final registerStatus = Provider.of<CashRegister>(context);
     final dailyTransactionsList = Provider.of<List<DailyTransactions>>(context);
     final dailyTransactions = Provider.of<DailyTransactions>(context);
+    final userProfile = Provider.of<UserData>(context);
 
-    if (dailyTransactions == null ||
-        registerStatus == null ||
-        dailyTransactionsList == null) {
+    if (userProfile == null || registerStatus == null) {
+      return Container(
+        width: MediaQuery.of(context).size.width * 0.42,
+        height: 400,
+        padding: EdgeInsets.all(30),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(25),
+          boxShadow: <BoxShadow>[
+            new BoxShadow(
+              color: Colors.grey[200],
+              offset: new Offset(15.0, 15.0),
+              blurRadius: 10.0,
+            )
+          ],
+        ),
+      );
+    }
+
+    if (dailyTransactionsList == null) {
       return Column(mainAxisAlignment: MainAxisAlignment.start, children: [
         Container(
           width: MediaQuery.of(context).size.width * 0.42,
@@ -48,8 +65,6 @@ class DailySales extends StatelessWidget {
       ]);
     }
 
-    final transactionsList = dailyTransactionsList.reversed.take(7).toList();
-
     return (MediaQuery.of(context).size.width > 1100)
         ? Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -62,11 +77,11 @@ class DailySales extends StatelessWidget {
                       padding: EdgeInsets.all(30),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(25),
+                        borderRadius: new BorderRadius.circular(12.0),
                         boxShadow: <BoxShadow>[
                           new BoxShadow(
-                            color: Colors.grey[200],
-                            offset: new Offset(15.0, 15.0),
+                            color: Colors.grey[350],
+                            offset: Offset(0.0, 0.0),
                             blurRadius: 10.0,
                           )
                         ],
@@ -96,18 +111,10 @@ class DailySales extends StatelessWidget {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  MultiProvider(
-                                                      providers: [
-                                                        StreamProvider<
-                                                                List<
-                                                                    Sales>>.value(
-                                                            initialData: null,
-                                                            value:
-                                                                DatabaseService()
-                                                                    .salesList())
-                                                      ],
-                                                      child:
-                                                          SalesDetailsView()))),
+                                                  SalesDetailsFilters(
+                                                      userProfile
+                                                          .activeBusiness,
+                                                      registerStatus))),
                                       icon: Icon(
                                         Icons.search,
                                         color: Colors.black,
@@ -118,7 +125,8 @@ class DailySales extends StatelessWidget {
                           SizedBox(height: 15),
                           //Amount
                           (registerStatus != null &&
-                                  registerStatus.registerisOpen)
+                                  registerStatus.registerisOpen &&
+                                  dailyTransactions != null)
                               ? Text(
                                   '${formatCurrency.format(dailyTransactions.sales)}',
                                   style: TextStyle(
@@ -134,10 +142,9 @@ class DailySales extends StatelessWidget {
                           SizedBox(height: 15),
                           //Graph Sales per day
                           Expanded(
-                              child: (dailyTransactions == null ||
-                                      dailyTransactionsList == null)
+                              child: (dailyTransactionsList == null)
                                   ? Container()
-                                  : DailySalesGraph(transactionsList))
+                                  : DailySalesGraph())
                         ],
                       )),
                 ),
@@ -148,11 +155,11 @@ class DailySales extends StatelessWidget {
                     width: MediaQuery.of(context).size.width * 0.42,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(25),
+                      borderRadius: new BorderRadius.circular(12.0),
                       boxShadow: <BoxShadow>[
                         new BoxShadow(
-                          color: Colors.grey[200],
-                          offset: new Offset(15.0, 15.0),
+                          color: Colors.grey[350],
+                          offset: Offset(0.0, 0.0),
                           blurRadius: 10.0,
                         )
                       ],
@@ -188,12 +195,14 @@ class DailySales extends StatelessWidget {
                             scrollDirection: Axis.vertical,
                             itemCount: registerStatus.paymentTypes.length,
                             itemBuilder: (context, i) {
-                              var salesByMediumIndex = dailyTransactions
-                                  .salesByMedium
-                                  .indexWhere((x) =>
-                                      x['Type'] ==
-                                      registerStatus.paymentTypes[i]['Type']);
-                              print(salesByMediumIndex);
+                              var salesByMediumIndex;
+                              if (dailyTransactions != null) {
+                                salesByMediumIndex = dailyTransactions
+                                    .salesByMedium
+                                    .indexWhere((x) =>
+                                        x['Type'] ==
+                                        registerStatus.paymentTypes[i]['Type']);
+                              }
 
                               return Container(
                                 padding: EdgeInsets.all(5.0),
@@ -234,7 +243,7 @@ class DailySales extends StatelessWidget {
                               );
                             },
                           ))),
-                        ),
+                        )
                       ],
                     ),
                   ),
@@ -251,11 +260,11 @@ class DailySales extends StatelessWidget {
                       padding: EdgeInsets.all(30),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(25),
+                        borderRadius: new BorderRadius.circular(12.0),
                         boxShadow: <BoxShadow>[
                           new BoxShadow(
-                            color: Colors.grey[200],
-                            offset: new Offset(15.0, 15.0),
+                            color: Colors.grey[350],
+                            offset: Offset(0.0, 0.0),
                             blurRadius: 10.0,
                           )
                         ],
@@ -281,22 +290,16 @@ class DailySales extends StatelessWidget {
                                   ),
                                   Spacer(),
                                   IconButton(
-                                      onPressed: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  MultiProvider(
-                                                      providers: [
-                                                        StreamProvider<
-                                                                List<
-                                                                    Sales>>.value(
-                                                            initialData: null,
-                                                            value:
-                                                                DatabaseService()
-                                                                    .salesList())
-                                                      ],
-                                                      child:
-                                                          SalesDetailsView()))),
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    SalesDetailsFilters(
+                                                        userProfile
+                                                            .activeBusiness,
+                                                        registerStatus)));
+                                      },
                                       icon: Icon(
                                         Icons.search,
                                         color: Colors.black,
@@ -323,10 +326,9 @@ class DailySales extends StatelessWidget {
                           SizedBox(height: 15),
                           //Graph Sales per day
                           Expanded(
-                              child: (dailyTransactions == null ||
-                                      dailyTransactionsList == null)
+                              child: (dailyTransactionsList == null)
                                   ? Container()
-                                  : DailySalesGraph(transactionsList))
+                                  : DailySalesGraph())
                         ],
                       )),
                 ),
@@ -337,11 +339,11 @@ class DailySales extends StatelessWidget {
                     width: MediaQuery.of(context).size.width * 0.42,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(25),
+                      borderRadius: new BorderRadius.circular(12.0),
                       boxShadow: <BoxShadow>[
                         new BoxShadow(
-                          color: Colors.grey[200],
-                          offset: new Offset(15.0, 15.0),
+                          color: Colors.grey[350],
+                          offset: Offset(0.0, 0.0),
                           blurRadius: 10.0,
                         )
                       ],
@@ -377,12 +379,14 @@ class DailySales extends StatelessWidget {
                             scrollDirection: Axis.vertical,
                             itemCount: registerStatus.paymentTypes.length,
                             itemBuilder: (context, i) {
-                              var salesByMediumIndex = dailyTransactions
-                                  .salesByMedium
-                                  .indexWhere((x) =>
-                                      x['Type'] ==
-                                      registerStatus.paymentTypes[i]['Type']);
-                              print(salesByMediumIndex);
+                              var salesByMediumIndex;
+                              if (dailyTransactions != null) {
+                                salesByMediumIndex = dailyTransactions
+                                    .salesByMedium
+                                    .indexWhere((x) =>
+                                        x['Type'] ==
+                                        registerStatus.paymentTypes[i]['Type']);
+                              }
 
                               return Container(
                                 padding: EdgeInsets.all(5.0),

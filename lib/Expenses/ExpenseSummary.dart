@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/gestures.dart';
 
 class ExpenseSummary extends StatefulWidget {
+  final String activeBusiness;
+  ExpenseSummary(this.activeBusiness);
   @override
   _ExpenseSummaryState createState() => _ExpenseSummaryState();
 }
@@ -49,13 +49,15 @@ class _ExpenseSummaryState extends State<ExpenseSummary> {
   Future currentValue() async {
     var year = DateTime.now().year.toString();
     var month = DateTime.now().month.toString();
-    final User user = FirebaseAuth.instance.currentUser;
-    final String uid = user.uid.toString();
 
     var firestore = FirebaseFirestore.instance;
 
-    var docRef =
-        firestore.collection('ERP').doc(uid).collection(year).doc(month).get();
+    var docRef = firestore
+        .collection('ERP')
+        .doc(widget.activeBusiness)
+        .collection(year)
+        .doc(month)
+        .get();
     return docRef;
   }
 
@@ -216,19 +218,17 @@ class _ExpenseSummaryState extends State<ExpenseSummary> {
                   Expanded(
                       child: PieChart(
                     PieChartData(
-                      pieTouchData:
-                          PieTouchData(touchCallback: (pieTouchResponse) {
+                      pieTouchData: PieTouchData(touchCallback:
+                          (FlTouchEvent event, pieTouchResponse) {
                         setState(() {
-                          final desiredTouch = pieTouchResponse.touchInput
-                                  is! PointerExitEvent &&
-                              pieTouchResponse.touchInput is! PointerUpEvent;
-                          if (desiredTouch &&
-                              pieTouchResponse.touchedSection != null) {
-                            touchedIndex = pieTouchResponse
-                                .touchedSection.touchedSectionIndex;
-                          } else {
+                          if (!event.isInterestedForInteractions ||
+                              pieTouchResponse == null ||
+                              pieTouchResponse.touchedSection == null) {
                             touchedIndex = -1;
+                            return;
                           }
+                          touchedIndex = pieTouchResponse
+                              .touchedSection.touchedSectionIndex;
                         });
                       }),
                       startDegreeOffset: 180,

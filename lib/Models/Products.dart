@@ -1,13 +1,18 @@
 class Products {
   String product;
-  int price;
+  double price;
   String image;
   String category;
   String description;
-  List<PriceOptions> priceOptions;
+  List<ProductOptions> productOptions;
   bool available;
-  bool milkOptions;
   String productID;
+  List historicPrices;
+  String code;
+  List ingredients;
+  List searchName;
+  bool vegan;
+  bool showOnMenu;
 
   Products(
       {this.product,
@@ -15,10 +20,26 @@ class Products {
       this.image,
       this.description,
       this.category,
-      this.priceOptions,
+      this.productOptions,
       this.available,
-      this.milkOptions,
-      this.productID});
+      this.productID,
+      this.historicPrices,
+      this.code,
+      this.ingredients,
+      this.searchName,
+      this.vegan,
+      this.showOnMenu});
+}
+
+class ProductOptions {
+  String title;
+  bool mandatory;
+  bool multipleOptions;
+  String priceStructure;
+  List priceOptions;
+
+  ProductOptions(this.title, this.mandatory, this.multipleOptions,
+      this.priceStructure, this.priceOptions);
 }
 
 class PriceOptions {

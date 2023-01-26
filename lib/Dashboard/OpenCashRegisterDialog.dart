@@ -1,6 +1,9 @@
 import 'package:denario/Backend/DatabaseService.dart';
+import 'package:denario/Models/User.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 
 class OpenCashRegisterDialog extends StatefulWidget {
   @override
@@ -9,7 +12,7 @@ class OpenCashRegisterDialog extends StatefulWidget {
 
 class _OpenCashRegisterDialogState extends State<OpenCashRegisterDialog> {
   String name;
-  int initialAmount = 0;
+  double initialAmount = 0;
   final controller = PageController(initialPage: 0);
   final int totalPages = 2;
 
@@ -18,6 +21,7 @@ class _OpenCashRegisterDialogState extends State<OpenCashRegisterDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final userProfile = Provider.of<UserData>(context);
     return SingleChildScrollView(
       child: Dialog(
         shape:
@@ -64,36 +68,38 @@ class _OpenCashRegisterDialogState extends State<OpenCashRegisterDialog> {
                           height: 25,
                         ),
                         //Name
-                        Container(
-                          width: double.infinity,
-                          height: 40,
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(15),
-                              border: Border.all(color: Colors.black)),
-                          alignment: Alignment.center,
-                          child: TextFormField(
-                            focusNode: nameNode,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.black, fontSize: 24),
-                            autofocus: true,
-                            validator: (val) => val.isEmpty
-                                ? "No olvides agregar un nombre"
-                                : null,
-                            inputFormatters: [
-                              LengthLimitingTextInputFormatter(45)
-                            ],
-                            cursorColor: Colors.grey,
-                            decoration: InputDecoration.collapsed(
-                              hintText: "Nombre",
-                              hintStyle: TextStyle(color: Colors.grey.shade700),
+                        TextFormField(
+                          focusNode: nameNode,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.black, fontSize: 24),
+                          autofocus: true,
+                          validator: (val) => val.isEmpty
+                              ? "No olvides agregar un nombre"
+                              : null,
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(45)
+                          ],
+                          cursorColor: Colors.grey,
+                          decoration: InputDecoration(
+                            label: Text('Nombre'),
+                            labelStyle:
+                                TextStyle(color: Colors.grey, fontSize: 12),
+                            border: new OutlineInputBorder(
+                              borderRadius: new BorderRadius.circular(12.0),
+                              borderSide: new BorderSide(
+                                color: Colors.grey,
+                              ),
                             ),
-                            onChanged: (val) {
-                              setState(() => name = val);
-                            },
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: new BorderRadius.circular(12.0),
+                              borderSide: new BorderSide(
+                                color: Colors.green,
+                              ),
+                            ),
                           ),
+                          onChanged: (val) {
+                            setState(() => name = val);
+                          },
                         ),
                         SizedBox(
                           height: 35,
@@ -101,17 +107,21 @@ class _OpenCashRegisterDialogState extends State<OpenCashRegisterDialog> {
                         //Button
                         Container(
                           height: 35.0,
-                          child: RaisedButton(
-                            color: Colors.black,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black,
+                              minimumSize: Size(300, 50),
+                              padding: EdgeInsets.symmetric(horizontal: 15),
+                              shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8)),
+                              ),
+                            ),
                             onPressed: () {
                               controller.nextPage(
                                   duration: Duration(milliseconds: 500),
                                   curve: Curves.ease);
-                              nameNode.nextFocus();
                             },
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25)),
-                            padding: EdgeInsets.all(0.0),
                             child: Container(
                               constraints: BoxConstraints(
                                   maxWidth: 300.0, minHeight: 50.0),
@@ -166,34 +176,41 @@ class _OpenCashRegisterDialogState extends State<OpenCashRegisterDialog> {
                           height: 25,
                         ),
                         //Amount
-                        Container(
-                          width: double.infinity,
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                          height: 75,
-                          color: Colors.white,
-                          alignment: Alignment.center,
-                          child: TextFormField(
-                            autofocus: true,
-                            focusNode: amountNode,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.black, fontSize: 40),
-                            validator: (val) => val.isEmpty
-                                ? "No olvides agregar un monto inicial"
-                                : null,
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            keyboardType: TextInputType.number,
-                            cursorColor: Colors.grey,
-                            decoration: InputDecoration.collapsed(
-                              hintText: "0",
-                              hintStyle: TextStyle(color: Colors.grey.shade700),
+                        TextFormField(
+                          autofocus: true,
+                          focusNode: amountNode,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.black, fontSize: 40),
+                          initialValue: '\$0.00',
+                          validator: (val) =>
+                              val.isEmpty ? "Agrega un monto válido" : null,
+                          inputFormatters: <TextInputFormatter>[
+                            CurrencyTextInputFormatter(
+                              name: '\$',
+                              locale: 'en',
+                              decimalDigits: 2,
                             ),
-                            onChanged: (val) {
-                              setState(() => initialAmount = int.parse(val));
-                            },
+                          ],
+                          keyboardType: TextInputType.number,
+                          cursorColor: Colors.grey,
+                          decoration: InputDecoration(
+                            border: new OutlineInputBorder(
+                              borderRadius: new BorderRadius.circular(12.0),
+                              borderSide: new BorderSide(
+                                color: Colors.grey,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: new BorderRadius.circular(12.0),
+                              borderSide: new BorderSide(
+                                color: Colors.green,
+                              ),
+                            ),
                           ),
+                          onChanged: (val) {
+                            setState(() => initialAmount = double.tryParse(
+                                (val.substring(1)).replaceAll(',', '')));
+                          },
                         ),
                         SizedBox(
                           height: 35,
@@ -201,33 +218,38 @@ class _OpenCashRegisterDialogState extends State<OpenCashRegisterDialog> {
                         //Button
                         Container(
                           height: 35.0,
-                          child: RaisedButton(
-                            color: Colors.black,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black,
+                              minimumSize: Size(300, 50),
+                              padding: EdgeInsets.symmetric(horizontal: 15),
+                              shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8)),
+                              ),
+                            ),
                             onPressed: () {
                               var date = DateTime.now();
 
-                              DatabaseService()
-                                  .openCashRegister(name, initialAmount, date);
-                              DatabaseService()
-                                  .recordOpenedRegister(true, date.toString());
+                              DatabaseService().openCashRegister(
+                                  userProfile.activeBusiness,
+                                  name,
+                                  initialAmount,
+                                  date);
+                              DatabaseService().recordOpenedRegister(
+                                  userProfile.activeBusiness,
+                                  true,
+                                  date.toString());
 
                               Navigator.of(context).pop();
                             },
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25)),
-                            padding: EdgeInsets.all(0.0),
-                            child: Container(
-                              constraints: BoxConstraints(
-                                  maxWidth: 300.0, minHeight: 50.0),
-                              alignment: Alignment.center,
-                              child: Text(
-                                "ABRIR CAJA",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.white),
-                              ),
+                            child: Text(
+                              "ABRIR CAJA",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white),
                             ),
                           ),
                         ),

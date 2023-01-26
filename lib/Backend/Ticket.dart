@@ -19,16 +19,34 @@ class TicketBloc {
     'IVA': 0,
     'Total': 0,
     'Color': Colors.white,
+    'Open Table': false,
+    'Order ID': '',
+    'Counter Order': false,
+    'Order Type': 'Mostrador',
+    'Client Assigned': false,
+    'Client': {
+      'Name': '',
+      'Address': '',
+      'Phone': 0,
+      'email': '',
+    }
   };
 
   /// [retrieveOrder] removes items from the cart, back to the shop
-  void retrieveOrder(orderName, paymentType, items, discount, tax, color) {
+  void retrieveOrder(orderName, paymentType, items, discount, tax, color,
+      isOpenTable, orderID, isCounterOrder, orderType, clientAssigned, client) {
     ticketItems['Order Name'] = orderName;
     ticketItems['Payment Type'] = paymentType;
     ticketItems['Items'] = items;
     ticketItems['Discount'] = discount;
     ticketItems['IVA'] = tax;
     ticketItems['Color'] = color;
+    ticketItems['Open Table'] = isOpenTable;
+    ticketItems['Counter Order'] = isCounterOrder;
+    ticketItems['Order ID'] = orderID;
+    ticketItems['Order Type'] = orderType;
+    ticketItems['Client Assigned'] = clientAssigned;
+    ticketItems['Client'] = client;
 
     ticketStreamController.sink.add(ticketItems);
   }
@@ -36,6 +54,20 @@ class TicketBloc {
   /// [changeOrderName] removes items from the cart, back to the shop
   void changeOrderName(orderName) {
     ticketItems['Order Name'] = orderName;
+
+    ticketStreamController.sink.add(ticketItems);
+  }
+
+  /// [changeOrderType] removes items from the cart, back to the shop
+  void changeOrderType(orderType) {
+    ticketItems['Order Type'] = orderType;
+
+    ticketStreamController.sink.add(ticketItems);
+  }
+
+  /// [changeTableStatus] removes items from the cart, back to the shop
+  void changeTableStatus(isOpenTable) {
+    ticketItems['Open Table'] = isOpenTable;
 
     ticketStreamController.sink.add(ticketItems);
   }
@@ -61,6 +93,17 @@ class TicketBloc {
     ticketItems['Discount'] = 0;
     ticketItems['Total'] = 0;
     ticketItems['Color'] = Colors.white;
+    ticketItems['Open Table'] = false;
+    ticketItems['Order ID'] = '';
+    ticketItems['Counter Order'] = false;
+    ticketItems['Order Type'] = 'Mostrador';
+    ticketItems['Client Assigned'] = false;
+    ticketItems['Client'] = {
+      'Name': '',
+      'Address': '',
+      'Phone': 0,
+      'email': '',
+    };
 
     ticketStreamController.sink.add(ticketItems);
   }
@@ -79,6 +122,38 @@ class TicketBloc {
   void removeQuantity(i) {
     ticketItems['Items'][i]['Quantity'] =
         ticketItems['Items'][i]['Quantity'] - 1;
+    ticketItems['Items'][i]['Total Price'] =
+        ticketItems['Items'][i]['Price'] * ticketItems['Items'][i]['Quantity'];
+
+    ticketStreamController.sink.add(ticketItems);
+  }
+
+  /// [editQuantity] adds items from the cart, back to the shop
+  void editQuantity(i, q) {
+    ticketItems['Items'][i]['Quantity'] = q;
+    ticketItems['Items'][i]['Total Price'] =
+        ticketItems['Items'][i]['Price'] * q;
+
+    ticketStreamController.sink.add(ticketItems);
+  }
+
+  /// [editCategory] adds items from the cart, back to the shop
+  void editCategory(i, category) {
+    ticketItems['Items'][i]['Category'] = category;
+
+    ticketStreamController.sink.add(ticketItems);
+  }
+
+  /// [editProduct] adds items from the cart, back to the shop
+  void editProduct(i, product) {
+    ticketItems['Items'][i]['Name'] = product;
+
+    ticketStreamController.sink.add(ticketItems);
+  }
+
+  /// [editPrice] adds items from the cart, back to the shop
+  void editPrice(i, price) {
+    ticketItems['Items'][i]['Price'] = price;
     ticketItems['Items'][i]['Total Price'] =
         ticketItems['Items'][i]['Price'] * ticketItems['Items'][i]['Quantity'];
 

@@ -102,8 +102,11 @@ class DailyTransactionsList extends StatelessWidget {
                               itemCount: dailyTransactionsList.length,
                               itemBuilder: (context, i) {
                                 return Container(
-                                  height: 40,
+                                  height: 50,
                                   width: double.infinity,
+                                  padding: EdgeInsets.all(5),
+                                  color:
+                                      i.isOdd ? Colors.grey[100] : Colors.white,
                                   child: Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,

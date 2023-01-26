@@ -1,48 +1,57 @@
 import 'package:denario/Backend/DatabaseService.dart';
-import 'package:denario/Expenses/FilteredExpenseList.dart';
+import 'package:denario/Dashboard/SalesDetailsView.dart';
 import 'package:denario/Models/DailyCash.dart';
-import 'package:denario/Models/Expenses.dart';
+import 'package:denario/Models/Sales.dart';
+import 'package:denario/Models/Stats.dart';
+import 'package:denario/Models/User.dart';
+import 'package:denario/No%20POS%20Sales/NewSaleScreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class ExpensesHistory extends StatefulWidget {
-  final String activeBusiness;
-  ExpensesHistory(this.activeBusiness);
+class SalesDetailsFilters extends StatefulWidget {
+  final String currentBusiness;
+  final CashRegister registerStatus;
+  SalesDetailsFilters(this.currentBusiness, this.registerStatus);
+
   @override
-  _ExpensesHistoryState createState() => _ExpensesHistoryState();
+  State<SalesDetailsFilters> createState() => _SalesDetailsFiltersState();
 }
 
-class _ExpensesHistoryState extends State<ExpensesHistory> {
+class _SalesDetailsFiltersState extends State<SalesDetailsFilters> {
   DateTime initDate;
   DateTime endDate;
   String paymentType;
   bool filtered;
   List paymentTypes = [];
-  TextEditingController supplierController =
-      new TextEditingController(text: '');
-  String supplier;
 
   @override
   void initState() {
-    initDate = DateTime(DateTime.now().year, DateTime.now().month, 1, 0, 0, 0);
+    initDate = DateTime(DateTime.now().year, DateTime.now().month,
+            DateTime.now().day, 0, 0, 0)
+        .subtract(Duration(days: 1));
     endDate = DateTime(DateTime.now().year, DateTime.now().month,
         DateTime.now().day, 23, 59, 59);
     filtered = false;
-    paymentTypes = ['Todos', 'Efectivo', 'MercadoPago', 'Tarjeta', 'Por pagar'];
+
+    for (var i = 0; i < widget.registerStatus.paymentTypes.length; i++) {
+      paymentTypes.add(widget.registerStatus.paymentTypes[i]['Type']);
+    }
+
+    paymentTypes.insert(0, 'Todos');
+    paymentTypes.add('Por Cobrar');
+    paymentType = 'Todos';
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final registerStatus = Provider.of<CashRegister>(context);
-
-    if (registerStatus == null) {
-      return Container();
-    }
-
     return Scaffold(
-        body: Padding(
+        body: Container(
+      width:
+          (MediaQuery.of(context).size.width > 1100) ? double.infinity : 1100,
       padding: const EdgeInsets.all(20.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -54,13 +63,61 @@ class _ExpensesHistoryState extends State<ExpensesHistory> {
               //Back
               IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: Icon(Icons.keyboard_arrow_left_outlined)),
+                  icon: Icon(Icons.arrow_back)),
+              SizedBox(width: 25),
+              Text(
+                'Historial de ventas',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
               Spacer(),
-              Text('Historial de Gastos'),
-              Spacer()
+              Container(
+                height: 50,
+                child: Tooltip(
+                  message: 'Registrar o agendar nueva venta',
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.black,
+                    ),
+                    onPressed: () {
+                      final User user = FirebaseAuth.instance.currentUser;
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MultiProvider(
+                                    providers: [
+                                      StreamProvider<UserData>.value(
+                                          initialData: null,
+                                          value: DatabaseService().userProfile(
+                                              user.uid.toString())),
+                                      StreamProvider<MonthlyStats>.value(
+                                        value: DatabaseService()
+                                            .monthlyStatsfromSnapshot(
+                                                widget.currentBusiness),
+                                        initialData: null,
+                                      )
+                                    ],
+                                    child: Scaffold(
+                                        body: NewSaleScreen(
+                                            widget.currentBusiness)),
+                                  )));
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.add, size: 16),
+                            SizedBox(width: 10),
+                            Text('Nueva venta')
+                          ]),
+                    ),
+                  ),
+                ),
+              )
             ]),
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 20),
           //Filters
           Container(
             height: 70,
@@ -129,15 +186,8 @@ class _ExpensesHistoryState extends State<ExpensesHistory> {
                                       child: child);
                                 }));
                             setState(() {
-                              if (pickedDate != null &&
-                                  pickedDate.month == DateTime.now().month) {
+                              if (pickedDate != null) {
                                 initDate = pickedDate;
-                                filtered = true;
-                              } else if (pickedDate != null &&
-                                  pickedDate.month != DateTime.now().month) {
-                                initDate = pickedDate;
-                                endDate = DateTime(
-                                    pickedDate.year, pickedDate.month + 1, 0);
                                 filtered = true;
                               }
                             });
@@ -160,7 +210,9 @@ class _ExpensesHistoryState extends State<ExpensesHistory> {
                       borderRadius: BorderRadius.circular(12.0),
                     ),
                     padding: EdgeInsets.all(12),
-                    child: Row(
+                    child: //(DateTime.now().difference(initDate).inDays > 1)
+                        // ?
+                        Row(
                       children: [
                         Text(
                           (endDate == null)
@@ -178,14 +230,9 @@ class _ExpensesHistoryState extends State<ExpensesHistory> {
                             onPressed: () async {
                               DateTime pickedDate = await showDatePicker(
                                   context: context,
-                                  initialDate: (initDate.month ==
-                                          DateTime.now().month)
-                                      ? DateTime.now()
-                                      : DateTime(
-                                          initDate.year, initDate.month + 1, 0),
+                                  initialDate: DateTime.now(),
                                   firstDate: initDate,
-                                  lastDate: DateTime(
-                                      initDate.year, initDate.month + 1, 0),
+                                  lastDate: DateTime.now(),
                                   builder: ((context, child) {
                                     return Theme(
                                         data: Theme.of(context).copyWith(
@@ -221,55 +268,35 @@ class _ExpensesHistoryState extends State<ExpensesHistory> {
                           ),
                         )
                       ],
-                    )),
-                SizedBox(width: 20),
-                //Proveedor
-                Container(
-                  width: 250,
-                  height: 45,
-                  child: TextFormField(
-                    controller: supplierController,
-                    style: TextStyle(color: Colors.black, fontSize: 14),
-                    cursorColor: Colors.grey,
-                    decoration: InputDecoration(
-                      suffixIcon: IconButton(
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.all(2),
-                        iconSize: 14,
-                        splashRadius: 15,
-                        onPressed: () {
-                          setState(() {
-                            supplierController.text = '';
-                            supplier = null;
-                          });
-                        },
-                        icon: Icon(Icons.close),
-                        color: Colors.black,
-                      ),
-                      hintText: 'Proveedor',
-                      hintStyle: TextStyle(color: Colors.black45, fontSize: 14),
-                      border: new OutlineInputBorder(
-                        borderRadius: new BorderRadius.circular(12.0),
-                        borderSide: new BorderSide(
-                          color: Colors.grey[350],
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: new BorderRadius.circular(12.0),
-                        borderSide: new BorderSide(
-                          color: Colors.green,
-                        ),
-                      ),
+                    )
+                    // : Row(
+                    //     children: [
+                    //       Text(
+                    //         'Hasta fecha',
+                    //         style: TextStyle(
+                    //             fontWeight: FontWeight.w400,
+                    //             fontSize: 16,
+                    //             color: Colors.grey),
+                    //       ),
+                    //       Spacer(),
+                    //       Container(
+                    //         height: 20,
+                    //         width: 20,
+                    //         child: IconButton(
+                    //           splashRadius: 1,
+                    //           color: Colors.grey,
+                    //           onPressed: () {},
+                    //           padding: EdgeInsets.all(0),
+                    //           tooltip: 'Selecciona un fecha final',
+                    //           iconSize: 18,
+                    //           icon: Icon(Icons.calendar_month),
+                    //         ),
+                    //       )
+                    //     ],
+                    //   ),
                     ),
-                    onChanged: (val) {
-                      setState(() {
-                        supplier = val;
-                        filtered = true;
-                      });
-                    },
-                  ),
-                ),
                 SizedBox(width: 20),
+
                 //Medio de pago
                 Container(
                   width: 250,
@@ -352,7 +379,6 @@ class _ExpensesHistoryState extends State<ExpensesHistory> {
                               23,
                               59,
                               59);
-                          supplierController.text = '';
                           filtered = false;
                         });
                       },
@@ -368,117 +394,102 @@ class _ExpensesHistoryState extends State<ExpensesHistory> {
               ],
             ),
           ),
-          SizedBox(height: 20),
           //Titles
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              //Fecha
-              Container(
-                  width: 50,
-                  child: Text(
-                    'Fecha',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.black54),
-                  )),
-              //Hora
-              Container(
-                  width: 75,
-                  child: Text(
-                    'Hora',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.black54),
-                  )),
-              //CostType
-              Container(
-                  width: 120,
-                  child: Text(
-                    'Tipo de costo',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.black54),
-                  )),
-              //Vendor
-              Container(
-                  width: 120,
-                  child: Text(
-                    'Proveedor',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.black54),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  )),
-              //Product
-              Container(
-                  width: 120,
-                  child: Text(
-                    'Producto',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.black54),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  )),
-              //Payment Type
-              Container(
-                  width: 120,
-                  child: Center(
-                    child: Text(
-                      'Medio de pago',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.black54),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  )),
-              //Total
-              Container(
-                  width: 70,
-                  child: Center(
-                    child: Text(
-                      'Total',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.black54),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  )),
-              //More Button
-              SizedBox(width: 45)
-            ],
-          ),
           SizedBox(height: 20),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            height: 40,
+            width: double.infinity,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                //Fecha
+                Container(
+                    width: 50,
+                    child: Text(
+                      'Fecha',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.black54),
+                    )),
+                //Hora
+                Container(
+                    width: 75,
+                    child: Text(
+                      'Hora',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.black54),
+                    )),
+
+                //Nombre
+                Container(
+                    width: 120,
+                    child: Text(
+                      'Cliente',
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.black54),
+                    )),
+
+                //Payment Type
+                Container(
+                    width: 120,
+                    child: Center(
+                      child: Text(
+                        'Medio de pago',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.black54),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    )),
+                //Total
+                Container(
+                    width: 70,
+                    child: Center(
+                      child: Text(
+                        'Total',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.black54),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    )),
+                //More Button
+                SizedBox(width: 45)
+              ],
+            ),
+          ),
+          Divider(
+            indent: 1,
+            endIndent: 1,
+            thickness: 1,
+            color: Colors.grey[300],
+          ),
           //Historical Details
-          (filtered)
-              ? StreamProvider<List<Expenses>>.value(
-                  value: DatabaseService().filteredExpenseList(
-                      widget.activeBusiness,
-                      endDate.month.toString(),
-                      endDate.year.toString(),
-                      initDate,
-                      endDate,
-                      paymentType,
-                      (supplier != null && supplier != '')
-                          ? supplier.toLowerCase()
-                          : null),
-                  initialData: null,
-                  child: FilteredExpenseList(
-                      widget.activeBusiness, registerStatus))
-              : StreamProvider<List<Expenses>>.value(
-                  value: DatabaseService().expenseList(widget.activeBusiness,
-                      endDate.month.toString(), endDate.year.toString()),
-                  initialData: null,
-                  child: FilteredExpenseList(
-                      widget.activeBusiness, registerStatus),
-                ),
+          Expanded(
+              child: (filtered)
+                  ? StreamProvider<List<Sales>>.value(
+                      initialData: null,
+                      value: DatabaseService().filteredSalesList(
+                          widget.currentBusiness,
+                          initDate,
+                          endDate,
+                          paymentType),
+                      child: SalesDetailsView(
+                          widget.currentBusiness, widget.registerStatus))
+                  : StreamProvider<List<Sales>>.value(
+                      initialData: null,
+                      value:
+                          DatabaseService().salesList(widget.currentBusiness),
+                      child: SalesDetailsView(
+                          widget.currentBusiness, widget.registerStatus)))
         ],
       ),
     ));

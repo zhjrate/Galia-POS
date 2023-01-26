@@ -1,6 +1,6 @@
 class CategoryList {
-  List<Categories> categoriesList;
-  CategoryList({this.categoriesList});
+  List categoryList;
+  CategoryList({this.categoryList});
 }
 
 class AccountsList {

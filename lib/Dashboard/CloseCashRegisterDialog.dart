@@ -1,6 +1,9 @@
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:denario/Backend/DatabaseService.dart';
+import 'package:denario/Models/User.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 class CloseCashRegisterDialog extends StatefulWidget {
   final String currentRegister;
@@ -12,7 +15,7 @@ class CloseCashRegisterDialog extends StatefulWidget {
 }
 
 class _CloseCashRegisterDialogState extends State<CloseCashRegisterDialog> {
-  int closeAmount = 0;
+  double closeAmount = 0;
   final controller = PageController(initialPage: 0);
   final int totalPages = 2;
 
@@ -21,6 +24,8 @@ class _CloseCashRegisterDialogState extends State<CloseCashRegisterDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final userProfile = Provider.of<UserData>(context);
+
     return SingleChildScrollView(
       child: Dialog(
         shape:
@@ -62,33 +67,41 @@ class _CloseCashRegisterDialogState extends State<CloseCashRegisterDialog> {
                     height: 25,
                   ),
                   //Amount
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                    height: 75,
-                    color: Colors.white,
-                    alignment: Alignment.center,
-                    child: TextFormField(
-                      autofocus: true,
-                      focusNode: amountNode,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.black, fontSize: 40),
-                      validator: (val) => val.isEmpty
-                          ? "No olvides agregar un monto inicial"
-                          : null,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
-                      keyboardType: TextInputType.number,
-                      cursorColor: Colors.grey,
-                      decoration: InputDecoration.collapsed(
-                        hintText: "0",
-                        hintStyle: TextStyle(color: Colors.grey.shade700),
+                  TextFormField(
+                    autofocus: true,
+                    focusNode: amountNode,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.black, fontSize: 40),
+                    initialValue: '\$0.00',
+                    validator: (val) =>
+                        val.isEmpty ? "Agrega un monto válido" : null,
+                    inputFormatters: <TextInputFormatter>[
+                      CurrencyTextInputFormatter(
+                        name: '\$',
+                        locale: 'en',
+                        decimalDigits: 2,
                       ),
-                      onChanged: (val) {
-                        setState(() => closeAmount = int.parse(val));
-                      },
+                    ],
+                    keyboardType: TextInputType.number,
+                    cursorColor: Colors.grey,
+                    decoration: InputDecoration(
+                      border: new OutlineInputBorder(
+                        borderRadius: new BorderRadius.circular(12.0),
+                        borderSide: new BorderSide(
+                          color: Colors.grey,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: new BorderRadius.circular(12.0),
+                        borderSide: new BorderSide(
+                          color: Colors.green,
+                        ),
+                      ),
                     ),
+                    onChanged: (val) {
+                      setState(() => closeAmount = double.tryParse(
+                          (val.substring(1)).replaceAll(',', '')));
+                    },
                   ),
                   SizedBox(
                     height: 35,
@@ -96,30 +109,32 @@ class _CloseCashRegisterDialogState extends State<CloseCashRegisterDialog> {
                   //Button
                   Container(
                     height: 35.0,
-                    child: RaisedButton(
-                      color: Colors.black,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        minimumSize: Size(300, 50),
+                        padding: EdgeInsets.symmetric(horizontal: 15),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                        ),
+                      ),
                       onPressed: () {
                         DatabaseService().closeCashRegister(
-                            closeAmount, widget.currentRegister);
-                        DatabaseService().recordOpenedRegister(false, '');
+                            userProfile.activeBusiness,
+                            closeAmount,
+                            widget.currentRegister);
+                        DatabaseService().recordOpenedRegister(
+                            userProfile.activeBusiness, false, '');
 
                         Navigator.of(context).pop();
                       },
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25)),
-                      padding: EdgeInsets.all(0.0),
-                      child: Container(
-                        constraints:
-                            BoxConstraints(maxWidth: 300.0, minHeight: 50.0),
-                        alignment: Alignment.center,
-                        child: Text(
-                          "CERRAR CAJA",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white),
-                        ),
+                      child: Text(
+                        "CERRAR CAJA",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white),
                       ),
                     ),
                   ),
